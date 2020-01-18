@@ -1,0 +1,6 @@
+# copy to ../Node.js
+version: "3.6"
+services:
+  app:
+    volumes:
+      - ../ECMAScript-modules/docs:/home/node/app/public
