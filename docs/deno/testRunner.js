@@ -36,14 +36,13 @@ import { load, objectify } from '../test.js';
 const { args, cwd, exit } = Deno;
 const { stringify } = JSON;
 
-const ARGUMENTS_OFFSET = 1;
 const EXIT_CODE_ERROR = 1;
 const JSON_INDENT = 2;
 const FILE_BASE_URL = `file://${cwd()}/`;
 const YAML_DOC_SEPARATOR = '---';
 const ARGUMENT_LIST = args
-  .slice(ARGUMENTS_OFFSET);
-const DIRECTORIES = ARGUMENT_LIST
+  .filter(value => value.startsWith('-'));
+const DIRECTORIES = args
   .filter(value => !value.startsWith('-'));
 const SILENT = ARGUMENT_LIST
   .includes('-s');
