@@ -201,7 +201,7 @@ function overloadSync(value) {
 }
 
 /**
- * @param {boolean|function|Array|Promise}
+ * @param {boolean|function|Array|Promise} value
  * @return {Promise<boolean>}
  */
 function asPromise(value) {
@@ -218,6 +218,21 @@ function asPromise(value) {
 }
 
 /**
+ * @param {string} label
+ * @param {function} [context]
+ * @return {string}
+ */
+function overloadLabel(label, context) {
+  if (typeof context === 'function') {
+    const { name } = context;
+
+    return `${name}() ${label}`;
+  }
+
+  return label;
+}
+
+/**
  * @param {Object|string} identifier
  * @return {Object}
  */
@@ -225,10 +240,15 @@ function suite(identifier) {
   const moduleIdentifier = getModuleIdentifier(identifier);
   const testQueue = [];
 
+  /**
+   * @param {string} label
+   * @param {boolean|function|Array|Promise} condition
+   */
   function test(label, condition) {
+    const description = overloadLabel(label, this);
     const testPromise = asPromise(condition)
       .then(testResult =>
-        toTestTuple(moduleIdentifier, label, testResult));
+        toTestTuple(moduleIdentifier, description, testResult));
 
     testQueue.push(testPromise);
   }
