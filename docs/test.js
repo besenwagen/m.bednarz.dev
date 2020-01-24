@@ -1,4 +1,5 @@
 export {
+  bind,
   load,
   objectify,
   promise,
@@ -218,21 +219,6 @@ function asPromise(value) {
 }
 
 /**
- * @param {string} label
- * @param {function} [context]
- * @return {string}
- */
-function overloadLabel(label, context) {
-  if (typeof context === 'function') {
-    const { name } = context;
-
-    return `${name}() ${label}`;
-  }
-
-  return label;
-}
-
-/**
  * @param {Object|string} identifier
  * @return {Object}
  */
@@ -242,20 +228,38 @@ function suite(identifier) {
 
   /**
    * @param {string} label
-   * @param {boolean|function|Array|Promise} condition
+   * @param {boolean|function|Array|Promise} testCase
    */
-  function test(label, condition) {
-    const description = overloadLabel(label, this);
-    const testPromise = asPromise(condition)
+  function test(label, testCase) {
+    const testPromise = asPromise(testCase)
       .then(testResult =>
-        toTestTuple(moduleIdentifier, description, testResult));
+        toTestTuple(moduleIdentifier, label, testResult));
 
     testQueue.push(testPromise);
+
+    return test;
   }
 
   registry.set(test, [moduleIdentifier, testQueue]);
 
   return test;
+}
+
+/**
+ * @param {function} testFunction
+ * @param {function} functionUnderTest
+ * @return {function}
+ */
+function bind(testFunction, functionUnderTest) {
+  const { name } = functionUnderTest;
+
+  function boundTest(label, testCase) {
+    testFunction(`${name}(): ${label}`, testCase);
+
+    return boundTest;
+  }
+
+  return boundTest;
 }
 
 //==========================================================
