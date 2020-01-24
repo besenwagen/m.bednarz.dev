@@ -25,7 +25,7 @@ bind(test, isFinite)
 
 bind(test, isNaN)
   ('input', isNaN(NaN))
-  ('isNaN does not coerce', [
+  ('does not coerce', [
     isNaN('42'),
     false,
   ]);
