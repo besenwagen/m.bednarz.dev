@@ -21,14 +21,16 @@ scope(test, isFinite)
   ('does not coerce', [
     isFinite('42'),
     false,
-  ]);
+  ])
+  ;
 
 scope(test, isNaN)
   ('input', isNaN(NaN))
   ('does not coerce', [
     isNaN('42'),
     false,
-  ]);
+  ])
+  ;
 
 scope(test, isObject)
   ('null is false', [
