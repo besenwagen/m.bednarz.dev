@@ -1,4 +1,4 @@
-import { bind, promise, suite } from './test.js';
+import { promise, scope, suite } from './test.js';
 import {
   isFalse,
   isFinite,
@@ -8,7 +8,7 @@ import {
 
 const test = suite(import.meta);
 
-bind(test, isFalse)
+scope(test, isFalse)
   ('false is true', isFalse(false))
   ('true is false', [
     isFalse(true),
@@ -16,21 +16,21 @@ bind(test, isFalse)
   ])
   ;
 
-bind(test, isFinite)
+scope(test, isFinite)
   ('number input', isFinite(42))
   ('does not coerce', [
     isFinite('42'),
     false,
   ]);
 
-bind(test, isNaN)
+scope(test, isNaN)
   ('input', isNaN(NaN))
   ('does not coerce', [
     isNaN('42'),
     false,
   ]);
 
-bind(test, isObject)
+scope(test, isObject)
   ('null is false', [
     isObject(null),
     false,

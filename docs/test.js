@@ -1,8 +1,8 @@
 export {
-  bind,
   load,
   objectify,
   promise,
+  scope,
   suite,
 };
 
@@ -250,7 +250,7 @@ function suite(identifier) {
  * @param {function} functionUnderTest
  * @return {function}
  */
-function bind(testFunction, functionUnderTest) {
+function scope(testFunction, functionUnderTest) {
   const { name } = functionUnderTest;
 
   function boundTest(label, testCase) {
