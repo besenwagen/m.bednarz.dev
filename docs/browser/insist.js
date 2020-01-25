@@ -7,7 +7,7 @@ export {
 /**
  * Promise API for `window.confirm`.
  * @param {string} message
- * @return {Promise<boolean>}
+ * @returns {Promise<boolean>}
  */
 function insist(message) {
   function executor(resolve) {

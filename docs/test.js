@@ -17,21 +17,21 @@ const ERROR_INDEX = 3;
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isBoolean = value =>
   (typeof value === 'boolean');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isString = value =>
   (typeof value === 'string');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isObject = value => (
   Object
@@ -42,14 +42,14 @@ const isObject = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isPromise = value =>
   (value.constructor === Promise);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isImportMeta = value => (
   isObject(value)
@@ -58,7 +58,7 @@ const isImportMeta = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isOrderedPair = value => (
   isArray(value)
@@ -67,7 +67,7 @@ const isOrderedPair = value => (
 
 /**
  * @param {Array} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isOrderedPairEqual = ([actual, expected]) =>
   (actual === expected);
@@ -75,7 +75,7 @@ const isOrderedPairEqual = ([actual, expected]) =>
 /**
  * @param {boolean} result
  * @param {string} message
- * @return {boolean}
+ * @returns {boolean}
  */
 function validate(result, message) {
   const type = typeof result;
@@ -93,7 +93,7 @@ function validate(result, message) {
  * @param {string} subject
  * @param {string} key
  * @param {boolean} value
- * @return {Array}
+ * @returns {Array}
  */
 function toTestTuple(subject, key, value) {
   const message = [subject, key].join(' > ');
@@ -106,7 +106,7 @@ function toTestTuple(subject, key, value) {
 
 /**
  * @param {Object|string} value
- * @return {string}
+ * @returns {string}
  */
 function overloadIdentifier(value) {
   if (isImportMeta(value)) {
@@ -122,7 +122,7 @@ function overloadIdentifier(value) {
  *
  * @todo Make this module completely environment agnostic.
  *
- * @return {string}
+ * @returns {string}
  */
 function getEnvironmentPrefix() {
   /* global Deno process */
@@ -139,7 +139,7 @@ function getEnvironmentPrefix() {
 
 /**
  * @param {string} pathname
- * @return {string}
+ * @returns {string}
  */
 function normalizePath(pathname) {
   const prefix = getEnvironmentPrefix();
@@ -155,7 +155,7 @@ function normalizePath(pathname) {
 
 /**
  * @param {string} url
- * @return {string}
+ * @returns {string}
  */
 function getRelativePath(url) {
   const { pathname } = new URL(url);
@@ -165,7 +165,7 @@ function getRelativePath(url) {
 
 /**
  * @param {Object|string} value
- * @return {string}
+ * @returns {string}
  */
 function getModuleIdentifier(value) {
   const url = overloadIdentifier(value);
@@ -175,7 +175,7 @@ function getModuleIdentifier(value) {
 
 /**
  * @param {boolean|function|Array|Promise} value
- * @return {boolean|Array|Promise}
+ * @returns {boolean|Array|Promise}
  */
 function overloadCallable(value) {
   if (typeof value === 'function') {
@@ -187,7 +187,7 @@ function overloadCallable(value) {
 
 /**
  * @param {boolean|Array}
- * @return {boolean}
+ * @returns {boolean}
  */
 function overloadSync(value) {
   if (isOrderedPair(value)) {
@@ -203,7 +203,7 @@ function overloadSync(value) {
 
 /**
  * @param {boolean|function|Array|Promise} value
- * @return {Promise<boolean>}
+ * @returns {Promise<boolean>}
  */
 function asPromise(value) {
   const normalized = overloadCallable(value);
@@ -220,7 +220,7 @@ function asPromise(value) {
 
 /**
  * @param {Object|string} identifier
- * @return {Object}
+ * @returns {Object}
  */
 function suite(identifier) {
   const moduleIdentifier = getModuleIdentifier(identifier);
@@ -248,7 +248,7 @@ function suite(identifier) {
 /**
  * @param {function} testFunction
  * @param {function} functionUnderTest
- * @return {function}
+ * @returns {function}
  */
 function scope(testFunction, functionUnderTest) {
   const { name } = functionUnderTest;
@@ -288,14 +288,14 @@ const filterResults = ([, result]) => !result;
 /**
  * @param {function} testFunction
  *   the function returned by `suite`
- * @return {Promise<Array>}
+ * @returns {Promise<Array>}
  */
 function promise(testFunction) {
   const [identifier, queue] = registry.get(testFunction);
 
   /**
    * @param {Array} testSuiteReport
-   * @return {Array}
+   * @returns {Array}
    */
   function onQueueResolved(testSuiteReport) {
     const { length: total } = testSuiteReport;
@@ -317,14 +317,14 @@ function promise(testFunction) {
 
 /**
  * @param {Module} module
- * @return {Promise}
+ * @returns {Promise}
  */
 const getDefaultModule = module =>
   module.default;
 
 /**
  * @param {string} path
- * @return {Promise}
+ * @returns {Promise}
  */
 const loadModule = path =>
   import(path)
@@ -352,7 +352,7 @@ function withStats(result) {
 /**
  * @param {Array} queue
  *   a list of test module URLs
- * @return {Promise<Object>}
+ * @returns {Promise<Object>}
  */
 function load(queue) {
   const modules = queue.map(loadModule);
@@ -368,14 +368,14 @@ function load(queue) {
 
 /**
  * @param {Array} entry
- * @return {Array}
+ * @returns {Array}
  */
 const toSuite = ([key, value]) =>
   [key, fromEntries(value)];
 
 /**
  * @param {Array} result
- * @return {Object}
+ * @returns {Object}
  */
 const objectify = result =>
   fromEntries(result.map(toSuite));
