@@ -21,20 +21,38 @@
       color: #000;
       background: #fff;
       text-align: center;
-      font: 1.3rem/1.5 Georgia, serif;
+      font: 1.3rem/1.5 Consolas, Inconsolata, Menlo, monospace;
     }
 
     h1 {
       margin: 0;
       padding: 0 0 0.5em;
-      font: 8vw/1 Consolas, Inconsolata, Menlo, monospace;
+      font-size: 8vw;
+    }
+
+    h1 em {
+      color: #090;
+      background: transparent;
+
+    }
+
+    a[href] {
+      border-bottom: 1px solid #090;
+      color: #00f;
+      background: transparent;
+      text-decoration: none;
+    }
+
+    a[href]:focus,
+    a[href]:hover {
+      border-color: transparent;
     }
   </style>
 </head>
 <body>
   <h1><em>m</em> is for <em>module</em></h1>
 
-  <a href="/test/">unit tests</a>
+  <a href="/test/">and tests are for units</a>
 
 </body>
 </html>

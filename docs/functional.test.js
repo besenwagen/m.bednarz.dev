@@ -1,4 +1,4 @@
-import { promise, suite } from './test.js';
+import { promise, scope, suite } from './test.js';
 import {
   compose,
   pipe,
@@ -15,8 +15,9 @@ const multiply = value1 =>
   value2 =>
     value1 * value2;
 
-test
-  ('the `compose` function passes right to left',
+scope(test, compose)
+
+  ('passes right to left',
     () => {
       const doTheMath = compose(
         add(6),
@@ -24,10 +25,13 @@ test
       );
 
       return [doTheMath(12), 42];
-    });
+    })
 
-test
-  ('the `pipe` function passes left to right',
+  ;
+
+scope(test, pipe)
+
+  ('passes left to right',
     () => {
       const doTheMath = pipe(
         multiply(3),
@@ -35,10 +39,13 @@ test
       );
 
       return [doTheMath(12), 42];
-    });
+    })
 
-test
-  ('the `stage` function creates a transformer with a bound argument',
+  ;
+
+scope(test, stage)
+
+  ('creates a transformer with a bound argument',
     () => {
       const callback = (first, second) => (first + second);
 
@@ -53,6 +60,8 @@ test
       });
 
       return stage(callbackSpy)(40)(2);
-    });
+    })
+
+  ;
 
 export default promise(test);
