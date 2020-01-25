@@ -19,6 +19,7 @@ const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
 const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;
 const TEST_FILE_POSTFIX = '.test.js';
 const TEST_REPORT_SELECTOR = 'main[itemscope]';
+const TEST_PATH_SELECTOR = ':scope > meta[itemprop="path"]';
 const TEST_DATA_SELECTOR = ':scope > meta[itemprop="test"]';
 const STATUS_BUSY = 'Running tests...';
 const REPORT_LABEL = 'Unit test report';
@@ -77,21 +78,21 @@ main li li strong {
 
 /**
  * @param {string} content
- * @return {string}
+ * @returns {string}
  */
 const heading = content =>
   `<h1>${content}</h1>`;
 
 /**
  * @param {string} content
- * @return {string}
+ * @returns {string}
  */
 const paragraph = content =>
   `<p>${content}</p>`;
 
 /**
  * @param {Array} items
- * @return {string}
+ * @returns {string}
  */
 const orderedList = items =>
   `<ol>${items.join('')}</ol>`;
@@ -101,14 +102,14 @@ const listItem = content =>
 
 /**
  * @param {string} content
- * @return {string}
+ * @returns {string}
  */
 const strong = content =>
   `<strong>${content}</strong>`;
 
 /**
  * @param {string} content
- * @return {string}
+ * @returns {string}
  */
 const code = content =>
   `<code>${content}</code>`;
@@ -118,14 +119,14 @@ const sourceLink = url =>
 
 /**
  * @param {boolean} result
- * @return {string}
+ * @returns {string}
  */
 const prefix = result => (result ? PASS : FAIL);
 
 /**
  * @param {string} label
  * @param {boolean} result
- * @return {string}
+ * @returns {string}
  */
 function markResult(label, result) {
   const genericIdentifier = result ? 'em' : 'strong';
@@ -135,7 +136,7 @@ function markResult(label, result) {
 
 /**
  * @param {string[]}
- * @return {string}
+ * @returns {string}
  */
 const tupleToItem = ([description, result]) =>
   listItem([
@@ -165,7 +166,7 @@ function summary([modules, tests, errors]) {
 
 /**
  * @param {Object} result
- * @return {string}
+ * @returns {string}
  */
 function toHtml(result) {
   const toListItem = part => listItem(parse(part));
@@ -184,7 +185,7 @@ function html(contextNode, literal) {
 
 /**
  * @param {Node} node
- * @return {function}
+ * @returns {function}
  */
 function mangle(node) {
   /**
@@ -208,40 +209,70 @@ function mangle(node) {
 /**
  * @param {string} selector
  * @param {Node} contextNode
- * @return {Array}
+ * @returns {Array}
  */
 const select = (selector, contextNode = document) =>
   from(contextNode.querySelectorAll(selector));
 
 /**
  * @param {...string} argumentList
- * @return {string}
+ * @returns {string}
  */
 const join = (...argumentList) =>
   argumentList.join('');
 
 /**
- * @param {string} baseName
- * @return {string}
+ *
+ * @param {HTMLELement} element
  */
-function resolve(baseName) {
+const getMicroDataContent = ({ content }) => content;
+
+/**
+ * @returns {string}
+ */
+function getDocumentPath() {
   const { pathname } = window.location;
   const basePath = pathname.replace(PATH_COMPONENT_EXPRESSION, '');
 
-  return join(basePath, baseName, TEST_FILE_POSTFIX);
+  return basePath;
 }
 
 /**
- * Get an array of modules.
- * @return {string[]}
+ *
+ * @param {HTMLElement} contextElement
+ * @returns {string}
  */
-const parseMicroData = contextNode =>
-  select(TEST_DATA_SELECTOR, contextNode)
-    .map(({ content }) => content)
-    .map(resolve);
+function getBasePath(contextElement) {
+  const [element] = select(TEST_PATH_SELECTOR, contextElement);
+
+  if (element) {
+    return getMicroDataContent(element);
+  }
+
+  return getDocumentPath();
+}
 
 /**
- * @return {Array|null}
+ * @param {string} baseName
+ * @param {string} basePath
+ * @returns {string}
+ */
+const resolve = (baseName, basePath) =>
+  join(basePath, baseName, TEST_FILE_POSTFIX);
+
+/**
+ * Get an array of modules.
+ * @param {HTMLELement} contextElement
+ * @param {string} basePath
+ * @returns {string[]}
+ */
+const parseMicroData = (contextElement, basePath) =>
+  select(TEST_DATA_SELECTOR, contextElement)
+    .map(getMicroDataContent)
+    .map(baseName => resolve(baseName, basePath));
+
+/**
+ * @returns {Array|null}
  */
 function matchQuery() {
   const { search } = window.location;
@@ -250,7 +281,7 @@ function matchQuery() {
 }
 
 /**
- * @return {string}
+ * @returns {string}
  */
 function getQuery() {
   const match = matchQuery();
@@ -266,17 +297,18 @@ function getQuery() {
 
 /**
  * Get the modules from the query string or micro data.
- * @param {Node} node
- * @return {Array}
+ * @param {HTMLElement} element
+ * @returns {Array}
  */
-function prioritize(node) {
+function prioritize(element) {
+  const basePath = getBasePath(element);
   const query = getQuery();
 
   if (query) {
-    return [resolve(query)];
+    return [resolve(query, basePath)];
   }
 
-  return parseMicroData(node);
+  return parseMicroData(element, basePath);
 }
 
 //== Grand total ===========================================
@@ -291,7 +323,7 @@ function setStyle() {
 
 /**
  * Write the report HTML into the document's MAIN element.
- * @return {Promise<undefined>}
+ * @returns {Promise<undefined>}
  */
 function run() {
   const [node] = select(TEST_REPORT_SELECTOR);
