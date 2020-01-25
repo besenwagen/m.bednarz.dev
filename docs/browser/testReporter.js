@@ -114,8 +114,19 @@ const strong = content =>
 const code = content =>
   `<code>${content}</code>`;
 
+/**
+ * @param {string} url
+ * @returns {string}
+ */
+const displayUrl = url =>
+  url.replace(/^\//, '');
+
+/**
+ * @param {string} url
+ * @returns {string}
+ */
 const sourceLink = url =>
-  `<a target="_blank" href="${url}">${url}</a>`;
+  `<a target="_blank" href="${url}">${displayUrl(url)}</a>`;
 
 /**
  * @param {boolean} result
@@ -145,14 +156,18 @@ const tupleToItem = ([description, result]) =>
   ].join(' '));
 
 /**
- * @param
- * @return
+ * @param {Array} tuple
+ * @return {Array}
  */
 const parse = ([subject, suite]) => [
   strong(sourceLink(subject)),
   orderedList(suite.map(tupleToItem)),
 ].join(' ');
 
+/**
+ * @param {Array} tuple
+ * @returns {string}
+ */
 function summary([modules, tests, errors]) {
   if (errors) {
     return paragraph([
@@ -185,17 +200,25 @@ function html(contextNode, literal) {
 
 /**
  * @param {Node} node
+ * @param {string} basePath
  * @returns {function}
  */
-function mangle(node) {
+function mangle(node, basePath) {
+  const expand = result =>
+    result
+      .map(([subject, ...rest]) => [
+        join(basePath, subject),
+        ...rest,
+      ]);
+
   /**
-   * @param {Array} result
+   * @param {Array} tuple
    */
   function write([result, stats]) {
     html(node, [
       heading(REPORT_LABEL),
       summary(stats),
-      toHtml(result),
+      toHtml(expand(result)),
     ].join(' '));
   }
 
@@ -208,7 +231,7 @@ function mangle(node) {
 
 /**
  * @param {string} selector
- * @param {Node} contextNode
+ * @param {Node} [contextNode = document]
  * @returns {Array}
  */
 const select = (selector, contextNode = document) =>
@@ -298,10 +321,10 @@ function getQuery() {
 /**
  * Get the modules from the query string or micro data.
  * @param {HTMLElement} element
+ * @param {string} basePath
  * @returns {Array}
  */
-function prioritize(element) {
-  const basePath = getBasePath(element);
+function prioritize(element, basePath) {
   const query = getQuery();
 
   if (query) {
@@ -322,18 +345,29 @@ function setStyle() {
 }
 
 /**
+ * @param {Node} node
+ * @param {string} basePath
+ * @returns {Promise}
+ */
+function overload(node, basePath) {
+  const modules = prioritize(node, basePath);
+  const write = mangle(node, basePath);
+
+  return load(modules)
+    .then(write);
+}
+
+/**
  * Write the report HTML into the document's MAIN element.
  * @returns {Promise<undefined>}
  */
 function run() {
   const [node] = select(TEST_REPORT_SELECTOR);
-  const modules = prioritize(node);
-  const write = mangle(node);
+  const basePath = getBasePath(node);
 
   setStyle();
 
-  return load(modules)
-    .then(write);
+  return overload(node, basePath);
 }
 
 const report = run();
