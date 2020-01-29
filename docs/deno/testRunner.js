@@ -55,14 +55,14 @@ const maxDepth = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
 
 /**
  * @param {string} filePath
- * @return {boolean}
+ * @returns {boolean}
  */
 const isTestFile = filePath =>
   testFileExpression.test(filePath);
 
 /**
  * @param {string} relativePath
- * @return {string}
+ * @returns {string}
  */
 const getFileUrl = relativePath => [
   FILE_BASE_URL,
@@ -71,7 +71,7 @@ const getFileUrl = relativePath => [
 
 /**
  * @param {string} filePath
- * @return {boolean}
+ * @returns {boolean}
  */
 const mapToFileUrl = filePath =>
   getFileUrl(filePath);
@@ -105,7 +105,7 @@ async function traverse(base) {
 
 /**
  * @param {string[][]} directories
- * @return {Promise<Array>}
+ * @returns {Promise<Array>}
  */
 const onFilesResolved = directories =>
   Promise
@@ -116,7 +116,7 @@ const onFilesResolved = directories =>
 
 /**
  * @param {number} errorCount
- * @return {number}
+ * @returns {number}
  */
 const getExitCode = errorCount =>
   Number(Boolean(errorCount));
@@ -178,7 +178,7 @@ function onError({ message }) {
 
 /**
  * @param {string} baseDirectory
- * @return {Array}
+ * @returns {Array}
  */
 const mapToFiles = baseDirectory =>
   traverse(baseDirectory);

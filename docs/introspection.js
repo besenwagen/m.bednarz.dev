@@ -37,82 +37,82 @@ const {
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const getStringTag = value =>
   Object.prototype.toString.call(value);
 
 /**
  * @param {function} callable
- * @return {string} */
+ * @returns {string} */
 const getFunctionName = ({ name }) =>
   name;
 
 /**
  * @param {value} instance
- * @return {string}
+ * @returns {string}
  */
 const getConstructorName = ({ constructor }) =>
   getFunctionName(constructor);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isBigInt = value =>
   (typeof value === 'bigint');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isBoolean = value =>
   (typeof value === 'boolean');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isComplex = value =>
   !isPrimitive(value);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isDate = value =>
   isInstanceOf(value, 'Date');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isDefined = value =>
   !isUndefined(value);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isError = value =>
   isInstanceOf(value, 'Error');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isFalse = value =>
   (value === false);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isFunction = value =>
   (typeof value === 'function');
 
 /**
- * @return {boolean}
+ * @returns {boolean}
  */
 const isInstanceOf = (value, name) => (
   isObject(value)
@@ -138,14 +138,14 @@ const isJsonPrimitive = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isNull = value =>
   (value === null);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isNumber = value => (
   (typeof value === 'number')
@@ -155,7 +155,7 @@ const isNumber = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isObject = value => (
   !isNull(value)
@@ -170,35 +170,35 @@ const isPrimitive = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isRegExp = value =>
   isInstanceOf(value, 'RegExp');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isPromise = value =>
   isInstanceOf(value, 'Promise');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isString = value =>
   (typeof value === 'string');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isSymbol = value =>
   (typeof value === 'symbol');
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isThenable = value => (
   isObject(value)
@@ -207,14 +207,14 @@ const isThenable = value => (
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isTrue = value =>
   (value === true);
 
 /**
  * @param {*} value
- * @return {boolean}
+ * @returns {boolean}
  */
 const isUndefined = value =>
   (value === undefined);

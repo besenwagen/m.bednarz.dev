@@ -4,7 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>m is for module</title>
+  <script type="module">
+    import { data } from '/browser/request.js';
+    import { select, setStyle, toFragment } from '/browser/dom.js';
+    import { useSymbol } from '/browser/svg.js';
+
+    function logo(id) {
+      const [placeholder] = select('.placeholder');
+      const symbol = useSymbol(id);
+
+      setStyle(placeholder, {
+        'border-radius': '0',
+        'color': '#090',
+        'background-color': 'transparent',
+      }).appendChild(symbol);
+
+      return placeholder;
+    }
+
+    data('https://eric.bednarz.dev/symbols.svg')
+      .then(svgLiteral => toFragment(svgLiteral))
+      .then(function render(symbols) {
+        const { body } = document;
+
+        body.appendChild(symbols);
+        body.insertBefore(logo('logomark'), body.firstChild);
+      });
+
+  </script>
   <style>
+    :root {
+      --color-primary: #090;
+      --color-action: #00f;
+    }
+
     html,
     body {
       height: 100%;
@@ -24,9 +57,16 @@
       font: 1.3rem/1.5 Consolas, Inconsolata, Menlo, monospace;
     }
 
+    .placeholder {
+      display: inline-flex;
+      width: 12vw;
+      height: 12vw;
+      border-radius: 100%;
+      background: #090;
+    }
+
     h1 {
-      margin: 0;
-      padding: 0 0 0.5em;
+      margin: 2vw 0 3vw 0;
       font-size: 8vw;
     }
 
@@ -37,19 +77,37 @@
     }
 
     a[href] {
-      border-bottom: 1px solid #090;
-      color: #00f;
+      border-bottom: 1px solid var(--color-primary);
+      color: var(--color-action);
       background: transparent;
       text-decoration: none;
     }
 
-    a[href]:focus,
     a[href]:hover {
+      border-width: 2px;
+    }
+
+    a[href]:focus {
+      outline: 2px solid var(--color-action);
+      outline-offset: 0.2rem;
       border-color: transparent;
+      color: #000;
+      background: transparent;
+    }
+
+    a[href]:focus:hover {
+      outline-width: 3px;
+      outline-color: var(--color-primary);
+      border-width: 1px;
+      color: var(--color-action);
+      background: transparent;
     }
   </style>
 </head>
 <body>
+
+  <span aria-hidden="true" class="placeholder"></span>
+
   <h1><em>m</em> is for <em>module</em></h1>
 
   <a href="/test/">and tests are for units</a>

@@ -8,7 +8,7 @@ export {
  * Reducer function for `compose`/`pipe`.
  * @param {*} currentValue
  * @param {function} transform
- * @return {*}
+ * @returns {*}
  */
 const passValueTo = (currentValue, transform) =>
   transform(currentValue);
@@ -18,7 +18,7 @@ const passValueTo = (currentValue, transform) =>
  * (right to left / inside out).
  * @param {...function} transformers
  *   list of transformers created with `stage`
- * @return {function}
+ * @returns {function}
  *   returns the result of passing its parameter
  *   sequentially through all transformers
  */
@@ -32,7 +32,7 @@ const compose = (...transformers) =>
  * (left to right / outside in).
  * @param {...function} transformers
  *   list of transformers created with `stage`
- * @return {function}
+ * @returns {function}
  *   returns the result of passing its parameter
  *   sequentially through all transformers
  */
@@ -47,7 +47,7 @@ const pipe = (...transformers) =>
  *   produces the input for the next stage by using
  *   the bound value of the current stage and the
  *   output of the previous stage as parameters
- * @return {function}
+ * @returns {function}
  *   binds its argument to `callback` and
  *   returns the actual transformer that is
  *   called by the `compose`/`pipe` reducer
