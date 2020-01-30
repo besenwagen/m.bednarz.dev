@@ -149,7 +149,7 @@ const isNull = value =>
  */
 const isNumber = value => (
   (typeof value === 'number')
-  && !isFinite(value)
+  && isFinite(value)
   && !isNaN(value)
 );
 

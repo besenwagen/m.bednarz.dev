@@ -2,6 +2,7 @@ import { promise, scope, suite } from './test.js';
 import {
   isFalse,
   isFinite,
+  isJsonPrimitive,
   isNaN,
   isObject,
 } from './introspection.js';
@@ -28,6 +29,14 @@ scope(test, isFinite)
     false,
   ])
 
+  ;
+
+scope(test, isJsonPrimitive)
+  ('string', isJsonPrimitive('Hello, world!'))
+  ('number', isJsonPrimitive(42))
+  ('true', isJsonPrimitive(true))
+  ('false', isJsonPrimitive(false))
+  ('null', isJsonPrimitive(null))
   ;
 
 scope(test, isNaN)
