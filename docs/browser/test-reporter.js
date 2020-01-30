@@ -43,7 +43,7 @@ main {
 }
 
 main code {
-  font: 0.9rem/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
+  font: 1rem/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
 }
 
 main h1 {
@@ -63,13 +63,25 @@ main li > ol {
   margin-left: 2em;
 }
 
-main li em {
-  color: #090;
+main ol a em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+main ol em {
+  color: #060;
   background: transparent;
 }
 
+main ul em {
+  color: #000;
+  background: transparent;
+  font-style: normal;
+}
+
+main ol a strong,
 main li li strong {
-  color: #f00;
+  color: #a00;
   background: transparent;
 }
 `;
@@ -97,6 +109,13 @@ const paragraph = content =>
 const orderedList = items =>
   `<ol>${items.join('')}</ol>`;
 
+/**
+* @param {Array} items
+* @returns {string}
+*/
+const unorderedList = items =>
+  `<ul>${items.join('')}</ul>`;
+
 const listItem = content =>
   `<li>${content}</li>`;
 
@@ -106,6 +125,13 @@ const listItem = content =>
  */
 const strong = content =>
   `<strong>${content}</strong>`;
+
+/**
+* @param {string} content
+* @returns {string}
+*/
+const em = content =>
+  `<em>${content}</em>`;
 
 /**
  * @param {string} content
@@ -125,8 +151,8 @@ const displayUrl = url =>
  * @param {string} url
  * @returns {string}
  */
-const sourceLink = url =>
-  `<a target="_blank" href="${url}">${displayUrl(url)}</a>`;
+const sourceLink = (url, element) =>
+  `<a target="_blank" href="${url}">${element(displayUrl(url))}</a>`;
 
 /**
  * @param {boolean} result
@@ -140,27 +166,51 @@ const prefix = result => (result ? PASS : FAIL);
  * @returns {string}
  */
 function markResult(label, result) {
-  const genericIdentifier = result ? 'em' : 'strong';
+  const element = result ? em : strong;
 
-  return `<${genericIdentifier}>${label}</${genericIdentifier}>`;
+  return element(label);
+}
+
+const infoItem = (type, token, element) =>
+  listItem(`${type}:<br>${element(code(token))}`);
+
+function infoList(info) {
+  if (info) {
+    const [actual, expected] = info;
+
+    return unorderedList([
+      infoItem('actual', actual, strong),
+      infoItem('expected', expected, em),
+    ]);
+  }
+
+  return '';
 }
 
 /**
  * @param {string[]}
  * @returns {string}
  */
-const tupleToItem = ([description, result]) =>
+const tupleToItem = ([description, result, info]) =>
   listItem([
     code(`[${prefix(result)}]`),
     markResult(description, result),
+    infoList(info),
   ].join(' '));
 
 /**
+ * @param {Array} suite
+ * @return {boolean}
+ */
+const hasErrors = suite =>
+  suite.some(([, result]) => !result);
+
+/**
  * @param {Array} tuple
- * @return {Array}
+ * @returns {Array}
  */
 const parse = ([subject, suite]) => [
-  strong(sourceLink(subject)),
+  sourceLink(subject, hasErrors(suite) ? strong : em),
   orderedList(suite.map(tupleToItem)),
 ].join(' ');
 

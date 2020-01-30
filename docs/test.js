@@ -6,6 +6,9 @@ export {
 
 const { isArray } = Array;
 
+const registry = new WeakMap();
+const testPrimitiveExpression = /^(?:string|number|boolean)$/;
+const PREFIX_INVALID = 'Invalid test case:';
 const PATH_OFFSET = 1;
 const ORDERED_PAIR_LENGTH = 2;
 
@@ -13,41 +16,12 @@ const ORDERED_PAIR_LENGTH = 2;
  * @param {*} value
  * @returns {boolean}
  */
-const isBoolean = value =>
-  (typeof value === 'boolean');
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isString = value =>
-  (typeof value === 'string');
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isObject = value => (
-  Object
+const isImportMeta = value => (
+  (Object
     .prototype
     .toString
-    .call(value) === '[object Object]'
-);
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isPromise = value =>
-  (value.constructor === Promise);
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isImportMeta = value => (
-  isObject(value)
-  && isString(value.url)
+    .call(value) === '[object Object]')
+  && (typeof value.url === 'string')
 );
 
 /**
@@ -59,43 +33,49 @@ const isOrderedPair = value => (
   && (value.length === ORDERED_PAIR_LENGTH)
 );
 
-/**
- * @param {Array} value
- * @returns {boolean}
- */
-const isOrderedPairEqual = ([actual, expected]) =>
-  (actual === expected);
+const isTestPrimitive = value => (
+  testPrimitiveExpression.test(typeof value)
+  || value === null
+  || value === undefined
+);
 
-/**
- * @param {boolean} result
- * @param {string} message
- * @returns {boolean}
- */
-function validate(result, message) {
-  const type = typeof result;
-
-  if (type !== 'boolean') {
-    console.error(`${message}: not a boolean`);
-
-    return false;
+function forcePrimitives(orderedPair) {
+  if (orderedPair.every(isTestPrimitive)) {
+    return orderedPair;
   }
 
-  return result;
+  throw new TypeError([
+    PREFIX_INVALID,
+    'ordered pair values must be',
+    [
+      'string',
+      'number',
+      'boolean',
+      'null',
+    ].join(', '),
+    'or undefined',
+  ].join(' '));
 }
 
 /**
- * @param {string} subject
- * @param {string} key
- * @param {boolean} value
+ * @param {string|number|null|undefined} value
+ * @returns {string}
+ */
+const withTypeInfo = value =>
+  `(${typeof value}) ${value}`;
+
+/**
+ * @param {Array} orderedPair
  * @returns {Array}
  */
-function toTestTuple(subject, key, value) {
-  const message = [subject, key].join(' > ');
-  const result = validate(value, message);
+function isOrderedPairEqual(orderedPair) {
+  const [actual, expected] = forcePrimitives(orderedPair);
 
-  console.assert(result, message);
+  if (actual === expected) {
+    return [true];
+  }
 
-  return [key, result];
+  return [false, [actual, expected].map(withTypeInfo)];
 }
 
 /**
@@ -180,19 +160,30 @@ function overloadCallable(value) {
 }
 
 /**
+ * @param {boolean} value
+ * @returns {Array}
+ */
+function forceBoolean(value) {
+  if (typeof value === 'boolean') {
+    return [value];
+  }
+
+  throw new TypeError([
+    PREFIX_INVALID,
+    'test case must resolve a boolean',
+  ].join(' '));
+}
+
+/**
  * @param {boolean|Array}
- * @returns {boolean}
+ * @returns {Array}
  */
 function overloadSync(value) {
   if (isOrderedPair(value)) {
     return isOrderedPairEqual(value);
   }
 
-  if (isBoolean(value)) {
-    return value;
-  }
-
-  throw new TypeError(`bad type: ${value}`);
+  return forceBoolean(value);
 }
 
 /**
@@ -202,7 +193,7 @@ function overloadSync(value) {
 function asPromise(value) {
   const normalized = overloadCallable(value);
 
-  if (isPromise(normalized)) {
+  if (normalized.constructor === Promise) {
     return normalized
       .then(result =>
         overloadSync(result));
@@ -211,6 +202,52 @@ function asPromise(value) {
   return Promise
     .resolve(overloadSync(normalized));
 }
+
+/**
+ * @param {Array} [info]
+ * @returns {string}
+ */
+function printInfo(info) {
+  if (info) {
+    const [actual, expected] = info;
+
+    return [
+      `\n| expected: ${expected}`,
+      `\n|   actual: ${actual}`,
+    ].join('');
+  }
+
+  return '';
+}
+
+/**
+ * @param {Array} testResult
+ * @param {string} subject
+ */
+function assert(testResult, subject) {
+  const [result, info] = testResult;
+  const message = `${subject}${printInfo(info)}`;
+
+  console.assert(result, message);
+}
+
+/**
+ * @param {string} id
+ * @param {string} label
+ * @returns {function}
+ */
+const resultFactory = (id, label) =>
+  /**
+   * @param {Array} testResult
+   * @returns {Array}
+   */
+  function onTestResultResolved(testResult) {
+    const message = [id, label].join(' > ');
+
+    assert(testResult, message);
+
+    return [label, ...testResult];
+  };
 
 /**
  * @param {Object|string} identifier
@@ -225,9 +262,8 @@ function suite(identifier) {
    * @param {boolean|function|Array|Promise} testCase
    */
   function test(label, testCase) {
-    const testPromise = asPromise(testCase)
-      .then(testResult =>
-        toTestTuple(moduleIdentifier, label, testResult));
+    const onResolved = resultFactory(moduleIdentifier, label);
+    const testPromise = asPromise(testCase).then(onResolved);
 
     testQueue.push(testPromise);
 
@@ -247,8 +283,14 @@ function suite(identifier) {
 function scope(testFunction, functionUnderTest) {
   const { name } = functionUnderTest;
 
+  /**
+   * @param {string} label
+   * @param {boolean|function|Array|Promise} testCase
+   */
   function boundTest(label, testCase) {
-    testFunction(`${name}(): ${label}`, testCase);
+    const prefixedLabel = `${name}(): ${label}`;
+
+    testFunction(prefixedLabel, testCase);
 
     return boundTest;
   }
@@ -257,10 +299,8 @@ function scope(testFunction, functionUnderTest) {
 }
 
 //==========================================================
-// Promise
+// Default export Promise
 //==========================================================
-
-const registry = new WeakMap();
 
 /**
  * @param {number} total
