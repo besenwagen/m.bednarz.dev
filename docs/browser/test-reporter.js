@@ -12,7 +12,7 @@ export {
 
 /* global window, document */
 
-import { load } from '../test.js';
+import { load } from '../test-io.js';
 
 const { from } = Array;
 const PATH_COMPONENT_EXPRESSION = /[^/]+$/;

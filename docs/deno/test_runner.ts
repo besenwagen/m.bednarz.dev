@@ -31,7 +31,7 @@
 /* global Deno */
 
 import { walk } from 'https://deno.land/std/fs/mod.ts';
-import { load, objectify } from '../test.js';
+import { load, objectify } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
 const { stringify } = JSON;
