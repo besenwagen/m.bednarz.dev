@@ -28,8 +28,8 @@ scope(test, createElement)
 scope(test, useSymbol)
 
   ('creates an SVGSVGElement instance', [
-    useSymbol('foo').constructor,
-    SVGSVGElement,
+    useSymbol('foo').constructor.name,
+    'SVGSVGElement',
   ])
 
   ;
