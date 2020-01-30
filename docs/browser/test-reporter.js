@@ -27,19 +27,13 @@ const PASS = 'passed';
 const FAIL = 'failed';
 
 const style = `
-body {
-  margin: 0;
-  padding: 2em;
-  color: #000;
-  background: #eee;
-}
-
 main {
+  --color-action: #00f;
   border: 1px solid #333;
   padding: 1.5em 3em;
   color: #333;
   background: #fff;
-  font: 1rem/1.5 sans-serif;
+  font: 1rem/1.5 Georgia, serif;
 }
 
 main code {
@@ -82,6 +76,28 @@ main ul em {
 main ol a strong,
 main li li strong {
   color: #a00;
+  background: transparent;
+}
+
+a[href] {
+  border-bottom: 1px solid #090;
+  color: var(--color-action);
+  background: transparent;
+  text-decoration: none;
+}
+
+a[href]:hover {
+  border-color: var(--color-action);
+  border-width: 2px;
+  color: #000;
+  background: transparent;
+}
+
+a[href]:focus {
+  outline: 2px solid var(--color-action);
+  outline-offset: 0.2rem;
+  border-color: transparent;
+  color: #000;
   background: transparent;
 }
 `;
