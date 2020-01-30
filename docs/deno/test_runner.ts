@@ -53,44 +53,24 @@ const DEFAULT_DEPTH = 1;
 const MAX_DEPTH = 10;
 const maxDepth = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
 
-/**
- * @param {string} filePath
- * @returns {boolean}
- */
-const isTestFile = filePath =>
+const isTestFile = (filePath: string): boolean =>
   testFileExpression.test(filePath);
 
-/**
- * @param {string} relativePath
- * @returns {string}
- */
-const getFileUrl = relativePath => [
+const getFileUrl = (relativePath: string): string => [
   FILE_BASE_URL,
   relativePath,
 ].join('');
 
-/**
- * @param {string} filePath
- * @returns {boolean}
- */
-const mapToFileUrl = filePath =>
+const mapToFileUrl = (filePath: string): string =>
   getFileUrl(filePath);
 
-/**
- * @param {string} filePath
- * @param {Array} bucket
- */
-function addTestFile(filePath, bucket) {
+function addTestFile(filePath: string, bucket: string[]) {
   if (isTestFile(filePath)) {
     bucket.push(filePath);
   }
 }
 
-/**
- * @param {string} base
- * @returns {Promise<string[]>}
- */
-async function traverse(base) {
+async function traverse(base: string): Promise<string[]> {
   const bucket = [];
   const options = {
     maxDepth,
@@ -103,36 +83,24 @@ async function traverse(base) {
   return bucket;
 }
 
-/**
- * @param {string[][]} directories
- * @returns {Promise<Array>}
- */
-const onFilesResolved = directories =>
+const onFilesResolved = (
+  directories: string[][]
+): Promise<string[]> =>
   Promise
     .all(
       directories
         .flat()
         .map(mapToFileUrl));
 
-/**
- * @param {number} errorCount
- * @returns {number}
- */
-const getExitCode = errorCount =>
+const getExitCode = (errorCount: number): number =>
   Number(Boolean(errorCount));
 
-/**
- * @param {number} count
- */
-function reportModules(count) {
+function reportModules(count: number) {
   console.info(YAML_DOC_SEPARATOR);
   console.info(`modules loaded: ${count}`);
 }
 
-/**
- * @param {Object[]} modules
- */
-function reportTests(total, errors) {
+function reportTests(total: number, errors: number) {
   if (errors) {
     console.info(`tests failed: ${errors}`);
   }
@@ -140,23 +108,29 @@ function reportTests(total, errors) {
   console.info(`tests passed: ${total - errors}`);
 }
 
-/**
- * @param {Object[]} modules
- */
-function reportVerbose(result) {
+function reportVerbose(result: string[]) {
   console.info(YAML_DOC_SEPARATOR);
   console.info(stringify(objectify(result), null, JSON_INDENT));
 }
 
-function summarize(modules, total, errors) {
+function summarize(modules: any, total: number, errors: number) {
   reportModules(modules);
   reportTests(total, errors);
 }
 
-/**
- * @param {Object[]} modules
- */
-function onTestSuitesResolved([result, [modules, tests, errors]]) {
+function onTestSuitesResolved([
+  result, [
+    modules,
+    tests,
+    errors,
+  ]
+]: [
+  any[], [
+    any[],
+    number,
+    number,
+  ],
+]) {
   const exitCode = getExitCode(errors);
 
   summarize(modules, tests, errors);
@@ -168,24 +142,14 @@ function onTestSuitesResolved([result, [modules, tests, errors]]) {
   exit(exitCode);
 }
 
-/**
- * @param {Error} reason
- */
-function onError({ message }) {
+function onError({ message }: Error) {
   console.error(message);
   exit(EXIT_CODE_ERROR);
 }
 
-/**
- * @param {string} baseDirectory
- * @returns {Array}
- */
-const mapToFiles = baseDirectory =>
+const mapToFiles = (baseDirectory: string): Promise<string[]> =>
   traverse(baseDirectory);
 
-/**
- * @type {Promise[]}
- */
 const queue = DIRECTORIES.map(mapToFiles);
 
 Promise
