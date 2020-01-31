@@ -84,7 +84,7 @@ function isOrderedPairEqual(orderedPair) {
  */
 function overloadIdentifier(value) {
   if (isImportMeta(value)) {
-    return value.url;
+    return getRelativePath(value.url);
   }
 
   return value;
@@ -142,9 +142,9 @@ function getRelativePath(url) {
  * @returns {string}
  */
 function getModuleIdentifier(value) {
-  const url = overloadIdentifier(value);
+  const identifier = overloadIdentifier(value);
 
-  return getRelativePath(url);
+  return identifier;
 }
 
 /**
