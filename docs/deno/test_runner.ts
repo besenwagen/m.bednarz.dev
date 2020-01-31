@@ -8,13 +8,13 @@
  *
  * Verbose example (try before you buy :-):
  *
- *   $ deno --allow-read --allow-net https://m.bednarz.dev/deno/test_runner.js client server
+ *   $ deno --allow-read --allow-net https://m.bednarz.dev/deno/test_runner.ts client server
  *
  * Runs all tests in `./client` and `./server`.
  *
  * Installation:
  *
- *   $ deno install estr https://m.bednarz.dev/deno/test_runner.js --allow-read --allow-net
+ *   $ deno install estr https://m.bednarz.dev/deno/test_runner.ts --allow-read --allow-net
  *
  * where `estr` is the executable name of your choice.
  * Make sure that `~/.deno/bin` is in your `$PATH` and run
