@@ -23,6 +23,7 @@ export {
   isPrimitive,
   isPromise,
   isRegExp,
+  isSymbol,
   isThenable,
   isTrue,
   isUndefined,
@@ -31,7 +32,7 @@ export {
 const { isArray } = Array;
 const {
   isFinite,
-  isSafeInteger: isInteger,
+  isSafeInteger,
   isNaN,
 } = Number;
 
@@ -81,7 +82,7 @@ const isComplex = value =>
  * @returns {boolean}
  */
 const isDate = value =>
-  isInstanceOf(value, 'Date');
+  isInstanceOf(value, Date);
 
 /**
  * @param {*} value
@@ -95,7 +96,7 @@ const isDefined = value =>
  * @returns {boolean}
  */
 const isError = value =>
-  isInstanceOf(value, 'Error');
+  isInstanceOf(value, Error);
 
 /**
  * @param {*} value
@@ -114,10 +115,17 @@ const isFunction = value =>
 /**
  * @returns {boolean}
  */
-const isInstanceOf = (value, name) => (
-  isObject(value)
-  && (getConstructorName(value) === name)
+const isInstanceOf = (value, constructor) => (
+  isComplex(value)
+  && isFunction(constructor)
+  && (
+    (value instanceof constructor)
+    || (getConstructorName(value) === getFunctionName(constructor))
+  )
 );
+
+const isInteger = value =>
+  isSafeInteger(value);
 
 const isDataPrimitive = value => (
   isString(value)
@@ -173,14 +181,14 @@ const isPrimitive = value => (
  * @returns {boolean}
  */
 const isRegExp = value =>
-  isInstanceOf(value, 'RegExp');
+  isInstanceOf(value, RegExp);
 
 /**
  * @param {*} value
  * @returns {boolean}
  */
 const isPromise = value =>
-  isInstanceOf(value, 'Promise');
+  isInstanceOf(value, Promise);
 
 /**
  * @param {*} value
