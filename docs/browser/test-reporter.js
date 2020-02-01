@@ -44,6 +44,7 @@ main h1 {
   margin: 0;
   border-bottom: 1px solid #000;
   padding: 0.75rem 0;
+  font-weight: normal;
   font-size: 1.5rem;
 }
 

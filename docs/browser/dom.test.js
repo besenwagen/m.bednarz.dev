@@ -1,4 +1,4 @@
-import { promise, scope, suite } from '../test.js';
+import { result, suite } from '../test.js';
 import {
   select,
   toFragment,
@@ -6,22 +6,18 @@ import {
 
 const test = suite(import.meta);
 
-scope(test, select)
-
+test(select)
   ('uses the documentElement as default scope', [
     select(':scope > head > title')[0].firstChild.nodeValue,
     'Test',
   ])
-
   ;
 
-scope(test, toFragment)
-
+test(toFragment)
   ('creates a DOM fragment from a string', [
     toFragment(' <i></i> ').childNodes.length,
     3,
   ])
-
   ;
 
-export default promise(test);
+export default result(test);

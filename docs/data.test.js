@@ -1,4 +1,4 @@
-import { promise, suite } from './test.js';
+import { result, suite } from './test.js';
 import {
   normalize,
   serialize,
@@ -9,26 +9,12 @@ const test = suite(import.meta);
 // JSON primitives
 
 test
-  ('string', [
-    normalize('Hello, world!'),
-    'Hello, world!',
-  ])
-  ('number', [
-    normalize(42),
-    42,
-  ])
-  ('true', [
-    normalize(true),
-    true,
-  ])
-  ('false', [
-    normalize(false),
-    false,
-  ])
-  ('null', [
-    normalize(null),
-    null,
-  ]);
+  ('string', [normalize('Hello, world!'), 'Hello, world!'])
+  ('number', [normalize(42), 42])
+  ('true', normalize(true))
+  ('false', [normalize(false), false])
+  ('null', [normalize(null), null])
+  ;
 
 // JSON structures
 
@@ -52,4 +38,4 @@ test
     '{"a":[{"c":7,"x":"foo"},false],"n":null,"z":42}',
   ]);
 
-export default promise(test);
+export default result(test);

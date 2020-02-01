@@ -1,4 +1,4 @@
-import { promise, scope, suite } from './test.js';
+import { result, suite } from './test.js';
 import {
   getConstructorName,
   getFunctionName,
@@ -31,23 +31,22 @@ import {
 } from './introspection.js';
 
 const test = suite(import.meta);
-const assert = scope.bind(null, test);
 
-assert(getConstructorName)
+test(getConstructorName)
   ('promise instance', [
     getConstructorName(new Promise(() => null)),
     'Promise',
   ])
   ;
 
-assert(getFunctionName)
+test(getFunctionName)
   ('declaration', [
     getFunctionName(function foo() { }),
     'foo',
   ])
   ;
 
-assert(getStringTag)
+test(getStringTag)
   ('object', [
     getStringTag({}),
     '[object Object]',
@@ -62,23 +61,23 @@ assert(getStringTag)
   ])
   ;
 
-assert(isArray)
+test(isArray)
   ('array literal is true', isArray([]))
   ('array constructor is true', isArray(new Array()))
   ;
 
-assert(isBigInt)
+test(isBigInt)
   ('bigint literal is true', isBigInt(42n))
   ('bigint is true', isBigInt(BigInt(42)))
   ('number is false', [isBigInt(42), false])
   ;
 
-assert(isBoolean)
+test(isBoolean)
   ('boolean true is true', isBoolean(true))
   ('boolean false is true', isBoolean(false))
   ;
 
-assert(isComplex)
+test(isComplex)
   ('function is true', isComplex(() => null))
   ('object is true', isComplex({}))
   ('array is true', isComplex([]))
@@ -86,7 +85,7 @@ assert(isComplex)
   ('null is false', [isComplex(null), false])
   ;
 
-assert(isDataPrimitive)
+test(isDataPrimitive)
   ('string is true', isDataPrimitive(''))
   ('number is true', isDataPrimitive(0))
   ('null is false', [isDataPrimitive(null), false])
@@ -95,47 +94,47 @@ assert(isDataPrimitive)
   ('false is false', [isDataPrimitive(false), false])
   ;
 
-assert(isDate)
+test(isDate)
   ('date instance is true', isDate(new Date()))
   ;
 
-assert(isDefined)
+test(isDefined)
   ('empty string is true', isDefined(''))
   ('0 is true', isDefined(0))
   ('null is true', isDefined(null))
   ('undefined is false', [isDefined(undefined), false])
   ;
 
-assert(isError)
+test(isError)
   ('error is true', isError(new Error()))
   ('type error is true', isError(new TypeError()))
   ;
 
-assert(isFalse)
+test(isFalse)
   ('false is true', isFalse(false))
   ('true is false', [isFalse(true), false])
   ;
 
-assert(isFinite)
+test(isFinite)
   ('number input', isFinite(42))
   ('does not coerce', [isFinite('42'), false])
   ;
 
-assert(isFunction)
+test(isFunction)
   ('function is true', isFunction(() => null))
   ;
 
-assert(isInstanceOf)
+test(isInstanceOf)
   ('data instance', isInstanceOf(new Date(), Date))
   ;
 
-assert(isInteger)
+test(isInteger)
   ('integer is true', isInteger(42))
   ('float is false', [isInteger(42.1), false])
   ('numeric string is false', [isInteger('42'), false])
   ;
 
-assert(isJsonPrimitive)
+test(isJsonPrimitive)
   ('string', isJsonPrimitive('Hello, world!'))
   ('number', isJsonPrimitive(42))
   ('true', isJsonPrimitive(true))
@@ -143,31 +142,31 @@ assert(isJsonPrimitive)
   ('null', isJsonPrimitive(null))
   ;
 
-assert(isNaN)
+test(isNaN)
   ('input', isNaN(NaN))
   ('does not coerce', [isNaN('42'), false])
   ;
 
-assert(isNull)
+test(isNull)
   ('null is true', isNull(null))
   ('string is false', [isNull('null'), false])
   ('undefined is false', [isNull(undefined), false])
   ;
 
-assert(isNumber)
+test(isNumber)
   ('number is true', isNumber(42))
   ('NaN is false', [isNumber(NaN), false])
   ('inifinity is false', [isNumber(Infinity), false])
   ;
 
-assert(isObject)
+test(isObject)
   ('null is false', [isObject(null), false])
   ('array is false', [isObject([]), false])
   ('function is false', [isObject(() => null), false])
   ('true without prototype', isObject(Object.create(null)))
   ;
 
-assert(isPrimitive)
+test(isPrimitive)
   ('string is true', isPrimitive(''))
   ('number is true', isPrimitive(0))
   ('true is true', isPrimitive(true))
@@ -177,20 +176,20 @@ assert(isPrimitive)
   ('symbol is true', isPrimitive(Symbol('foobar')))
   ;
 
-assert(isPromise)
+test(isPromise)
   ('promise instance is true', isPromise(new Promise(() => null)))
   ;
 
-assert(isRegExp)
+test(isRegExp)
   ('regexp literal is true', isRegExp(/^fubar/))
   ('regexp instance is true', isRegExp(new RegExp('^fubar')))
   ;
 
-assert(isSymbol)
+test(isSymbol)
   ('symbol is true', isSymbol(Symbol('foobar')))
   ;
 
-assert(isThenable)
+test(isThenable)
   ('must be a method', isThenable({
     then() {},
   }))
@@ -202,15 +201,15 @@ assert(isThenable)
   ])
   ;
 
-assert(isTrue)
+test(isTrue)
   ('boolean true is true', isTrue(true))
   ('string true is false', [isTrue('true'), false])
   ;
 
-assert(isUndefined)
+test(isUndefined)
   ('undefined is true', isUndefined(undefined))
   ('string undefined is false', [isUndefined('undefined'), false])
   ('null is false', [isUndefined(null), false])
   ;
 
-export default promise(test);
+export default result(test);

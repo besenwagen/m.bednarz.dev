@@ -1,10 +1,9 @@
-import { promise, scope, suite } from '../test.js';
+import { result, suite } from '../test.js';
 import { json } from './request.js';
 
 const test = suite(import.meta);
 
-scope(test, json)
-
+test(json)
   ('get GitHub API overview',
     json('https://api.github.com')
       .then(({ authorizations_url }) => [
@@ -16,7 +15,6 @@ scope(test, json)
 
         return false;
       }))
-
   ;
 
-export default promise(test);
+export default result(test);

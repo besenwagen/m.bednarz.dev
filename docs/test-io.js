@@ -1,9 +1,9 @@
+// Environment agnostic test automation I/O utilities
+
 export {
   load,
   objectify,
 };
-
-// Environment agnostic test automation I/O utilities
 
 // == Input ==
 

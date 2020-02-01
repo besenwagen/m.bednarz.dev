@@ -1,4 +1,4 @@
-import { promise, suite } from '../test.js';
+import { result, suite } from '../test.js';
 import { insist } from './insist.js';
 
 const test = suite(import.meta);
@@ -21,4 +21,4 @@ test(
       (typeof value === 'boolean')),
 );
 
-export default promise(test);
+export default result(test);

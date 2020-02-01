@@ -1,4 +1,4 @@
-import { promise, suite } from './test.js';
+import { result, suite } from './test.js';
 
 const test = suite(import.meta);
 
@@ -48,4 +48,4 @@ test
       });
     });
 
-export default promise(test);
+export default result(test);

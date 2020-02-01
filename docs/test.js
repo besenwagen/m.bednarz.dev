@@ -1,6 +1,5 @@
 export {
-  promise,
-  scope,
+  result,
   suite,
 };
 
@@ -195,8 +194,8 @@ function asPromise(value) {
 
   if (normalized.constructor === Promise) {
     return normalized
-      .then(result =>
-        overloadSync(result));
+      .then(syncResult =>
+        overloadSync(syncResult));
   }
 
   return Promise
@@ -225,10 +224,10 @@ function printInfo(info) {
  * @param {string} subject
  */
 function assert(testResult, subject) {
-  const [result, info] = testResult;
+  const [booleanResult, info] = testResult;
   const message = `${subject}${printInfo(info)}`;
 
-  console.assert(result, message);
+  console.assert(booleanResult, message);
 }
 
 /**
@@ -251,52 +250,68 @@ const resultFactory = (id, label) =>
   };
 
 /**
- * @param {Object|string} identifier
- * @returns {Object}
+ * @param {Object|string} id
+ * @returns {Array}
  */
-function suite(identifier) {
-  const moduleIdentifier = getModuleIdentifier(identifier);
-  const testQueue = [];
+function testFactory(id) {
+  const identifier = getModuleIdentifier(id);
+  const queue = [];
 
   /**
    * @param {string} label
    * @param {boolean|function|Array|Promise} testCase
+   * @returns {function}
    */
-  function test(label, testCase) {
-    const onResolved = resultFactory(moduleIdentifier, label);
+  function run(label, testCase) {
+    const onResolved = resultFactory(identifier, label);
     const testPromise = asPromise(testCase).then(onResolved);
 
-    testQueue.push(testPromise);
+    queue.push(testPromise);
 
-    return test;
+    return run;
   }
 
-  registry.set(test, [moduleIdentifier, testQueue]);
+  /**
+   * @param {function} functionUnderTest
+   * @returns {function}
+   */
+  function scope(functionUnderTest) {
+    const { name } = functionUnderTest;
 
-  return test;
+    function scopedTest(label, testCase) {
+      const scopedLabel = `${name}(): ${label}`;
+
+      run(scopedLabel, testCase);
+
+      return scopedTest;
+    }
+
+    return scopedTest;
+  }
+
+  return [identifier, queue, run, scope];
 }
 
 /**
- * @param {function} testFunction
- * @param {function} functionUnderTest
+ * @param {Object|string} id
  * @returns {function}
  */
-function scope(testFunction, functionUnderTest) {
-  const { name } = functionUnderTest;
+function suite(id) {
+  const [identifier, queue, run, scope] = testFactory(id);
 
-  /**
-   * @param {string} label
-   * @param {boolean|function|Array|Promise} testCase
-   */
-  function boundTest(label, testCase) {
-    const prefixedLabel = `${name}(): ${label}`;
+  function overload(...argumentList) {
+    const [first] = argumentList;
 
-    testFunction(prefixedLabel, testCase);
+    if (typeof first === 'function') {
+      return scope(first);
+    }
 
-    return boundTest;
+    return run(...argumentList);
   }
 
-  return boundTest;
+  registry.set(overload, [identifier, queue]);
+
+  return overload;
 }
 
 // == Default export handler ==
@@ -316,14 +331,15 @@ function getSummary(total, errors) {
 /**
  * @param {Array} tuple
  */
-const filterResults = ([, result]) => !result;
+const filterResults = ([, booleanResult]) =>
+  !booleanResult;
 
 /**
  * @param {function} testFunction
  *   the function returned by `suite`
  * @returns {Promise<Array>}
  */
-function promise(testFunction) {
+function result(testFunction) {
   const [identifier, queue] = registry.get(testFunction);
 
   /**

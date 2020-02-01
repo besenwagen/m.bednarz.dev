@@ -1,4 +1,4 @@
-import { promise, suite } from './test.js';
+import { result, suite } from './test.js';
 import { dictionary } from './dictionary.js';
 
 const test = suite(import.meta);
@@ -24,4 +24,4 @@ test
     undefined,
   ]);
 
-export default promise(test);
+export default result(test);

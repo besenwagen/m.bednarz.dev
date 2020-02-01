@@ -1,4 +1,4 @@
-import { promise, scope, suite } from './test.js';
+import { result, suite } from './test.js';
 import {
   compose,
   pipe,
@@ -15,8 +15,7 @@ const multiply = value1 =>
   value2 =>
     value1 * value2;
 
-scope(test, compose)
-
+test(compose)
   ('passes right to left',
     () => {
       const doTheMath = compose(
@@ -26,11 +25,9 @@ scope(test, compose)
 
       return [doTheMath(12), 42];
     })
-
   ;
 
-scope(test, pipe)
-
+test(pipe)
   ('passes left to right',
     () => {
       const doTheMath = pipe(
@@ -40,11 +37,9 @@ scope(test, pipe)
 
       return [doTheMath(12), 42];
     })
-
   ;
 
-scope(test, stage)
-
+test(stage)
   ('creates a transformer with a bound argument',
     () => {
       const callback = (first, second) => (first + second);
@@ -61,7 +56,6 @@ scope(test, stage)
 
       return stage(callbackSpy)(40)(2);
     })
-
   ;
 
-export default promise(test);
+export default result(test);
