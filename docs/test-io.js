@@ -5,9 +5,7 @@ export {
 
 // Environment agnostic test automation I/O utilities
 
-//==========================================================
-// Input
-//==========================================================
+// == Input ==
 
 const INITIAL_COUNT = 0;
 const TOTAL_INDEX = 2;
@@ -60,9 +58,7 @@ function load(queue) {
     .then(withStats);
 }
 
-//==========================================================
-// Output
-//==========================================================
+// == Output ==
 
 const { fromEntries } = Object;
 

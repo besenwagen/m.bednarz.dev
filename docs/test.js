@@ -237,6 +237,7 @@ function assert(testResult, subject) {
  * @returns {function}
  */
 const resultFactory = (id, label) =>
+
   /**
    * @param {Array} testResult
    * @returns {Array}
@@ -298,9 +299,7 @@ function scope(testFunction, functionUnderTest) {
   return boundTest;
 }
 
-//==========================================================
-// Default export Promise
-//==========================================================
+// == Default export handler ==
 
 /**
  * @param {number} total

@@ -1,3 +1,5 @@
+/* global SVGElement */
+
 import { promise, scope, suite } from '../test.js';
 import {
   createElement,

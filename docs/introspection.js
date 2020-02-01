@@ -45,7 +45,8 @@ const getStringTag = value =>
 
 /**
  * @param {function} callable
- * @returns {string} */
+ * @returns {string}
+ */
 const getFunctionName = ({ name }) =>
   name;
 
@@ -113,31 +114,46 @@ const isFunction = value =>
   (typeof value === 'function');
 
 /**
+ * @param {*} value
+ * @param {function} constructor
  * @returns {boolean}
  */
-const isInstanceOf = (value, constructor) => (
-  isComplex(value)
-  && isFunction(constructor)
-  && (
-    (value instanceof constructor)
-    || (getConstructorName(value) === getFunctionName(constructor))
-  )
-);
+const isInstanceOf = (value, constructor) =>
+  (value instanceof constructor);
 
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 const isInteger = value =>
   isSafeInteger(value);
 
+/**
+ * string or number
+ * @param {*} value
+ * @retuens {boolean}
+ */
 const isDataPrimitive = value => (
   isString(value)
   || isNumber(value)
 );
 
+/**
+ * true, false, null or undefined
+ * @param {*} value
+ * @returns {boolean}
+ */
 const isFixedPrimitive = value => (
   isBoolean(value)
-  || isUndefined(value)
   || isNull(value)
+  || isUndefined(value)
 );
 
+/**
+ * string, number, true, false or null
+ * @param {*} value
+ * @returns {boolean}
+ */
 const isJsonPrimitive = value => (
   isDataPrimitive(value)
   || isBoolean(value)
@@ -170,6 +186,11 @@ const isObject = value => (
   && (getStringTag(value) === '[object Object]')
 );
 
+/**
+ * string, number, symbol, true, false, null or undefined
+ * @param {*} value
+ * @returns {boolean}
+ */
 const isPrimitive = value => (
   isDataPrimitive(value)
   || isFixedPrimitive(value)

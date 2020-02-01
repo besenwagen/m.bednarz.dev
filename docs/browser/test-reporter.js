@@ -102,7 +102,7 @@ a[href]:focus {
 }
 `;
 
-//== DOM setters ===============================================
+// == DOM setters ==
 
 /**
  * @param {string} content
@@ -126,9 +126,9 @@ const orderedList = items =>
   `<ol>${items.join('')}</ol>`;
 
 /**
-* @param {Array} items
-* @returns {string}
-*/
+ * @param {Array} items
+ * @returns {string}
+ */
 const unorderedList = items =>
   `<ul>${items.join('')}</ul>`;
 
@@ -143,9 +143,9 @@ const strong = content =>
   `<strong>${content}</strong>`;
 
 /**
-* @param {string} content
-* @returns {string}
-*/
+ * @param {string} content
+ * @returns {string}
+ */
 const em = content =>
   `<em>${content}</em>`;
 
@@ -293,7 +293,7 @@ function mangle(node, basePath) {
   return write;
 }
 
-//== Data handlers =========================================
+// == Data handlers ==
 
 /**
  * @param {string} selector
@@ -400,7 +400,7 @@ function prioritize(element, basePath) {
   return parseMicroData(element, basePath);
 }
 
-//== Grand total ===========================================
+// == Grand total ==
 
 function setStyle() {
   const styleElement = document.createElement('style');
