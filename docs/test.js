@@ -32,12 +32,20 @@ const isOrderedPair = value => (
   && (value.length === ORDERED_PAIR_LENGTH)
 );
 
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 const isTestPrimitive = value => (
   testPrimitiveExpression.test(typeof value)
-  || value === null
-  || value === undefined
+  || (value === null)
+  || (value === undefined)
 );
 
+/**
+ * @param {Array} orderedPair
+ * @returns {Array}
+ */
 function forcePrimitives(orderedPair) {
   if (orderedPair.every(isTestPrimitive)) {
     return orderedPair;
@@ -94,7 +102,6 @@ function overloadIdentifier(value) {
  * from the file:// URL paths in Deno and Node.js.
  *
  * @todo Make this module completely environment agnostic.
- *
  * @returns {string}
  */
 function getEnvironmentPrefix() {
@@ -174,7 +181,7 @@ function forceBoolean(value) {
 }
 
 /**
- * @param {boolean|Array}
+ * @param {boolean|Array} value
  * @returns {Array}
  */
 function overloadSync(value) {
