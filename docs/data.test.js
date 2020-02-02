@@ -1,8 +1,5 @@
 import { result, suite } from './test.js';
-import {
-  normalize,
-  serialize,
-} from './data.js';
+import { normalize, serialize } from './data.js';
 
 const test = suite(import.meta);
 
@@ -10,7 +7,7 @@ export default result(test);
 
 // JSON primitives
 
-test
+test(normalize)
   ('string', [normalize('Hello, world!'), 'Hello, world!'])
   ('number', [normalize(42), 42])
   ('true', normalize(true))
@@ -20,7 +17,7 @@ test
 
 // JSON structures
 
-test
+test(serialize)
   ('array', [
     serialize(['foo', 42, null]),
     '["foo",42,null]',

@@ -1,8 +1,5 @@
 import { result, suite } from '../test.js';
-import {
-  select,
-  toFragment,
-} from './dom.js';
+import { select, toFragment } from './dom.js';
 
 const test = suite(import.meta);
 

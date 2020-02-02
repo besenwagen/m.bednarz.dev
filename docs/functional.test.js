@@ -1,9 +1,5 @@
 import { result, suite } from './test.js';
-import {
-  compose,
-  pipe,
-  stage,
-} from './functional.js';
+import { compose, pipe, stage } from './functional.js';
 
 const test = suite(import.meta);
 
