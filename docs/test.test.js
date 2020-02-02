@@ -2,6 +2,8 @@ import { result, suite } from './test.js';
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test
   ('expression', void 0 === undefined);
 
@@ -47,5 +49,3 @@ test
         setTimeout(() => resolve([void 0, undefined]), 500);
       });
     });
-
-export default result(test);

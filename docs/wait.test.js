@@ -3,6 +3,8 @@ import { wait } from './wait.js';
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test
   ('resolves within 50 ms error margin', () => {
     const start = Number(new Date());
@@ -17,5 +19,3 @@ test
         );
       });
   });
-
-export default result(test);

@@ -3,16 +3,20 @@ import { insist } from './insist.js';
 
 const test = suite(import.meta);
 
-const { warn } = console;
+export default result(test);
 
-warn(
-  'Calling the `insist` function blocks execution',
-  'until user interaction with the browser.'
-);
-warn(
-  'Run this test suite in isolation',
-  'with the query `?m=insist`.'
-);
+{
+  const { warn } = console;
+
+  warn(
+    'Calling the `insist` function blocks execution',
+    'until user interaction with the browser.'
+  );
+  warn(
+    'Run this test suite in isolation',
+    'with the query `?m=insist`.'
+  );
+}
 
 test(
   'resolves a boolean',
@@ -20,5 +24,3 @@ test(
     .then(value =>
       (typeof value === 'boolean')),
 );
-
-export default result(test);

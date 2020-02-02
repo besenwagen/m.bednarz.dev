@@ -340,13 +340,19 @@ const filterResults = ([, booleanResult]) =>
  * @returns {Promise<Array>}
  */
 function result(testFunction) {
-  const [identifier, queue] = registry.get(testFunction);
+  /**
+   * @param {Array} tuple
+   * @returns {Promise}
+   */
+  const resolve = ([identifier, queue]) =>
+    Promise
+      .all([identifier, ...queue]);
 
   /**
    * @param {Array} testSuiteReport
    * @returns {Array}
    */
-  function onQueueResolved(testSuiteReport) {
+  function onQueueResolved([identifier, ...testSuiteReport]) {
     const { length: total } = testSuiteReport;
     const { length: errors } = testSuiteReport.filter(filterResults);
 
@@ -356,6 +362,7 @@ function result(testFunction) {
   }
 
   return Promise
-    .all(queue)
+    .resolve(registry.get(testFunction))
+    .then(resolve)
     .then(onQueueResolved);
 }

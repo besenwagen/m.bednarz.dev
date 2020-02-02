@@ -3,6 +3,8 @@ import { dictionary } from './dictionary.js';
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test
   ('the stringTag of a dictionary is Dictionary', [
     Object
@@ -23,5 +25,3 @@ test
     dictionary({}).prototype,
     undefined,
   ]);
-
-export default result(test);

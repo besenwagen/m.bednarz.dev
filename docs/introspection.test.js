@@ -32,6 +32,8 @@ import {
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test(getConstructorName)
   ('promise instance', [
     getConstructorName(new Promise(() => null)),
@@ -47,18 +49,9 @@ test(getFunctionName)
   ;
 
 test(getStringTag)
-  ('object', [
-    getStringTag({}),
-    '[object Object]',
-  ])
-  ('array', [
-    getStringTag([]),
-    '[object Array]',
-  ])
-  ('function', [
-    getStringTag(() => null),
-    '[object Function]',
-  ])
+  ('object', [getStringTag({}), '[object Object]'])
+  ('array', [getStringTag([]), '[object Array]'])
+  ('function', [getStringTag(() => null), '[object Function]'])
   ;
 
 test(isArray)
@@ -211,5 +204,3 @@ test(isUndefined)
   ('string undefined is false', [isUndefined('undefined'), false])
   ('null is false', [isUndefined(null), false])
   ;
-
-export default result(test);

@@ -6,6 +6,8 @@ import {
 
 const test = suite(import.meta);
 
+export default result(test);
+
 // JSON primitives
 
 test
@@ -37,5 +39,3 @@ test
     }),
     '{"a":[{"c":7,"x":"foo"},false],"n":null,"z":42}',
   ]);
-
-export default result(test);

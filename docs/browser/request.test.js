@@ -3,6 +3,8 @@ import { json } from './request.js';
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test(json)
   ('get GitHub API overview',
     json('https://api.github.com')
@@ -16,5 +18,3 @@ test(json)
         return false;
       }))
   ;
-
-export default result(test);

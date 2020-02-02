@@ -6,6 +6,8 @@ import {
 
 const test = suite(import.meta);
 
+export default result(test);
+
 test(select)
   ('uses the documentElement as default scope', [
     select(':scope > head > title')[0].firstChild.nodeValue,
@@ -19,5 +21,3 @@ test(toFragment)
     3,
   ])
   ;
-
-export default result(test);
