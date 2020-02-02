@@ -35,4 +35,5 @@ test(serialize)
       n: null,
     }),
     '{"a":[{"c":7,"x":"foo"},false],"n":null,"z":42}',
-  ]);
+  ])
+  ;
