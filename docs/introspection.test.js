@@ -184,7 +184,7 @@ test(isSymbol)
 
 test(isThenable)
   ('must be a method', isThenable({
-    then() {},
+    then() { },
   }))
   ('can not be a property', [
     isThenable({

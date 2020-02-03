@@ -1,6 +1,7 @@
 export {
   result,
   suite,
+  formatFailureTuple,
 };
 
 const { isArray } = Array;
@@ -66,10 +67,10 @@ function forcePrimitives(orderedPair) {
 
 /**
  * @param {string|number|null|undefined} value
- * @returns {string}
+ * @returns {Array}
  */
 const withTypeInfo = value =>
-  `(${typeof value}) ${value}`;
+  [typeof value, value];
 
 /**
  * @param {Array} orderedPair
@@ -171,7 +172,7 @@ function overloadCallable(value) {
  */
 function forceBoolean(value) {
   if (typeof value === 'boolean') {
-    return [value];
+    return value;
   }
 
   throw new TypeError([
@@ -189,7 +190,14 @@ function overloadSync(value) {
     return isOrderedPairEqual(value);
   }
 
-  return forceBoolean(value);
+  if (forceBoolean(value)) {
+    return [true];
+  }
+
+  return [false, [
+    ['boolean', false],
+    ['boolean', true],
+  ]];
 }
 
 /**
@@ -210,16 +218,22 @@ function asPromise(value) {
 }
 
 /**
+ * @param {Array} tuple
+ * @returns {string}
+ */
+const formatFailureTuple = ([type, value]) => `(${type}) ${value}`;
+
+/**
  * @param {Array} [info]
  * @returns {string}
  */
-function printInfo(info) {
+function formatInfo(info) {
   if (info) {
     const [actual, expected] = info;
 
     return [
-      `\n| expected: ${expected}`,
-      `\n|   actual: ${actual}`,
+      `\n|   actual: ${formatFailureTuple(actual)}`,
+      `\n| expected: ${formatFailureTuple(expected)}`,
     ].join('');
   }
 
@@ -232,7 +246,7 @@ function printInfo(info) {
  */
 function assert(testResult, subject) {
   const [booleanResult, info] = testResult;
-  const message = `${subject}${printInfo(info)}`;
+  const message = `${subject}${formatInfo(info)}`;
 
   console.assert(booleanResult, message);
 }
@@ -286,7 +300,7 @@ function testFactory(id) {
     const { name } = functionUnderTest;
 
     function scopedTest(label, testCase) {
-      const scopedLabel = `${name}(): ${label}`;
+      const scopedLabel = `${name}() | ${label}`;
 
       run(scopedLabel, testCase);
 
@@ -321,11 +335,12 @@ function suite(id) {
   return overload;
 }
 
-// == Default export handler ==
+// ## Default export handler
 
 /**
  * @param {number} total
  * @param {number} errors
+ * @returns {string}
  */
 function getSummary(total, errors) {
   if (errors) {
@@ -337,39 +352,39 @@ function getSummary(total, errors) {
 
 /**
  * @param {Array} tuple
+ * @returns {boolean}
  */
 const filterResults = ([, booleanResult]) =>
   !booleanResult;
+
+/**
+ * @param {Array} tuple
+ * @returns {Promise}
+ */
+const destructure = ([identifier, queue]) =>
+  Promise
+    .all([identifier, ...queue]);
+
+/**
+ * @param {Array} testSuiteReport
+ * @returns {Array}
+ */
+function restructure([identifier, ...testSuiteReport]) {
+  const { length: total } = testSuiteReport;
+  const { length: errors } = testSuiteReport.filter(filterResults);
+
+  console.info(`  ${identifier}:`, getSummary(total, errors));
+
+  return [identifier, testSuiteReport, total, errors];
+}
 
 /**
  * @param {function} testFunction
  *   the function returned by `suite`
  * @returns {Promise<Array>}
  */
-function result(testFunction) {
-  /**
-   * @param {Array} tuple
-   * @returns {Promise}
-   */
-  const resolve = ([identifier, queue]) =>
-    Promise
-      .all([identifier, ...queue]);
-
-  /**
-   * @param {Array} testSuiteReport
-   * @returns {Array}
-   */
-  function onQueueResolved([identifier, ...testSuiteReport]) {
-    const { length: total } = testSuiteReport;
-    const { length: errors } = testSuiteReport.filter(filterResults);
-
-    console.info(`${identifier}:`, getSummary(total, errors));
-
-    return [identifier, testSuiteReport, total, errors];
-  }
-
-  return Promise
+const result = testFunction =>
+  Promise
     .resolve(registry.get(testFunction))
-    .then(resolve)
-    .then(onQueueResolved);
-}
+    .then(destructure)
+    .then(restructure);

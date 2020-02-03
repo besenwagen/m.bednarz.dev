@@ -13,6 +13,7 @@ export {
 /* global window, document */
 
 import { load } from '../test-io.js';
+import { formatFailureTuple } from '../test.js';
 
 const { from } = Array;
 const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
@@ -196,8 +197,8 @@ function infoList(info) {
     const [actual, expected] = info;
 
     return unorderedList([
-      infoItem('actual', actual, strong),
-      infoItem('expected', expected, em),
+      infoItem('actual', formatFailureTuple(actual), strong),
+      infoItem('expected', formatFailureTuple(expected), em),
     ]);
   }
 
