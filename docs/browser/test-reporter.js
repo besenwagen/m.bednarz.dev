@@ -6,13 +6,21 @@
  * (c) 2020 Eric Bednarz
  * License: MIT
  */
+
 export {
   report,
 };
 
-/* global window, document */
-
 import { load } from '../test-io.js';
+import {
+  createElement,
+  createFragment,
+  elementFactory,
+  purge,
+} from './dom.js';
+
+/* global window, document */
+/* eslint id-length: [error, { exceptions: [a, p] }] */
 
 const { from } = Array;
 const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
@@ -125,55 +133,34 @@ a[href]:focus {
 }
 `;
 
-// == DOM setters ==
+//#region DOM write
 
 /**
- * @param {string} content
+ * @param {Array} tuple
  * @returns {string}
  */
-const heading = content =>
-  `<h1>${content}</h1>`;
+function summary([modules, tests, errors]) {
+  if (errors) {
+    return [
+      `${errors} of ${tests} tests`,
+      `failing in ${modules} modules.`,
+    ].join(' ');
+  }
+
+  return `${tests} tests in ${modules} modules.`;
+}
 
 /**
- * @param {string} content
+ * @param {boolean} state
  * @returns {string}
  */
-const paragraph = content =>
-  `<p>${content}</p>`;
+const statePrefix = state => (state ? PASS : FAIL);
 
 /**
- * @param {Array} items
+ * @param {boolean} state
  * @returns {string}
  */
-const orderedList = items =>
-  `<ol>${items.join('')}</ol>`;
-
-const listItem = content =>
-  `<li>${content}</li>`;
-
-const pre = content =>
-  `<pre>${content}</pre>`;
-
-/**
- * @param {string} content
- * @returns {string}
- */
-const strong = content =>
-  `<strong>${content}</strong>`;
-
-/**
- * @param {string} content
- * @returns {string}
- */
-const em = content =>
-  `<em>${content}</em>`;
-
-/**
- * @param {string} content
- * @returns {string}
- */
-const code = content =>
-  `<code>${content}</code>`;
+const stateMarker = state => (state ? 'em' : 'strong');
 
 /**
  * @param {string} url
@@ -182,105 +169,60 @@ const code = content =>
 const displayUrl = url =>
   url.replace(/^\//, '');
 
-/**
- * @param {string} url
- * @returns {string}
- */
-const sourceLink = (url, element) =>
-  `<a target="_blank" href="${url}">${element(displayUrl(url))}</a>`;
+const {
+  h1, p, ol, li, a,
+  table, tr, th, td,
+  code, pre,
+} = elementFactory([
+  'h1', 'p', 'ol', 'li',
+  'table', 'tr', 'th', 'td',
+  'a', 'pre', 'code',
+]);
 
-/**
- * @param {boolean} result
- * @returns {string}
- */
-const prefix = result => (result ? PASS : FAIL);
+const markState = (state, children) =>
+  createElement(stateMarker(state), children);
 
-/**
- * @param {string} label
- * @param {boolean} result
- * @returns {string}
- */
-function markResult(label, result) {
-  const element = result ? em : strong;
+const assertionTable = (testResult, [actual, expected]) =>
+  table([
+    tr([
+      th({
+        scope: 'row',
+      }, 'actual'),
+      td(code(typeof actual)),
+      td(pre(code(markState(testResult, String(actual))))),
+    ]),
+    tr([
+      th({
+        scope: 'row',
+      }, 'expected'),
+      td(code(typeof expected)),
+      td(pre(code(String(expected)))),
+    ]),
+  ]);
 
-  return element(label);
-}
+const toListItem = ([description, testResult, assertion]) =>
+  li([
+    code(`[${statePrefix(testResult)}]`),
+    ' ',
+    markState(testResult, description),
+    assertionTable(testResult, assertion),
+  ]);
 
-function infoTable(testResult, [actual, expected]) {
-  const element = testResult ? em : strong;
-
-  return `
-<table>
-  <tr>
-    <th scope="row">actual</td>
-    <td>${code(typeof actual)}</td>
-    <td>
-      ${pre(code(element(actual)))}
-    </td>
-  </tr>
-  <tr>
-    <th scope="row">expected</td>
-    <td>${code(typeof expected)}</td>
-    <td>
-      ${pre(code(expected))}
-    </td>
-  </tr>
-</table>
-  `.trim();
-}
-
-/**
- * @param {string[]}
- * @returns {string}
- */
-const tupleToItem = ([description, testResult, assertion]) =>
-  listItem([
-    code(`[${prefix(testResult)}]`),
-    markResult(description, testResult),
-    infoTable(testResult, assertion),
-  ].join(' '));
-
-/**
- * @param {Array} tuple
- * @returns {Array}
- */
-const parse = ([subject, suite, [, errors]]) => [
-  sourceLink(subject, errors ? strong : em),
-  orderedList(suite.map(tupleToItem)),
-].join(' ');
-
-/**
- * @param {Array} tuple
- * @returns {string}
- */
-function summary([modules, tests, errors]) {
-  if (errors) {
-    return paragraph([
-      `${errors} of ${tests} tests`,
-      `failing in ${modules} modules.`,
-    ].join(' '));
-  }
-
-  return paragraph(`${tests} tests in ${modules} modules.`);
-}
-
-/**
- * @param {Object} result
- * @returns {string}
- */
-function toHtml(result) {
-  const toListItem = part => listItem(parse(part));
-  const data = result.map(toListItem);
-
-  return orderedList(data);
-}
+const toSuiteItem = ([href, suite, [, errors]]) =>
+  li([
+    a({
+      href,
+      target: '_blank',
+    }, markState(!errors, displayUrl(href))),
+    ol(suite.map(toListItem)),
+  ]);
 
 /**
  * @param {Node} contextNode
  * @param {string} literal
  */
-function html(contextNode, literal) {
-  contextNode.innerHTML = literal;
+function html(contextNode, children) {
+  purge(contextNode).appendChild(children);
 }
 
 /**
@@ -288,31 +230,33 @@ function html(contextNode, literal) {
  * @param {string} basePath
  * @returns {function}
  */
-function mangle(node, basePath) {
-  const expand = result =>
-    result
-      .map(([subject, ...rest]) => [
-        join(basePath, subject),
-        ...rest,
-      ]);
-
+function writeFactory(node, basePath) {
   /**
    * @param {Array} tuple
    */
   function write([result, stats]) {
-    html(node, [
-      heading(REPORT_LABEL),
-      summary(stats),
-      toHtml(expand(result)),
-    ].join(' '));
+    const resultList = result
+      .map(([href, ...tail]) => [
+        [basePath, href].join(''),
+        ...tail,
+      ])
+      .map(toSuiteItem);
+
+    html(node, createFragment([
+      h1(REPORT_LABEL),
+      p(summary(stats)),
+      ol(resultList),
+    ]));
   }
 
-  html(node, STATUS_BUSY);
+  html(node, p(STATUS_BUSY));
 
   return write;
 }
 
-// == Data handlers ==
+//#endregion
+
+//#region DOM getters
 
 /**
  * @param {string} selector
@@ -419,12 +363,12 @@ function prioritize(element, basePath) {
   return parseMicroData(element, basePath);
 }
 
-// == Grand total ==
+//#endregion
+
+//#region initialize
 
 function setStyle() {
-  const styleElement = document.createElement('style');
-
-  styleElement.appendChild(document.createTextNode(style));
+  const styleElement = createElement('style', style);
 
   document.head.appendChild(styleElement);
 }
@@ -436,7 +380,7 @@ function setStyle() {
  */
 function overload(node, basePath) {
   const modules = prioritize(node, basePath);
-  const write = mangle(node, basePath);
+  const write = writeFactory(node, basePath);
 
   return load(modules)
     .then(write);
@@ -456,3 +400,5 @@ function run() {
 }
 
 const report = run();
+
+//#endregion
