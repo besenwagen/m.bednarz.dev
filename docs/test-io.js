@@ -5,6 +5,9 @@ export {
   objectify,
   printReport,
   printSummary,
+
+  // private
+  jsonEscape,
   yamlify,
 };
 
@@ -14,8 +17,8 @@ const { entries, fromEntries } = Object;
 // ## Input
 
 const INITIAL_COUNT = 0;
-const TOTAL_INDEX = 2;
-const ERROR_INDEX = 3;
+const TOTAL_INDEX = 0;
+const ERROR_INDEX = 1;
 
 /**
  * @param {Module} module
@@ -64,7 +67,7 @@ const reduceCount = (subTotal, value) =>
  */
 const reduceIndex = (array, index) =>
   array
-    .map(tuple => tuple[index])
+    .map(([,, stats]) => stats[index])
     .reduce(reduceCount, INITIAL_COUNT);
 
 /**
@@ -137,13 +140,30 @@ const objectify = result =>
 
 // ### YAML
 
-const caseToTaml = (key, type, value) => [
-  `      ${key}:`,
-  `        ${type}: ${value}`,
+/**
+ * noop placeholder
+ * @param {string} value
+ * @returns {string}
+ */
+function indent(value) {
+  return value;
+}
+
+const escapeDoubleQuotes = string =>
+  string
+    .replace(/\\([\s\S])|(")/g, '\\$1$2');
+
+function jsonEscape(value) {
+  return `"${escapeDoubleQuotes(String(value))}"`;
+}
+
+const caseToYaml = (key, value) => [
+  indent(`      ${key}:`),
+  indent(`        ${typeof value}: ${jsonEscape(value)}`),
 ];
 
-function diagnosticsToYaml(name, [actual, expected]) {
-  const toCase = ([key, value]) => caseToTaml(key, ...value);
+function assertionToYaml(name, [actual, expected]) {
+  const toCase = tuple => caseToYaml(...tuple);
   const toCaseList = (accumulator, value) => [
     ...accumulator,
     ...toCase(value),
@@ -154,30 +174,24 @@ function diagnosticsToYaml(name, [actual, expected]) {
   })
     .reduce(toCaseList, []);
 
-  return [`    ${name}:`, ...caseList];
+  return [indent(`    ${jsonEscape(name)}:`), ...caseList];
 }
 
 function suiteToYaml(suite) {
-  const buffer = [];
-
-  function toLines(accumulator, [name, result, diagnostics]) {
-    if (result) {
-      accumulator.push(`    ${name}: passed`);
-    } else {
-      accumulator.push(...diagnosticsToYaml(name, diagnostics));
-    }
+  function toLines(accumulator, [description, assertion]) {
+    accumulator.push(...assertionToYaml(description, assertion));
 
     return accumulator;
   }
 
-  return suite.reduce(toLines, buffer);
+  return suite.reduce(toLines, []);
 }
 
 function yamlify(result) {
   const buffer = [];
 
   for (const [id, suite] of result) {
-    buffer.push(`  ${id}:`, ...suiteToYaml(suite));
+    buffer.push(indent(`  ${id}:`), ...suiteToYaml(suite));
   }
 
   return buffer.join('\n');

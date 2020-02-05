@@ -13,7 +13,6 @@ export {
 /* global window, document */
 
 import { load } from '../test-io.js';
-import { formatFailureTuple } from '../test.js';
 
 const { from } = Array;
 const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
@@ -37,7 +36,8 @@ main {
   font: 1rem/1.5 Georgia, serif;
 }
 
-main code {
+pre,
+code {
   font: 1rem/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
 }
 
@@ -55,7 +55,7 @@ main ol {
 }
 
 main li > ol {
-  margin-top: 0;
+  margin-top: 0rem;
   margin-left: 2em;
 }
 
@@ -79,6 +79,27 @@ main ol a strong,
 main li li strong {
   color: #a00;
   background: transparent;
+}
+
+table {
+
+  margin: 0.5rem 0;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: right;
+  font-weight: normal;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 0.1rem 0.75rem;
+  vertical-align: top;
+}
+
+td pre {
+  margin: 0;
 }
 
 a[href] {
@@ -127,15 +148,11 @@ const paragraph = content =>
 const orderedList = items =>
   `<ol>${items.join('')}</ol>`;
 
-/**
- * @param {Array} items
- * @returns {string}
- */
-const unorderedList = items =>
-  `<ul>${items.join('')}</ul>`;
-
 const listItem = content =>
   `<li>${content}</li>`;
+
+const pre = content =>
+  `<pre>${content}</pre>`;
 
 /**
  * @param {string} content
@@ -189,46 +206,46 @@ function markResult(label, result) {
   return element(label);
 }
 
-const infoItem = (type, token, element) =>
-  listItem(`${type}:<br>${element(code(token))}`);
+function infoTable(testResult, [actual, expected]) {
+  const element = testResult ? em : strong;
 
-function infoList(info) {
-  if (info) {
-    const [actual, expected] = info;
-
-    return unorderedList([
-      infoItem('actual', formatFailureTuple(actual), strong),
-      infoItem('expected', formatFailureTuple(expected), em),
-    ]);
-  }
-
-  return '';
+  return `
+<table>
+  <tr>
+    <th scope="row">actual</td>
+    <td>${code(typeof actual)}</td>
+    <td>
+      ${pre(code(element(actual)))}
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">expected</td>
+    <td>${code(typeof expected)}</td>
+    <td>
+      ${pre(code(expected))}
+    </td>
+  </tr>
+</table>
+  `.trim();
 }
 
 /**
  * @param {string[]}
  * @returns {string}
  */
-const tupleToItem = ([description, result, info]) =>
+const tupleToItem = ([description, testResult, assertion]) =>
   listItem([
-    code(`[${prefix(result)}]`),
-    markResult(description, result),
-    infoList(info),
+    code(`[${prefix(testResult)}]`),
+    markResult(description, testResult),
+    infoTable(testResult, assertion),
   ].join(' '));
-
-/**
- * @param {Array} suite
- * @return {boolean}
- */
-const hasErrors = suite =>
-  suite.some(([, result]) => !result);
 
 /**
  * @param {Array} tuple
  * @returns {Array}
  */
-const parse = ([subject, suite]) => [
-  sourceLink(subject, hasErrors(suite) ? strong : em),
+const parse = ([subject, suite, [, errors]]) => [
+  sourceLink(subject, errors ? strong : em),
   orderedList(suite.map(tupleToItem)),
 ].join(' ');
 

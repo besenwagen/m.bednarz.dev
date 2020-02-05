@@ -31,15 +31,12 @@
 /* global Deno */
 
 import { walk } from 'https://deno.land/std/fs/mod.ts';
-import { load, objectify } from '../test-io.js';
+import { load, printReport } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
-const { stringify } = JSON;
 
 const EXIT_CODE_ERROR = 1;
-const JSON_INDENT = 2;
 const FILE_BASE_URL = `file://${cwd()}/`;
-const YAML_DOC_SEPARATOR = '---';
 const ARGUMENT_LIST = args
   .filter(value => value.startsWith('-'));
 const DIRECTORIES = args
@@ -95,29 +92,6 @@ const onFilesResolved = (
 const getExitCode = (errorCount: number): number =>
   Number(Boolean(errorCount));
 
-function reportModules(count: number) {
-  console.info(YAML_DOC_SEPARATOR);
-  console.info(`modules loaded: ${count}`);
-}
-
-function reportTests(total: number, errors: number) {
-  if (errors) {
-    console.info(`tests failed: ${errors}`);
-  }
-
-  console.info(`tests passed: ${total - errors}`);
-}
-
-function reportVerbose(result: string[]) {
-  console.info(YAML_DOC_SEPARATOR);
-  console.info(stringify(objectify(result), null, JSON_INDENT));
-}
-
-function summarize(modules: any, total: number, errors: number) {
-  reportModules(modules);
-  reportTests(total, errors);
-}
-
 function onTestSuitesResolved([
   result, [
     modules,
@@ -133,10 +107,8 @@ function onTestSuitesResolved([
 ]) {
   const exitCode = getExitCode(errors);
 
-  summarize(modules, tests, errors);
-
-  if (!SILENT) {
-    reportVerbose(result);
+    if (!SILENT) {
+    printReport(result);
   }
 
   exit(exitCode);

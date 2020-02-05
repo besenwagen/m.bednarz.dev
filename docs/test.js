@@ -1,7 +1,6 @@
 export {
   result,
   suite,
-  formatFailureTuple,
 };
 
 const { isArray } = Array;
@@ -12,91 +11,7 @@ const PREFIX_INVALID = 'Invalid test case:';
 const PATH_OFFSET = 1;
 const ORDERED_PAIR_LENGTH = 2;
 
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isImportMeta = value => (
-  (Object
-    .prototype
-    .toString
-    .call(value) === '[object Object]')
-  && (typeof value.url === 'string')
-);
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isOrderedPair = value => (
-  isArray(value)
-  && (value.length === ORDERED_PAIR_LENGTH)
-);
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isTestPrimitive = value => (
-  testPrimitiveExpression.test(typeof value)
-  || (value === null)
-  || (value === undefined)
-);
-
-/**
- * @param {Array} orderedPair
- * @returns {Array}
- */
-function forcePrimitives(orderedPair) {
-  if (orderedPair.every(isTestPrimitive)) {
-    return orderedPair;
-  }
-
-  throw new TypeError([
-    PREFIX_INVALID,
-    'ordered pair values must be',
-    [
-      'string',
-      'number',
-      'boolean',
-      'null',
-    ].join(', '),
-    'or undefined',
-  ].join(' '));
-}
-
-/**
- * @param {string|number|null|undefined} value
- * @returns {Array}
- */
-const withTypeInfo = value =>
-  [typeof value, value];
-
-/**
- * @param {Array} orderedPair
- * @returns {Array}
- */
-function isOrderedPairEqual(orderedPair) {
-  const [actual, expected] = forcePrimitives(orderedPair);
-
-  if (actual === expected) {
-    return [true];
-  }
-
-  return [false, [actual, expected].map(withTypeInfo)];
-}
-
-/**
- * @param {Object|string} value
- * @returns {string}
- */
-function overloadIdentifier(value) {
-  if (isImportMeta(value)) {
-    return getRelativePath(value.url);
-  }
-
-  return value;
-}
+//#region module identifier
 
 /**
  * Get the current working directory for removing it
@@ -145,25 +60,158 @@ function getRelativePath(url) {
 }
 
 /**
+ * @param {*} value
+ * @returns {boolean}
+ */
+const isImportMeta = value => (
+  (Object
+    .prototype
+    .toString
+    .call(value) === '[object Object]')
+  && (typeof value.url === 'string')
+);
+
+/**
  * @param {Object|string} value
  * @returns {string}
  */
-function getModuleIdentifier(value) {
-  const identifier = overloadIdentifier(value);
-
-  return identifier;
-}
-
-/**
- * @param {boolean|function|Array|Promise} value
- * @returns {boolean|Array|Promise}
- */
-function overloadCallable(value) {
-  if (typeof value === 'function') {
-    return value();
+function overloadIdentifier(value) {
+  if (isImportMeta(value)) {
+    return getRelativePath(value.url);
   }
 
   return value;
+}
+
+//#endregion
+
+//#region assertion
+
+/**
+ * @param {Array} tuple
+ * @returns {string}
+ */
+function getAssertionType(value) {
+  if (value === null) {
+    return String(value);
+  }
+
+  return typeof value;
+}
+
+/**
+ * @param {string} token
+ * @param {number} count
+ * @returns {string}
+ */
+const drawTheLine = (token, count) =>
+  token.repeat(count);
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+const newLine = value => `\n${value}`;
+
+/**
+ * @param {string} prefix
+ * @param {string} value
+ * @param {number} length
+ * @returns {string}
+ */
+function formatMultilineAssertion(prefix, value, length) {
+  const pipe = '|';
+  const tail = value.replace(/\n/gm, newLine(pipe));
+  const line = newLine([
+    pipe,
+    drawTheLine('-', (length - pipe.length)),
+  ].join(''));
+
+  return [prefix, line, newLine(`|${tail}`)].join('');
+}
+
+/**
+ * @param {string} label
+ * @param {string} value
+ * @param {number} length
+ * @returns {string}
+ */
+function formatAssertion(label, value, length) {
+  const type = getAssertionType(value);
+  const prefix = newLine(`| ${label} (${type}):`);
+
+  if (type === 'string' && value.includes('\n')) {
+    return formatMultilineAssertion(prefix, value, length);
+  }
+
+  return `${prefix} ${value}`;
+}
+
+/**
+ * @param {Array} [info]
+ * @returns {string}
+ */
+const formatAssertionTuple = (actual, expected, length) => [
+  newLine(drawTheLine('=', length)),
+  formatAssertion('  actual', actual, length),
+  newLine(drawTheLine('~', length)),
+  formatAssertion('expected', expected, length),
+  newLine(drawTheLine('=', length)),
+].join('');
+
+/**
+ * @param {Array} assertion
+ * @param {string} subject
+ */
+function assert([actual, expected], subject) {
+  const pipe = '| ';
+  const width = (subject.length + pipe.length);
+  const testResult = (actual === expected);
+
+  console.assert(testResult, [
+    newLine(drawTheLine('=', width)),
+    newLine(pipe),
+    subject,
+    formatAssertionTuple(actual, expected, width),
+  ].join(''));
+
+  return testResult;
+}
+
+//#endregion
+
+//#region test case
+
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
+const isTestPrimitive = value => (
+  testPrimitiveExpression.test(typeof value)
+  || (value === null)
+  || (value === undefined)
+);
+
+/**
+ * @param {Array} orderedPair
+ * @returns {Array}
+ */
+function forceTestPrimitives(orderedPair) {
+  if (orderedPair.every(isTestPrimitive)) {
+    return orderedPair;
+  }
+
+  throw new TypeError([
+    PREFIX_INVALID,
+    'ordered pair values must be',
+    [
+      'string',
+      'number',
+      'boolean',
+      'null',
+    ].join(', '),
+    'or undefined',
+  ].join(' '));
 }
 
 /**
@@ -182,29 +230,43 @@ function forceBoolean(value) {
 }
 
 /**
+ * @param {*} value
+ * @returns {boolean}
+ */
+const isOrderedPair = value => (
+  isArray(value)
+  && (value.length === ORDERED_PAIR_LENGTH)
+);
+
+/**
  * @param {boolean|Array} value
  * @returns {Array}
  */
 function overloadSync(value) {
   if (isOrderedPair(value)) {
-    return isOrderedPairEqual(value);
+    return forceTestPrimitives(value);
   }
 
-  if (forceBoolean(value)) {
-    return [true];
+  return [forceBoolean(value), true];
+}
+
+/**
+ * @param {boolean|function|Array|Promise} value
+ * @returns {boolean|Array|Promise}
+ */
+function overloadCallable(value) {
+  if (typeof value === 'function') {
+    return value();
   }
 
-  return [false, [
-    ['boolean', false],
-    ['boolean', true],
-  ]];
+  return value;
 }
 
 /**
  * @param {boolean|function|Array|Promise} value
  * @returns {Promise<boolean>}
  */
-function asPromise(value) {
+function overloadPromise(value) {
   const normalized = overloadCallable(value);
 
   if (normalized.constructor === Promise) {
@@ -217,39 +279,18 @@ function asPromise(value) {
     .resolve(overloadSync(normalized));
 }
 
+//#endregion
+
+//#region test suite
+
 /**
- * @param {Array} tuple
+ * @param {string} value
  * @returns {string}
  */
-const formatFailureTuple = ([type, value]) => `(${type}) ${value}`;
-
-/**
- * @param {Array} [info]
- * @returns {string}
- */
-function formatInfo(info) {
-  if (info) {
-    const [actual, expected] = info;
-
-    return [
-      `\n|   actual: ${formatFailureTuple(actual)}`,
-      `\n| expected: ${formatFailureTuple(expected)}`,
-    ].join('');
-  }
-
-  return '';
-}
-
-/**
- * @param {Array} testResult
- * @param {string} subject
- */
-function assert(testResult, subject) {
-  const [booleanResult, info] = testResult;
-  const message = `${subject}${formatInfo(info)}`;
-
-  console.assert(booleanResult, message);
-}
+const sanitizeDescription = value =>
+  value
+    .replace(/\s+/gm, ' ')
+    .trim();
 
 /**
  * @param {string} id
@@ -259,15 +300,14 @@ function assert(testResult, subject) {
 const resultFactory = (id, label) =>
 
   /**
-   * @param {Array} testResult
+   * @param {Array} assertion
    * @returns {Array}
    */
-  function onTestResultResolved(testResult) {
+  function onTestResultResolved(assertion) {
     const message = [id, label].join(' > ');
+    const result = assert(assertion, message);
 
-    assert(testResult, message);
-
-    return [label, ...testResult];
+    return [label, result, assertion];
   };
 
 /**
@@ -275,17 +315,18 @@ const resultFactory = (id, label) =>
  * @returns {Array}
  */
 function testFactory(id) {
-  const identifier = getModuleIdentifier(id);
+  const identifier = overloadIdentifier(id);
   const queue = [];
 
   /**
-   * @param {string} label
+   * @param {string} description
    * @param {boolean|function|Array|Promise} testCase
    * @returns {function}
    */
-  function run(label, testCase) {
+  function run(description, testCase) {
+    const label = sanitizeDescription(description);
     const onResolved = resultFactory(identifier, label);
-    const testPromise = asPromise(testCase).then(onResolved);
+    const testPromise = overloadPromise(testCase).then(onResolved);
 
     queue.push(testPromise);
 
@@ -300,7 +341,7 @@ function testFactory(id) {
     const { name } = functionUnderTest;
 
     function scopedTest(label, testCase) {
-      const scopedLabel = `${name}() | ${label}`;
+      const scopedLabel = `${name}(): ${label}`;
 
       run(scopedLabel, testCase);
 
@@ -335,7 +376,9 @@ function suite(id) {
   return overload;
 }
 
-// ## Default export handler
+//#endregion
+
+//#region default export handler
 
 /**
  * @param {number} total
@@ -352,13 +395,6 @@ function getSummary(total, errors) {
 
 /**
  * @param {Array} tuple
- * @returns {boolean}
- */
-const filterResults = ([, booleanResult]) =>
-  !booleanResult;
-
-/**
- * @param {Array} tuple
  * @returns {Promise}
  */
 const destructure = ([identifier, queue]) =>
@@ -369,13 +405,14 @@ const destructure = ([identifier, queue]) =>
  * @param {Array} testSuiteReport
  * @returns {Array}
  */
-function restructure([identifier, ...testSuiteReport]) {
-  const { length: total } = testSuiteReport;
-  const { length: errors } = testSuiteReport.filter(filterResults);
+function restructure([identifier, ...testSuite]) {
+  const { length: total } = testSuite;
+  const { length: errors } = testSuite
+    .filter(([, testResult]) => !testResult);
 
-  console.info(`  ${identifier}:`, getSummary(total, errors));
+  console.info(`- ${identifier} (${getSummary(total, errors)})`);
 
-  return [identifier, testSuiteReport, total, errors];
+  return [identifier, testSuite, [total, errors]];
 }
 
 /**
@@ -388,3 +425,5 @@ const result = testFunction =>
     .resolve(registry.get(testFunction))
     .then(destructure)
     .then(restructure);
+
+//#endregion
