@@ -87,8 +87,6 @@ function forceUrl(value) {
     );
   }
 
-  console.info(pathname);
-
   return normalizePath(pathname);
 }
 
