@@ -23,18 +23,19 @@ import {
 /* eslint id-length: [error, { exceptions: [a, p] }] */
 
 const { from } = Array;
-const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
-const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;
-const TEST_FILE_POSTFIX = '.test.js';
-const TEST_REPORT_SELECTOR = 'main[itemscope]';
-const TEST_PATH_SELECTOR = ':scope > meta[itemprop="path"]';
-const TEST_DATA_SELECTOR = ':scope > meta[itemprop="test"]';
-const STATUS_BUSY = 'Running tests...';
-const REPORT_LABEL = 'Unit test report';
-const PASS = 'passed';
-const FAIL = 'failed';
 
+//#region DOM setters
+
+const CLASS_SHOW_TESTS = 'show-tests';
+const CLASS_SHOW_ASSERTIONS = 'show-assertions';
+const ATTRIBUTE_FAIL = 'data-fail';
+
+//#region CSS literal
 const style = `
+html {
+  overflow-y: scroll;
+}
+
 main {
   --color-action: #00f;
   border: 1px solid #333;
@@ -57,6 +58,12 @@ main h1 {
   font-size: 1.5rem;
 }
 
+main h1 + div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 main ol {
   margin: 0.75rem 0;
   padding: 0;
@@ -67,12 +74,12 @@ main li > ol {
   margin-left: 2em;
 }
 
-main ol a em {
+main a em {
   font-weight: bold;
   font-style: normal;
 }
 
-main ol em {
+main em {
   color: #060;
   background: transparent;
 }
@@ -83,14 +90,13 @@ main ul em {
   font-style: normal;
 }
 
-main ol a strong,
+main strong,
 main li li strong {
   color: #a00;
   background: transparent;
 }
 
 table {
-
   margin: 0.5rem 0;
   border-collapse: collapse;
 }
@@ -108,6 +114,19 @@ th, td {
 
 td pre {
   margin: 0;
+}
+
+label:hover {
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  margin: 0;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:focus {
+  outline: 2px solid var(--color-action);
 }
 
 a[href] {
@@ -131,24 +150,43 @@ a[href]:focus {
   color: #000;
   background: transparent;
 }
+
+main:not(.${CLASS_SHOW_TESTS}) ol ol {
+  display: none;
+}
+
+main:not(.${CLASS_SHOW_ASSERTIONS}) ol table {
+  display: none;
+}
+
+main ol[${ATTRIBUTE_FAIL}] li:not([${ATTRIBUTE_FAIL}]) ol,
+main ol[${ATTRIBUTE_FAIL}] ol li:not([${ATTRIBUTE_FAIL}]) {
+  display: none;
+}
+
+main.${CLASS_SHOW_TESTS} ol ol {
+  display: block ! important;
+}
+
+main.${CLASS_SHOW_TESTS} li li {
+  display: list-item ! important;
+}
+
+main ol li[${ATTRIBUTE_FAIL}] ol {
+  display: block;
+}
+
+main ol li[${ATTRIBUTE_FAIL}] li[${ATTRIBUTE_FAIL}] table {
+  display: table;
+}
 `;
 
-//#region DOM write
+//#endregion
 
-/**
- * @param {Array} tuple
- * @returns {string}
- */
-function summary([modules, tests, errors]) {
-  if (errors) {
-    return [
-      `${errors} of ${tests} tests`,
-      `failing in ${modules} modules.`,
-    ].join(' ');
-  }
-
-  return `${tests} tests in ${modules} modules.`;
-}
+const STATUS_BUSY = 'Running tests...';
+const REPORT_LABEL = 'Unit test report';
+const PASS = 'passed';
+const FAIL = 'failed';
 
 /**
  * @param {boolean} state
@@ -170,14 +208,36 @@ const displayUrl = url =>
   url.replace(/^\//, '');
 
 const {
-  h1, p, ol, li, a,
+  h1, p, ol, li,
+  strong, em, a,
   table, tr, th, td,
-  code, pre,
+  div, code, pre,
+  label, input,
 } = elementFactory([
   'h1', 'p', 'ol', 'li',
+  'strong', 'em', 'a',
   'table', 'tr', 'th', 'td',
-  'a', 'pre', 'code',
+  'div', 'code', 'pre',
+  'label', 'input',
 ]);
+
+/**
+ * @param {Array} tuple
+ * @returns {string}
+ */
+function summary([modules, tests, errors]) {
+  if (errors) {
+    return [
+      strong(`${errors} of ${tests} tests failing`),
+      ` in ${modules} modules.`,
+    ];
+  }
+
+  return [
+    em(`${tests} tests`),
+    ` in ${modules} modules.`,
+  ];
+}
 
 const markState = (state, children) =>
   createElement(stateMarker(state), children);
@@ -201,7 +261,9 @@ const assertionTable = (testResult, [actual, expected]) =>
   ]);
 
 const toListItem = ([description, testResult, assertion]) =>
-  li([
+  li({
+    [ATTRIBUTE_FAIL]: !testResult,
+  }, [
     code(`[${statePrefix(testResult)}]`),
     ' ',
     markState(testResult, description),
@@ -209,7 +271,9 @@ const toListItem = ([description, testResult, assertion]) =>
   ]);
 
 const toSuiteItem = ([href, suite, [, errors]]) =>
-  li([
+  li({
+    [ATTRIBUTE_FAIL]: Boolean(errors),
+  }, [
     a({
       href,
       target: '_blank',
@@ -221,8 +285,55 @@ const toSuiteItem = ([href, suite, [, errors]]) =>
  * @param {Node} contextNode
  * @param {string} literal
  */
-function html(contextNode, children) {
+function main(contextNode, children) {
   purge(contextNode).appendChild(children);
+}
+
+/**
+ * @param {HTMLElement} element
+ * @returns {boolean}
+ */
+const isCheckbox = ({ nodeName, type }) => (
+  (nodeName === 'INPUT')
+  && (type === 'checkbox')
+);
+
+/**
+ * @param {HTMLElement} node
+ * @returns {boolean}
+ */
+function getStatus(node, stats) {
+  const [, , errors] = stats;
+  const result = Boolean(errors);
+
+  if (!result) {
+    node.classList.add(CLASS_SHOW_TESTS);
+  }
+
+  return result;
+}
+
+/**
+ * @param {HTMLElement} node
+ */
+function setEvent(node) {
+  function onClick({
+    target,
+  }) {
+    if (isCheckbox(target)) {
+      node.classList.toggle(`show-${target.name}`);
+    }
+  }
+
+  node.addEventListener('click', onClick);
+}
+
+/**
+ * @param {HTMLElement} node
+ */
+function bootstrap(node) {
+  setEvent(node);
+  main(node, p(STATUS_BUSY));
 }
 
 /**
@@ -241,15 +352,41 @@ function writeFactory(node, basePath) {
         ...tail,
       ])
       .map(toSuiteItem);
+    const status = getStatus(node, stats);
 
-    html(node, createFragment([
+    main(node, createFragment([
       h1(REPORT_LABEL),
-      p(summary(stats)),
-      ol(resultList),
+      div([
+        p(summary(stats)),
+        div([
+          'Show all: ',
+          label([
+            input({
+              checked: !status,
+              name: 'tests',
+              type: 'checkbox',
+            }),
+            ' ',
+            'tests',
+          ]),
+          ' ',
+          label([
+            input({
+              name: 'assertions',
+              type: 'checkbox',
+            }),
+            ' ',
+            'assertions',
+          ]),
+        ]),
+      ]),
+      ol({
+        [ATTRIBUTE_FAIL]: status,
+      }, resultList),
     ]));
   }
 
-  html(node, p(STATUS_BUSY));
+  bootstrap(node);
 
   return write;
 }
@@ -257,6 +394,13 @@ function writeFactory(node, basePath) {
 //#endregion
 
 //#region DOM getters
+
+const TEST_REPORT_SELECTOR = 'main[itemscope]';
+const TEST_PATH_SELECTOR = ':scope > meta[itemprop="path"]';
+const TEST_DATA_SELECTOR = ':scope > meta[itemprop="test"]';
+const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
+const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;
+const TEST_FILE_POSTFIX = '.test.js';
 
 /**
  * @param {string} selector

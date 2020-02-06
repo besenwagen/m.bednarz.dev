@@ -8,6 +8,8 @@ export {
   toFragment,
 };
 
+import { callOrNothingAtAll } from '../utilities.js';
+
 /* global document */
 
 const { from, isArray } = Array;
@@ -70,6 +72,27 @@ function setStyle(element, style) {
   return element;
 }
 
+function setBooleanAttribute(element, name) {
+  element.setAttribute(name, '');
+
+  return element;
+}
+
+function setAttribute(element, name, value) {
+  if (typeof value === 'boolean') {
+    callOrNothingAtAll(value, [
+      setBooleanAttribute, [
+        element,
+        name,
+      ],
+    ]);
+  } else {
+    element.setAttribute(name, value);
+  }
+
+  return element;
+}
+
 /**
  *
  * @param {HTMLElement} element
@@ -78,7 +101,7 @@ function setStyle(element, style) {
  */
 function setAttributes(element, attributes) {
   for (const [key, value] of entries(attributes)) {
-    element.setAttribute(key, value);
+    setAttribute(element, key, value);
   }
 
   return element;

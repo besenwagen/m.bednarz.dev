@@ -199,10 +199,10 @@ function assertionToYaml(name, result, [actual, expected]) {
  * @returns {Array}
  */
 function suiteToYaml(suite) {
-  function toLines(accumulator, [description, result, assertion]) {
-    accumulator.push(...assertionToYaml(description, result, assertion));
+  function toLines(buffer, [description, result, assertion]) {
+    buffer.push(...assertionToYaml(description, result, assertion));
 
-    return accumulator;
+    return buffer;
   }
 
   return suite.reduce(toLines, []);

@@ -164,8 +164,8 @@ test(isPrimitive)
   ('number is true', isPrimitive(0))
   ('true is true', isPrimitive(true))
   ('false is true', isPrimitive(false))
-  ('null is true', isPrimitive(undefined))
-  ('undefined is true', isPrimitive(null))
+  ('undefined is true', isPrimitive(undefined))
+  ('null is true', isPrimitive(null))
   ('symbol is true', isPrimitive(Symbol('foobar')))
   ;
 
