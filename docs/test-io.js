@@ -14,7 +14,7 @@ export {
 const { isArray } = Array;
 const { entries, fromEntries } = Object;
 
-// ## Input
+// #region Input
 
 const INITIAL_COUNT = 0;
 const TOTAL_INDEX = 0;
@@ -45,11 +45,6 @@ function printSummary(modules, tests, errors) {
   console.info(`  modules: ${modules}`);
   console.info(`  tests: ${tests}`);
   console.info(`  failed: ${errors}`);
-}
-
-function printReport(result) {
-  console.info('report:');
-  console.info(yamlify(result));
 }
 
 /**
@@ -102,9 +97,11 @@ function load(queue) {
     .then(withStats);
 }
 
-// ## Output
+// #endregion
 
-// ### Object
+// #region Output
+
+// #region Object
 
 function toFailureObject(failure) {
   const toObject = keyValuePair => fromEntries([keyValuePair]);
@@ -138,7 +135,9 @@ const toSuite = ([key, value]) =>
 const objectify = result =>
   fromEntries(result.map(toSuite));
 
-// ### YAML
+// #endregion
+
+// #region YAML
 
 /**
  * noop placeholder
@@ -149,19 +148,37 @@ function indent(value) {
   return value;
 }
 
+/**
+ * @param {string} string
+ * @returns {string}
+ */
 const escapeDoubleQuotes = string =>
   string
     .replace(/\\([\s\S])|(")/g, '\\$1$2');
 
+/**
+ * @param {*}
+ * @returns {string}
+ */
 function jsonEscape(value) {
   return `"${escapeDoubleQuotes(String(value))}"`;
 }
 
+/**
+ * @param {*} key
+ * @param {*} value
+ * @returns {Array}
+ */
 const caseToYaml = (key, value) => [
   indent(`      ${key}:`),
   indent(`        ${typeof value}: ${jsonEscape(value)}`),
 ];
 
+/**
+ * @param {string} name
+ * @param {boolean} result
+ * @param {Array} assertion
+ */
 function assertionToYaml(name, result, [actual, expected]) {
   const toCase = tuple => caseToYaml(...tuple);
   const toCaseList = (accumulator, value) => [
@@ -177,6 +194,10 @@ function assertionToYaml(name, result, [actual, expected]) {
   return [indent(`    ${jsonEscape(name)}:`), ...caseList];
 }
 
+/**
+ * @param {Array} suite
+ * @returns {Array}
+ */
 function suiteToYaml(suite) {
   function toLines(accumulator, [description, result, assertion]) {
     accumulator.push(...assertionToYaml(description, result, assertion));
@@ -187,6 +208,10 @@ function suiteToYaml(suite) {
   return suite.reduce(toLines, []);
 }
 
+/**
+ * @param {Array} result
+ * @returns {string}
+ */
 function yamlify(result) {
   const buffer = [];
 
@@ -196,3 +221,15 @@ function yamlify(result) {
 
   return buffer.join('\n');
 }
+
+/**
+ * @param {Array} result
+ */
+function printReport(result) {
+  console.info('report:');
+  console.info(yamlify(result));
+}
+
+// #endregion
+
+// #endregion
