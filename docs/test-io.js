@@ -14,7 +14,7 @@ export {
 const { isArray } = Array;
 const { entries, fromEntries } = Object;
 
-// #region Input
+//#region Input
 
 const INITIAL_COUNT = 0;
 const TOTAL_INDEX = 0;
@@ -97,11 +97,11 @@ function load(queue) {
     .then(withStats);
 }
 
-// #endregion
+//#endregion
 
-// #region Output
+//#region Output
 
-// #region Object
+//#region Object
 
 function toFailureObject(failure) {
   const toObject = keyValuePair => fromEntries([keyValuePair]);
@@ -135,9 +135,9 @@ const toSuite = ([key, value]) =>
 const objectify = result =>
   fromEntries(result.map(toSuite));
 
-// #endregion
+//#endregion
 
-// #region YAML
+//#region YAML
 
 /**
  * noop placeholder
@@ -249,6 +249,6 @@ function printReport(result) {
   console.info(yamlify(result));
 }
 
-// #endregion
+//#endregion
 
-// #endregion
+//#endregion

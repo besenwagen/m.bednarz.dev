@@ -1,17 +1,21 @@
 export {
   result,
   suite,
+
+  // private
+  forceUrl,
 };
 
 const { isArray } = Array;
 
-const registry = new WeakMap();
 const testPrimitiveExpression = /^(?:string|number|boolean)$/;
 const PREFIX_INVALID = 'Invalid test case:';
-const PATH_OFFSET = 1;
 const ORDERED_PAIR_LENGTH = 2;
 
 //#region module identifier
+
+const BASE_URL = 'https://localhost/';
+const PATH_OFFSET = 1;
 
 /**
  * Get the current working directory for removing it
@@ -71,6 +75,23 @@ const isImportMeta = value => (
   && (typeof value.url === 'string')
 );
 
+function forceUrl(value) {
+  const {
+    pathname,
+    protocol,
+  } = new URL(value, BASE_URL);
+
+  if (!/^(?:https|file):$/.test(protocol)) {
+    throw new Error(
+      `Expected 'https:' or 'file:' protocol, got '${protocol}'`
+    );
+  }
+
+  console.info(pathname);
+
+  return normalizePath(pathname);
+}
+
 /**
  * @param {Object|string} value
  * @returns {string}
@@ -80,7 +101,7 @@ function overloadIdentifier(value) {
     return getRelativePath(value.url);
   }
 
-  return value;
+  return forceUrl(value);
 }
 
 //#endregion
@@ -280,6 +301,8 @@ function overloadPromise(value) {
 }
 
 //#endregion
+
+const registry = new WeakMap();
 
 //#region test suite
 

@@ -1,4 +1,7 @@
-import { result, suite } from './test.js'
+import {
+  result, suite,
+  forceUrl,
+} from './test.js'
 
 const test = suite(import.meta)
 
@@ -66,3 +69,37 @@ test
 
       return result(localTest).then(onTestResolved)
     })
+
+test(forceUrl)
+  ('absolute URL', [
+    forceUrl('https://example.org/foo/bar.js'),
+    'foo/bar.js',
+  ])
+  ('absolute path', [
+    forceUrl('/foo/bar.js'),
+    'foo/bar.js',
+  ])
+  ('relative path', [
+    forceUrl('foo/bar.js'),
+    'foo/bar.js',
+  ])
+  ('valid URL', () => {
+    try {
+      forceUrl('https://example.org foo/bar.js');
+    } catch (error) {
+      return [
+        error.constructor.name,
+        'TypeError',
+      ];
+    }
+  })
+  ('no http', () => {
+    try {
+      forceUrl('http://example.org/foo/bar.js');
+    } catch ({ message }) {
+      return [
+        message,
+        "Expected 'https:' or 'file:' protocol, got 'http:'",
+      ];
+    }
+  })

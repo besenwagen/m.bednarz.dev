@@ -24,11 +24,7 @@ test(toFragment)
 
 {
   const test_elementFactory = test(elementFactory)
-  const {
-    a,
-    div,
-    span,
-  } = elementFactory(['div', 'a', 'span'])
+  const { a } = elementFactory(['a'])
 
   {
     const link = a({
