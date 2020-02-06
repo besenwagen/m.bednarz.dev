@@ -15,8 +15,10 @@ test(jsonEscape)
   ])
   ;
 
-test(yamlify)
-  ('quotes all test case descriptions and values', [
+const test_yamlify = test(yamlify);
+
+test_yamlify
+  ('quotes all test case descriptions', [
     yamlify([
       ['moduleIdentifier', [
         ['test1', true, [true, true]],
@@ -26,8 +28,25 @@ test(yamlify)
       '  moduleIdentifier:',
       '    "test1":',
       '      actual:',
-      '        boolean: "true"',
+      '        boolean: true',
       '      expected:',
-      '        boolean: "true"',
+      '        boolean: true',
+    ].join('\n'),
+  ]);
+
+test_yamlify
+  ('quotes assertion string values', [
+    yamlify([
+      ['moduleIdentifier', [
+        ['test1', true, ['foo "and" bar', 'foo "and" bar']],
+      ]],
+    ]),
+    [
+      '  moduleIdentifier:',
+      '    "test1":',
+      '      actual:',
+      '        string: "foo \\"and\\" bar"',
+      '      expected:',
+      '        string: "foo \\"and\\" bar"',
     ].join('\n'),
   ]);

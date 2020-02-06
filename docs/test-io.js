@@ -164,6 +164,14 @@ function jsonEscape(value) {
   return `"${escapeDoubleQuotes(String(value))}"`;
 }
 
+function escapeAssertionValue(value) {
+  if (typeof value === 'string') {
+    return `"${escapeDoubleQuotes(value)}"`;
+  }
+
+  return value;
+}
+
 /**
  * @param {*} key
  * @param {*} value
@@ -171,7 +179,7 @@ function jsonEscape(value) {
  */
 const caseToYaml = (key, value) => [
   indent(`      ${key}:`),
-  indent(`        ${typeof value}: ${jsonEscape(value)}`),
+  indent(`        ${typeof value}: ${escapeAssertionValue(value)}`),
 ];
 
 /**

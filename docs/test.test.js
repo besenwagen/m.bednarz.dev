@@ -53,7 +53,7 @@ test
 test
   ('description is sanitized',
     () => {
-      const localTest = suite('#SELFTEST');
+      const localTest = suite('SELFTEST');
 
       localTest(`   foo
          bar   \t   \n       baz
