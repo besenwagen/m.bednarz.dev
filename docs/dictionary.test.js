@@ -1,9 +1,9 @@
-import { result, suite } from './test.js';
-import { dictionary } from './dictionary.js';
+import { result, suite } from './test.js'
+import { dictionary } from './dictionary.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 test
   ('the stringTag of a dictionary is Dictionary', [
@@ -12,16 +12,16 @@ test
       .toString
       .call(dictionary({})),
     '[object Dictionary]',
-  ]);
+  ])
 
 test
   ('a dictionary has no constructor', [
     dictionary({}).constructor,
     undefined,
-  ]);
+  ])
 
 test
   ('a dictionary has no prototype', [
     dictionary({}).prototype,
     undefined,
-  ]);
+  ])

@@ -36,6 +36,13 @@ html {
   overflow-y: scroll;
 }
 
+body {
+  margin: 0;
+  padding: 2em;
+  color: #000;
+  background: #eee;
+}
+
 main {
   --color-action: #00f;
   border: 1px solid #333;

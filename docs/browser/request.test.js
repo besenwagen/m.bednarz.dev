@@ -1,9 +1,9 @@
-import { result, suite } from '../test.js';
-import { json } from './request.js';
+import { result, suite } from '../test.js'
+import { json } from './request.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 test(json)
   ('get GitHub API overview',
@@ -13,8 +13,7 @@ test(json)
         'https://api.github.com/authorizations',
       ])
       .catch(error => {
-        console.error(error);
+        console.error(error)
 
-        return false;
+        return false
       }))
-  ;

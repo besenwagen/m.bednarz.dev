@@ -1,9 +1,9 @@
-import { result, suite } from './test.js';
-import { normalize, serialize } from './data.js';
+import { result, suite } from './test.js'
+import { normalize, serialize } from './data.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 // JSON primitives
 
@@ -13,7 +13,6 @@ test(normalize)
   ('true', normalize(true))
   ('false', [normalize(false), false])
   ('null', [normalize(null), null])
-  ;
 
 // JSON structures
 
@@ -36,4 +35,3 @@ test(serialize)
     }),
     '{"a":[{"c":7,"x":"foo"},false],"n":null,"z":42}',
   ])
-  ;

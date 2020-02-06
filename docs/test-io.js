@@ -156,17 +156,28 @@ const escapeDoubleQuotes = string =>
   string
     .replace(/\\([\s\S])|(")/g, '\\$1$2');
 
+function doubleQuote(value) {
+  const match = /^"(.*)"|\\"(.*)\\"$/.exec(value);
+
+  if (match) {
+    const [, quoted, stripped] = match;
+
+    return `"${(quoted || stripped)}"`;
+  }
+
+  return `"${value}"`;
+}
+
 /**
  * @param {*}
  * @returns {string}
  */
-function jsonEscape(value) {
-  return `"${escapeDoubleQuotes(String(value))}"`;
-}
+const jsonEscape = value =>
+  doubleQuote(escapeDoubleQuotes(String(value)));
 
 function escapeAssertionValue(value) {
   if (typeof value === 'string') {
-    return `"${escapeDoubleQuotes(value)}"`;
+    return jsonEscape(value.replace(/\n/gm, '\\n'));
   }
 
   return value;

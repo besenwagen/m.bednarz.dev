@@ -1,13 +1,13 @@
-import { result, suite } from './test.js';
-import { callOrNothingAtAll } from './utilities.js';
+import { result, suite } from './test.js'
+import { callOrNothingAtAll } from './utilities.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 {
-  const test_callOrNothingAtAll = test(callOrNothingAtAll);
-  const increment = n => n + 1;
+  const test_callOrNothingAtAll = test(callOrNothingAtAll)
+  const increment = n => n + 1
 
   test_callOrNothingAtAll
     ('falsy -> undefined', [
@@ -16,14 +16,14 @@ export default result(test);
           41,
         ]]),
       undefined,
-    ]);
+    ])
 
   test_callOrNothingAtAll
     ('truthy -> return value', [
-      callOrNothingAtAll('0', [
+      callOrNothingAtAll(1, [
         increment, [
           41,
         ]]),
       42,
-    ]);
+    ])
 }
