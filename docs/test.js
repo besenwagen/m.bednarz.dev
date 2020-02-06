@@ -39,28 +39,18 @@ function getEnvironmentPrefix() {
 
 /**
  * @param {string} pathname
+ * @param {string} protocol
  * @returns {string}
  */
-function normalizePath(pathname) {
-  const prefix = getEnvironmentPrefix();
-
-  if (prefix) {
+function normalizePath(pathname, protocol) {
+  if (protocol === 'file:') {
+    const prefix = getEnvironmentPrefix();
     const prefixExpression = new RegExp(`^${prefix}/`);
 
     return pathname.replace(prefixExpression, '');
   }
 
   return pathname.substring(PATH_OFFSET);
-}
-
-/**
- * @param {string} url
- * @returns {string}
- */
-function getRelativePath(url) {
-  const { pathname } = new URL(url);
-
-  return normalizePath(pathname);
 }
 
 /**
@@ -75,6 +65,18 @@ const isImportMeta = value => (
   && (typeof value.url === 'string')
 );
 
+/**
+ * @param {Object|string} value
+ * @returns {string}
+ */
+function overloadIdentifier(value) {
+  if (isImportMeta(value)) {
+    return value.url;
+  }
+
+  return value;
+}
+
 function forceUrl(value) {
   const {
     pathname,
@@ -87,20 +89,15 @@ function forceUrl(value) {
     );
   }
 
-  return normalizePath(pathname);
+  return normalizePath(pathname, protocol);
 }
 
 /**
  * @param {Object|string} value
  * @returns {string}
  */
-function overloadIdentifier(value) {
-  if (isImportMeta(value)) {
-    return getRelativePath(value.url);
-  }
-
-  return forceUrl(value);
-}
+const getModuleUrl = value =>
+  forceUrl(overloadIdentifier(value));
 
 //#endregion
 
@@ -282,11 +279,26 @@ function overloadCallable(value) {
 }
 
 /**
+ * @param {*} value
+ * @returns {*}
+ */
+function forceValue(value) {
+  if ((value === undefined) || (value === null)) {
+    throw new TypeError([
+      PREFIX_INVALID,
+      'null or undefined',
+    ].join(' '));
+  }
+
+  return value;
+}
+
+/**
  * @param {boolean|function|Array|Promise} value
  * @returns {Promise<boolean>}
  */
 function overloadPromise(value) {
-  const normalized = overloadCallable(value);
+  const normalized = forceValue(overloadCallable(value));
 
   if (normalized.constructor === Promise) {
     return normalized
@@ -336,7 +348,7 @@ const resultFactory = (id, label) =>
  * @returns {Array}
  */
 function testFactory(id) {
-  const identifier = overloadIdentifier(id);
+  const identifier = getModuleUrl(id);
   const queue = [];
 
   /**

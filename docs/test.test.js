@@ -83,19 +83,12 @@ test(forceUrl)
     forceUrl('foo/bar.js'),
     'foo/bar.js',
   ])
-  ('valid URL', () => {
-    try {
-      forceUrl('https://example.org foo/bar.js');
-    } catch (error) {
-      return [
-        error.constructor.name,
-        'TypeError',
-      ];
-    }
-  })
-  ('no http', () => {
+
+  ('only https: or file:', () => {
     try {
       forceUrl('http://example.org/foo/bar.js');
+
+      return false;
     } catch ({ message }) {
       return [
         message,
