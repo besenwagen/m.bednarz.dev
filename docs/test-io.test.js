@@ -2,7 +2,7 @@ import { result, suite } from './test.js';
 import {
   jsonEscape,
   yamlify,
- } from './test-io.js';
+} from './test-io.js';
 
 const test = suite(import.meta);
 
@@ -19,7 +19,7 @@ test(yamlify)
   ('quotes all test case descriptions and values', [
     yamlify([
       ['moduleIdentifier', [
-        ['test1', [true, true]],
+        ['test1', true, [true, true]],
       ]],
     ]),
     [

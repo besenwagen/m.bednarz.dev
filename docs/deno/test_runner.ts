@@ -107,7 +107,7 @@ function onTestSuitesResolved([
 ]) {
   const exitCode = getExitCode(errors);
 
-    if (!SILENT) {
+  if (!SILENT) {
     printReport(result);
   }
 

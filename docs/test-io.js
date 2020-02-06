@@ -67,7 +67,7 @@ const reduceCount = (subTotal, value) =>
  */
 const reduceIndex = (array, index) =>
   array
-    .map(([,, stats]) => stats[index])
+    .map(([, , stats]) => stats[index])
     .reduce(reduceCount, INITIAL_COUNT);
 
 /**
@@ -162,7 +162,7 @@ const caseToYaml = (key, value) => [
   indent(`        ${typeof value}: ${jsonEscape(value)}`),
 ];
 
-function assertionToYaml(name, [actual, expected]) {
+function assertionToYaml(name, result, [actual, expected]) {
   const toCase = tuple => caseToYaml(...tuple);
   const toCaseList = (accumulator, value) => [
     ...accumulator,
@@ -178,8 +178,8 @@ function assertionToYaml(name, [actual, expected]) {
 }
 
 function suiteToYaml(suite) {
-  function toLines(accumulator, [description, assertion]) {
-    accumulator.push(...assertionToYaml(description, assertion));
+  function toLines(accumulator, [description, result, assertion]) {
+    accumulator.push(...assertionToYaml(description, result, assertion));
 
     return accumulator;
   }
