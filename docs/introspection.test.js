@@ -85,7 +85,7 @@ test(isFunction)
   ('arrow function', isFunction(() => null))
 
 test(isInstanceOf)
-  ('data instance', isInstanceOf(new Date(), Date))
+  ('error instance', isInstanceOf(new TypeError(), Error))
 
 test(isInteger)
   ('integer', isInteger(42))

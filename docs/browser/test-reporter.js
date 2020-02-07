@@ -38,22 +38,19 @@ html {
 
 body {
   margin: 0;
-  padding: 2em;
-  color: #000;
-  background: #eee;
+  padding: 0 3em 1.5em;
 }
 
 main {
   --color-action: #00f;
-  border: 1px solid #333;
-  padding: 1.5em 3em;
+  padding: 0;
   color: #333;
   background: #fff;
   font: 1rem/1.5 Georgia, serif;
 }
 
-pre,
-code {
+main pre,
+main code {
   font: 1rem/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
 }
 
@@ -65,25 +62,47 @@ main h1 {
   font-size: 1.5rem;
 }
 
-main h1 + div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+main input[type="checkbox"] {
+  margin: 0;
+  vertical-align: middle;
 }
 
-main ol {
-  margin: 0.75rem 0;
+main input[type="checkbox"]:not([disabled]):hover {
+  cursor: pointer;
+}
+
+main input[type="checkbox"]:focus {
+  outline: 2px solid var(--color-action);
+}
+
+main section {
+  display: list-item;
+  list-style-type: number;
+  margin: 0.75em 0;
+  font-weight: bold;
+}
+
+main section h2 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1em;
+}
+
+main section h2 a {
+  font-weight: bold;
+}
+
+main section ol {
+  margin: 0;
   padding: 0;
+  font-weight: normal;
 }
 
-main li > ol {
-  margin-top: 0rem;
-  margin-left: 2em;
+main strong {
+  color: #900;
 }
 
 main a em {
-  font-weight: bold;
-  font-style: normal;
 }
 
 main em {
@@ -91,66 +110,42 @@ main em {
   background: transparent;
 }
 
-main ul em {
-  color: #000;
-  background: transparent;
-  font-style: normal;
-}
-
-main strong,
-main li li strong {
-  color: #a00;
-  background: transparent;
-}
-
-table {
+main table {
   margin: 0.5rem 0;
   border-collapse: collapse;
 }
 
-th {
+main th {
   text-align: right;
   font-weight: normal;
 }
 
-th, td {
-  border: 1px solid #000;
+main th,
+main td {
+  border: 1px solid #999;
   padding: 0.1rem 0.75rem;
   vertical-align: top;
 }
 
-td pre {
+main td pre {
   margin: 0;
 }
 
-label:hover {
-  cursor: pointer;
-}
-
-input[type="checkbox"] {
-  margin: 0;
-  vertical-align: middle;
-}
-
-input[type="checkbox"]:focus {
-  outline: 2px solid var(--color-action);
-}
-
-a[href] {
+main a[href] {
   border-bottom: 1px solid #090;
   color: var(--color-action);
   background: transparent;
   text-decoration: none;
 }
 
-a[href]:hover {
+main a[href]:hover {
   border-color: var(--color-action);
   border-width: 2px;
   color: #000;
   background: transparent;
 }
 
-a[href]:focus {
+main a[href]:focus {
   outline: 2px solid var(--color-action);
   outline-offset: 0.2rem;
   border-color: transparent;
@@ -158,42 +153,43 @@ a[href]:focus {
   background: transparent;
 }
 
-main:not(.${CLASS_SHOW_TESTS}) ol ol {
+main:not(.${CLASS_SHOW_TESTS})
+  ol:not([${ATTRIBUTE_FAIL}]),
+main:not(.${CLASS_SHOW_TESTS})
+  ol[${ATTRIBUTE_FAIL}] li:not([${ATTRIBUTE_FAIL}]),
+main:not(.${CLASS_SHOW_ASSERTIONS})
+  li:not([${ATTRIBUTE_FAIL}]) table
+{
   display: none;
 }
 
-main:not(.${CLASS_SHOW_ASSERTIONS}) ol table {
-  display: none;
-}
+@media only screen and (min-width: 768px) {
+  body {
+    padding: 2em;
+    color: #000;
+    background: #eee;
+  }
 
-main ol[${ATTRIBUTE_FAIL}] li:not([${ATTRIBUTE_FAIL}]) ol,
-main ol[${ATTRIBUTE_FAIL}] ol li:not([${ATTRIBUTE_FAIL}]) {
-  display: none;
-}
+  main {
+    border: 1px solid #333;
+    padding: 1.5em 3em;
+  }
 
-main.${CLASS_SHOW_TESTS} ol ol {
-  display: block ! important;
-}
-
-main.${CLASS_SHOW_TESTS} li li {
-  display: list-item ! important;
-}
-
-main ol li[${ATTRIBUTE_FAIL}] ol {
-  display: block;
-}
-
-main ol li[${ATTRIBUTE_FAIL}] li[${ATTRIBUTE_FAIL}] table {
-  display: table;
+  main h1 + div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 `;
 
 //#endregion
 
+const TEST_TAIL_EXPRESSION = /\.test\.js$/;
 const STATUS_BUSY = 'Running tests...';
 const REPORT_LABEL = 'Unit test report';
-const PASS = 'passed';
-const FAIL = 'failed';
+const PASS = 'pass';
+const FAIL = 'fail';
 
 /**
  * @param {boolean} state
@@ -215,17 +211,19 @@ const displayUrl = url =>
   url.replace(/^\//, '');
 
 const {
-  h1, p, ol, li,
-  strong, em, a,
-  table, tr, th, td,
-  div, code, pre,
+  header, h1, p, div,
+  section, h2, ol, li,
   label, input,
+  strong, em, a,
+  table, thead, tbody, tr, th, td,
+  code, pre,
 } = elementFactory([
-  'h1', 'p', 'ol', 'li',
-  'strong', 'em', 'a',
-  'table', 'tr', 'th', 'td',
-  'div', 'code', 'pre',
+  'header', 'h1', 'p', 'div',
+  'section', 'h2', 'ol', 'li',
   'label', 'input',
+  'strong', 'em', 'a',
+  'table', 'thead', 'tbody', 'tr', 'th', 'td',
+  'code', 'pre',
 ]);
 
 /**
@@ -236,13 +234,13 @@ function summary([modules, tests, errors]) {
   if (errors) {
     return [
       strong(`${errors} of ${tests} tests failing`),
-      ` in ${modules} modules.`,
+      ` in ${modules} test suites.`,
     ];
   }
 
   return [
-    em(`${tests} tests`),
-    ` in ${modules} modules.`,
+    em(`${tests} tests passing`),
+    ` in ${modules} test suites.`,
   ];
 }
 
@@ -250,7 +248,9 @@ const markState = (state, children) =>
   createElement(stateMarker(state), children);
 
 const assertionTable = (testResult, [actual, expected]) =>
-  table([
+  table({
+    class: 'assertion',
+  }, [
     tr([
       th({
         scope: 'row',
@@ -267,25 +267,54 @@ const assertionTable = (testResult, [actual, expected]) =>
     ]),
   ]);
 
-const toListItem = ([description, testResult, assertion]) =>
-  li({
-    [ATTRIBUTE_FAIL]: !testResult,
-  }, [
-    code(`[${statePrefix(testResult)}]`),
-    ' ',
-    markState(testResult, description),
-    assertionTable(testResult, assertion),
-  ]);
+function getHref(href) {
+  const { pathname, search } = window.location;
 
-const toSuiteItem = ([href, suite, [, errors]]) =>
-  li({
-    [ATTRIBUTE_FAIL]: Boolean(errors),
+  if (href === [pathname, search].join('')) {
+    return false;
+  }
+
+  return href;
+}
+
+const moduleLink = ({ name, href }, testResult) =>
+  a({
+    href: getHref(href),
+  }, markState(testResult, name));
+
+const sourceLink = href => a({
+  href,
+  target: '_blank',
+}, displayUrl(href));
+
+const toSuiteItem = ([
+  moduleData,
+  testUrl,
+  moduleUrl,
+  suite,
+  suiteResult,
+], index) =>
+  section({
+    [ATTRIBUTE_FAIL]: !suiteResult,
   }, [
-    a({
-      href,
-      target: '_blank',
-    }, markState(!errors, displayUrl(href))),
-    ol(suite.map(toListItem)),
+    h2([
+      moduleLink(moduleData, suiteResult),
+      ` module (${suite.length} tests)`,
+    ]),
+    ol({
+      [ATTRIBUTE_FAIL]: !suiteResult,
+    }, suite
+      .map(function row([description, testResult, assertion], subIndex) {
+        return li({
+          [ATTRIBUTE_FAIL]: !testResult,
+        }, [
+          code(`[${statePrefix(testResult)}]`),
+          ' ',
+          markState(testResult, description),
+          assertionTable(testResult, assertion),
+        ]);
+      })
+    ),
   ]);
 
 /**
@@ -313,10 +342,6 @@ function getStatus(node, stats) {
   const [, , errors] = stats;
   const result = Boolean(errors);
 
-  if (!result) {
-    node.classList.add(CLASS_SHOW_TESTS);
-  }
-
   return result;
 }
 
@@ -333,6 +358,48 @@ function setEvent(node) {
   }
 
   node.addEventListener('click', onClick);
+}
+
+const fromTestUrl = (url, substitute = '') =>
+  url
+    .replace(TEST_TAIL_EXPRESSION, substitute);
+
+/**
+ * @param {string} url
+ * @returns {string}
+ */
+const getSourceUrl = url =>
+  fromTestUrl(url, '.js');
+
+function moduleData(url) {
+  const { pathname } = window.location;
+  const name = fromTestUrl(url);
+
+  return {
+    name,
+    href: `${pathname}?m=${name}`,
+  };
+}
+
+/**
+ * @param {Array} result
+ * @param {string} basePath
+ * @returns {Array}
+ */
+function getResultList(result, basePath) {
+  const resolve = relativePath => [
+    basePath,
+    relativePath,
+  ].join('');
+  const toItem = ([testUrl, testSuite, [, errorCount]]) => [
+    moduleData(testUrl),
+    resolve(testUrl),
+    resolve(getSourceUrl(testUrl)),
+    testSuite,
+    !errorCount,
+  ];
+
+  return result.map(toItem);
 }
 
 /**
@@ -353,41 +420,46 @@ function writeFactory(node, basePath) {
    * @param {Array} tuple
    */
   function write([result, stats]) {
-    const resultList = result
-      .map(([href, ...tail]) => [
-        [basePath, href].join(''),
-        ...tail,
-      ])
+    const resultList = getResultList(result, basePath)
       .map(toSuiteItem);
     const status = getStatus(node, stats);
 
+    const checked = (resultList.length === 1);
+
+    if (checked) {
+      node.classList.add(CLASS_SHOW_TESTS);
+    }
+
     main(node, createFragment([
-      h1(REPORT_LABEL),
-      div([
-        p(summary(stats)),
+      header([
+        h1(REPORT_LABEL),
         div([
-          'Show all: ',
-          label([
-            input({
-              checked: !status,
-              name: 'tests',
-              type: 'checkbox',
-            }),
+          p(summary(stats)),
+          div([
+            'Show all: ',
+            label([
+              input({
+                checked,
+                disabled: checked,
+                name: 'tests',
+                type: 'checkbox',
+              }),
+              ' ',
+              'tests',
+            ]),
             ' ',
-            'tests',
-          ]),
-          ' ',
-          label([
-            input({
-              name: 'assertions',
-              type: 'checkbox',
-            }),
-            ' ',
-            'assertions',
+            label([
+              input({
+                name: 'assertions',
+                type: 'checkbox',
+              }),
+              ' ',
+              'assertions',
+            ]),
           ]),
         ]),
       ]),
-      ol({
+      div({
         [ATTRIBUTE_FAIL]: status,
       }, resultList),
     ]));
