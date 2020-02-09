@@ -38,15 +38,21 @@ html {
 
 body {
   margin: 0;
-  padding: 0 3em 1.5em;
+  padding: 0;
 }
 
 main {
-  --color-action: #00f;
-  padding: 0;
+  --color-action: #00c;
+  padding: 0 0 1.5rem 0;
   color: #333;
   background: #fff;
   font: 1rem/1.5 Georgia, serif;
+}
+
+main > header > div,
+main > div,
+main > p {
+  padding: 0 1rem 0 4rem;
 }
 
 main pre,
@@ -57,7 +63,7 @@ main code {
 main h1 {
   margin: 0;
   border-bottom: 1px solid #000;
-  padding: 0.75rem 0;
+  padding: 0.75rem 1rem 0.75rem 4rem;
   font-weight: normal;
   font-size: 1.5rem;
 }
@@ -76,10 +82,7 @@ main input[type="checkbox"]:focus {
 }
 
 main section {
-  display: list-item;
-  list-style-type: number;
   margin: 0.75em 0;
-  font-weight: bold;
 }
 
 main section h2 {
@@ -88,21 +91,33 @@ main section h2 {
   font-size: 1em;
 }
 
-main section h2 a {
+main section h2 a em {
   font-weight: bold;
 }
 
 main section ol {
+  list-style: none;
   margin: 0;
   padding: 0;
   font-weight: normal;
 }
 
-main strong {
-  color: #900;
+h2 > span:first-child {
+  font-weight: bold;
 }
 
-main a em {
+h2 > span:first-child,
+li > span:first-child {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 3em;
+  margin-left: -3em;
+  padding: 0 0.2em 0;
+  text-align: right;
+}
+
+main strong {
+  color: #900;
 }
 
 main em {
@@ -164,15 +179,13 @@ main:not(.${CLASS_SHOW_ASSERTIONS})
 }
 
 @media only screen and (min-width: 768px) {
-  body {
-    padding: 2em;
-    color: #000;
-    background: #eee;
+  main h1 {
+    margin: 0 4rem;
+    padding: 0.75rem 0;
   }
 
-  main {
-    border: 1px solid #333;
-    padding: 1.5em 3em;
+  main > header > div {
+    padding-right: 4rem;
   }
 
   main h1 + div {
@@ -182,11 +195,10 @@ main:not(.${CLASS_SHOW_ASSERTIONS})
   }
 }
 `;
-
 //#endregion
 
 const TEST_TAIL_EXPRESSION = /\.test\.js$/;
-const STATUS_BUSY = 'Running tests...';
+const STATUS_BUSY = 'Running tests…';
 const REPORT_LABEL = 'Unit test report';
 const PASS = 'pass';
 const FAIL = 'fail';
@@ -215,15 +227,15 @@ const {
   section, h2, ol, li,
   label, input,
   strong, em, a,
-  table, thead, tbody, tr, th, td,
-  code, pre,
+  table, tr, th, td,
+  code, pre, span,
 } = elementFactory([
   'header', 'h1', 'p', 'div',
   'section', 'h2', 'ol', 'li',
   'label', 'input',
   'strong', 'em', 'a',
-  'table', 'thead', 'tbody', 'tr', 'th', 'td',
-  'code', 'pre',
+  'table', 'tr', 'th', 'td',
+  'code', 'pre', 'span',
 ]);
 
 /**
@@ -287,27 +299,47 @@ const sourceLink = href => a({
   target: '_blank',
 }, displayUrl(href));
 
+const increment = number => number + Number(true);
+
+const marker = counters =>
+  span(counters.map(increment).join('.'));
+
 const toSuiteItem = ([
   moduleData,
   testUrl,
   moduleUrl,
   suite,
   suiteResult,
-], index) =>
+], sectionIndex) =>
   section({
     [ATTRIBUTE_FAIL]: !suiteResult,
   }, [
     h2([
+      marker([sectionIndex]),
+      ' ',
       moduleLink(moduleData, suiteResult),
       ` module (${suite.length} tests)`,
     ]),
+    //    p([
+    //      'Source files: ',
+    //      sourceLink(testUrl),
+    //      ' ',
+    //      sourceLink(moduleUrl),
+    //      '.',
+    //    ]),
     ol({
       [ATTRIBUTE_FAIL]: !suiteResult,
     }, suite
-      .map(function row([description, testResult, assertion], subIndex) {
+      .map(function row([
+        description,
+        testResult,
+        assertion,
+      ], listIndex) {
         return li({
           [ATTRIBUTE_FAIL]: !testResult,
         }, [
+          marker([sectionIndex, listIndex]),
+          ' ',
           code(`[${statePrefix(testResult)}]`),
           ' ',
           markState(testResult, description),
@@ -371,7 +403,7 @@ const fromTestUrl = (url, substitute = '') =>
 const getSourceUrl = url =>
   fromTestUrl(url, '.js');
 
-function moduleData(url) {
+function getModuleData(url) {
   const { pathname } = window.location;
   const name = fromTestUrl(url);
 
@@ -392,7 +424,7 @@ function getResultList(result, basePath) {
     relativePath,
   ].join('');
   const toItem = ([testUrl, testSuite, [, errorCount]]) => [
-    moduleData(testUrl),
+    getModuleData(testUrl),
     resolve(testUrl),
     resolve(getSourceUrl(testUrl)),
     testSuite,
@@ -422,9 +454,7 @@ function writeFactory(node, basePath) {
   function write([result, stats]) {
     const resultList = getResultList(result, basePath)
       .map(toSuiteItem);
-    const status = getStatus(node, stats);
-
-    const checked = (resultList.length === 1);
+    const checked = (resultList.length === Number(true));
 
     if (checked) {
       node.classList.add(CLASS_SHOW_TESTS);
@@ -460,7 +490,7 @@ function writeFactory(node, basePath) {
         ]),
       ]),
       div({
-        [ATTRIBUTE_FAIL]: status,
+        [ATTRIBUTE_FAIL]: getStatus(node, stats),
       }, resultList),
     ]));
   }
