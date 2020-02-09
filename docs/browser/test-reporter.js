@@ -94,7 +94,9 @@ main section > h2 {
 }
 
 main.${CLASS_SHOW_TESTS} section > h2,
-main.${CLASS_SHOW_SOURCE_LINKS} section > h2 {
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2,
+main.${CLASS_SHOW_TESTS} section > h2 > span:first-child,
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > span:first-child {
   font-weight: bold;
 }
 
@@ -112,10 +114,6 @@ main section ol {
   margin: 0;
   padding: 0;
   font-weight: normal;
-}
-
-main h2 > span:first-child {
-  font-weight: bold;
 }
 
 main h2 > span:first-child,
