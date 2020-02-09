@@ -28,9 +28,11 @@ const { from } = Array;
 
 const CLASS_SHOW_TESTS = 'show-tests';
 const CLASS_SHOW_ASSERTIONS = 'show-assertions';
+const CLASS_SHOW_SOURCE_LINKS = 'show-source-links';
 const ATTRIBUTE_FAIL = 'data-fail';
 
 //#region CSS literal
+
 const style = `
 html {
   overflow-y: scroll;
@@ -85,10 +87,20 @@ main section {
   margin: 0.75em 0;
 }
 
-main section h2 {
+main section > h2 {
   margin: 0;
   font-weight: normal;
   font-size: 1em;
+}
+
+main.${CLASS_SHOW_TESTS} section > h2,
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2 {
+  font-weight: bold;
+}
+
+main section > ul {
+  margin: 0;
+  padding: 0;
 }
 
 main section h2 a em {
@@ -102,17 +114,17 @@ main section ol {
   font-weight: normal;
 }
 
-h2 > span:first-child {
+main h2 > span:first-child {
   font-weight: bold;
 }
 
-h2 > span:first-child,
-li > span:first-child {
+main h2 > span:first-child,
+main li > span:first-child {
   display: inline-block;
   box-sizing: border-box;
   width: 3em;
   margin-left: -3em;
-  padding: 0 0.2em 0;
+  padding: 0 0.5em 0 0;
   text-align: right;
 }
 
@@ -173,7 +185,9 @@ main:not(.${CLASS_SHOW_TESTS})
 main:not(.${CLASS_SHOW_TESTS})
   ol[${ATTRIBUTE_FAIL}] li:not([${ATTRIBUTE_FAIL}]),
 main:not(.${CLASS_SHOW_ASSERTIONS})
-  li:not([${ATTRIBUTE_FAIL}]) table
+  li:not([${ATTRIBUTE_FAIL}]) table,
+main:not(.${CLASS_SHOW_SOURCE_LINKS})
+  section > h2 + ul
 {
   display: none;
 }
@@ -195,6 +209,7 @@ main:not(.${CLASS_SHOW_ASSERTIONS})
   }
 }
 `;
+
 //#endregion
 
 const TEST_TAIL_EXPRESSION = /\.test\.js$/;
@@ -224,14 +239,14 @@ const displayUrl = url =>
 
 const {
   header, h1, p, div,
-  section, h2, ol, li,
+  section, h2, ol, ul, li,
   label, input,
   strong, em, a,
   table, tr, th, td,
   code, pre, span,
 } = elementFactory([
   'header', 'h1', 'p', 'div',
-  'section', 'h2', 'ol', 'li',
+  'section', 'h2', 'ol', 'ul', 'li',
   'label', 'input',
   'strong', 'em', 'a',
   'table', 'tr', 'th', 'td',
@@ -260,20 +275,14 @@ const markState = (state, children) =>
   createElement(stateMarker(state), children);
 
 const assertionTable = (testResult, [actual, expected]) =>
-  table({
-    class: 'assertion',
-  }, [
+  table({ class: 'assertion' }, [
     tr([
-      th({
-        scope: 'row',
-      }, 'actual'),
+      th({ scope: 'row' }, 'actual'),
       td(code(typeof actual)),
       td(pre(code(markState(testResult, String(actual))))),
     ]),
     tr([
-      th({
-        scope: 'row',
-      }, 'expected'),
+      th({ scope: 'row' }, 'expected'),
       td(code(typeof expected)),
       td(pre(code(String(expected)))),
     ]),
@@ -302,7 +311,10 @@ const sourceLink = href => a({
 const increment = number => number + Number(true);
 
 const marker = counters =>
-  span(counters.map(increment).join('.'));
+  span([
+    counters.map(increment).join('.'),
+    ' ',
+  ]);
 
 const toSuiteItem = ([
   moduleData,
@@ -316,17 +328,19 @@ const toSuiteItem = ([
   }, [
     h2([
       marker([sectionIndex]),
-      ' ',
       moduleLink(moduleData, suiteResult),
-      ` module (${suite.length} tests)`,
+      ` test suite (${suite.length} tests)`,
     ]),
-    //    p([
-    //      'Source files: ',
-    //      sourceLink(testUrl),
-    //      ' ',
-    //      sourceLink(moduleUrl),
-    //      '.',
-    //    ]),
+    ul([
+      li([
+        'test module: ',
+        sourceLink(testUrl),
+      ]),
+      li([
+        'module under test: ',
+        sourceLink(moduleUrl),
+      ]),
+    ]),
     ol({
       [ATTRIBUTE_FAIL]: !suiteResult,
     }, suite
@@ -339,7 +353,6 @@ const toSuiteItem = ([
           [ATTRIBUTE_FAIL]: !testResult,
         }, [
           marker([sectionIndex, listIndex]),
-          ' ',
           code(`[${statePrefix(testResult)}]`),
           ' ',
           markState(testResult, description),
@@ -485,6 +498,15 @@ function writeFactory(node, basePath) {
               }),
               ' ',
               'assertions',
+            ]),
+            ' ',
+            label([
+              input({
+                name: 'source-links',
+                type: 'checkbox',
+              }),
+              ' ',
+              'source links',
             ]),
           ]),
         ]),
