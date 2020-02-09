@@ -82,6 +82,11 @@ function withStats(result) {
   ];
 }
 
+function onError(error) {
+  console.error(error);
+  throw error;
+}
+
 /**
  * @param {Array} queue
  *   a list of test module URLs
@@ -94,7 +99,8 @@ function load(queue) {
 
   return Promise
     .all(modules)
-    .then(withStats);
+    .then(withStats)
+    .catch(onError);
 }
 
 //#endregion

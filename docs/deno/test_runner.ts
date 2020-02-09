@@ -115,7 +115,6 @@ function onTestSuitesResolved([
 }
 
 function onError({ message }: Error) {
-  console.error(message);
   exit(EXIT_CODE_ERROR);
 }
 

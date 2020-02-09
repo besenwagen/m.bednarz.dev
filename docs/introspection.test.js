@@ -1,7 +1,7 @@
 import { result, suite } from './test.js'
 import {
   getConstructorName, getFunctionName,
-  getStringTag, isArray, isBigInt,
+  getStringTag, isArray,
   isBoolean, isComplex, isDate,
   isDataPrimitive, isDefined, isError,
   isFalse, isFinite, isFunction,
@@ -35,11 +35,6 @@ test(getStringTag)
 test(isArray)
   ('array literal', isArray([]))
   ('Array instance', isArray(new Array()))
-
-test(isBigInt)
-  ('bigint literal', isBigInt(42n))
-  ('BigInt call', isBigInt(BigInt(42)))
-  ('not number', [isBigInt(42), false])
 
 test(isBoolean)
   ('true', isBoolean(true))

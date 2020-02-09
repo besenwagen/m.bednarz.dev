@@ -457,6 +457,7 @@ const result = testFunction =>
   Promise
     .resolve(registry.get(testFunction))
     .then(destructure)
-    .then(restructure);
+    .then(restructure)
+    .catch(error => error);
 
 //#endregion

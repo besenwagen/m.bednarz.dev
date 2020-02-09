@@ -96,7 +96,9 @@ main section > h2 {
 main.${CLASS_SHOW_TESTS} section > h2,
 main.${CLASS_SHOW_SOURCE_LINKS} section > h2,
 main.${CLASS_SHOW_TESTS} section > h2 > span:first-child,
-main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > span:first-child {
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > span:first-child,
+main.${CLASS_SHOW_TESTS} section > h2 > code,
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > code {
   font-weight: bold;
 }
 
@@ -326,6 +328,8 @@ const toSuiteItem = ([
   }, [
     h2([
       marker([sectionIndex]),
+      code(`[${statePrefix(suiteResult)}]`),
+      ' ',
       moduleLink(moduleData, suiteResult),
       ` test suite (${suite.length} tests)`,
     ]),
@@ -646,6 +650,13 @@ function setStyle() {
   document.head.appendChild(styleElement);
 }
 
+function onError(error) {
+  main(
+    document.body.querySelector('main'),
+    p(`Fatal error: ${error.message}`)
+  );
+}
+
 /**
  * @param {Node} node
  * @param {string} basePath
@@ -656,7 +667,8 @@ function overload(node, basePath) {
   const write = writeFactory(node, basePath);
 
   return load(modules)
-    .then(write);
+    .then(write)
+    .catch(onError);
 }
 
 /**

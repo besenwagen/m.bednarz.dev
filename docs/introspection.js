@@ -3,7 +3,6 @@ export {
   getFunctionName,
   getStringTag,
   isArray,
-  isBigInt,
   isBoolean,
   isComplex,
   isDate,
@@ -56,13 +55,6 @@ const getFunctionName = ({ name }) =>
  */
 const getConstructorName = ({ constructor }) =>
   getFunctionName(constructor);
-
-/**
- * @param {*} value
- * @returns {boolean}
- */
-const isBigInt = value =>
-  (typeof value === 'bigint');
 
 /**
  * @param {*} value
