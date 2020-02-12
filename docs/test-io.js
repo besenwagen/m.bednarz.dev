@@ -45,7 +45,7 @@ function printSummary(modules, tests, errors) {
   console.info('summary:');
   console.info(`  modules: ${modules}`);
   console.info(`  tests: ${tests}`);
-  console.info(`  failed: ${errors}`);
+  console.info(`  failing: ${errors}`);
 }
 
 /**
