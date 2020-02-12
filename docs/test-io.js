@@ -3,7 +3,6 @@
 export {
   failing,
   load,
-  objectify,
   printReport,
   printSummary,
 
@@ -135,42 +134,6 @@ function toFailing(accumulator, [suiteName, tests]) {
  */
 const failing = result =>
   result.reduce(toFailing, []);
-
-//#region Object
-
-function toFailureObject(failure) {
-  const toObject = keyValuePair => fromEntries([keyValuePair]);
-  const [actual, expected] = failure.map(toObject);
-
-  return {
-    actual,
-    expected,
-  };
-}
-
-function diagnose([key, value, failure]) {
-  if (isArray(failure)) {
-    return [key, toFailureObject(failure)];
-  }
-
-  return [key, value];
-}
-
-/**
- * @param {Array} entry
- * @returns {Array}
- */
-const toSuite = ([key, value]) =>
-  [key, fromEntries(value.map(diagnose))];
-
-/**
- * @param {Array} result
- * @returns {Object}
- */
-const objectify = result =>
-  fromEntries(result.map(toSuite));
-
-//#endregion
 
 //#region YAML
 
