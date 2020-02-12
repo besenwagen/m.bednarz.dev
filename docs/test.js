@@ -148,12 +148,11 @@ function formatMultilineAssertion(prefix, value, length) {
 
 /**
  * @param {string} label
- * @param {string} value
+ * @param {Array} value
  * @param {number} length
  * @returns {string}
  */
-function formatAssertion(label, value, length) {
-  const type = getAssertionType(value);
+function formatAssertion(label, [type, value], length) {
   const prefix = newLine(`| ${label} (${type}):`);
 
   if (type === 'string' && value.includes('\n')) {
@@ -176,22 +175,51 @@ const formatAssertionTuple = (actual, expected, length) => [
 ].join('');
 
 /**
+ * @param {*} value
+ * @returns {Array}
+ */
+const toTypeTuple = value => [
+  getAssertionType(value),
+  value,
+];
+
+/**
+ * @param {*} actual
+ * @param {*} expected
+ * @returns {Array}
+ */
+const getTypeTuple = (actual, expected) =>
+  [actual, expected].map(toTypeTuple);
+
+/**
+ * @param {string} subject
+ * @param {Array} typedAssertion
+ * @returns {string}
+ */
+function getAssertionMessage(subject, typedAssertion) {
+  const pipe = '| ';
+  const width = (subject.length + pipe.length);
+
+  return [
+    newLine(drawTheLine('=', width)),
+    newLine(pipe),
+    subject,
+    formatAssertionTuple(...typedAssertion, width),
+  ].join('');
+}
+
+/**
  * @param {Array} assertion
  * @param {string} subject
  */
 function assert([actual, expected], subject) {
-  const pipe = '| ';
-  const width = (subject.length + pipe.length);
   const testResult = (actual === expected);
+  const typeTuple = getTypeTuple(actual, expected);
+  const message = getAssertionMessage(subject, typeTuple);
 
-  console.assert(testResult, [
-    newLine(drawTheLine('=', width)),
-    newLine(pipe),
-    subject,
-    formatAssertionTuple(actual, expected, width),
-  ].join(''));
+  console.assert(testResult, message);
 
-  return testResult;
+  return [testResult, typeTuple];
 }
 
 //#endregion
@@ -338,9 +366,8 @@ const resultFactory = (id, label) =>
    */
   function onTestResultResolved(assertion) {
     const message = [id, label].join(' > ');
-    const result = assert(assertion, message);
 
-    return [label, result, assertion];
+    return [label, ...assert(assertion, message)];
   };
 
 /**

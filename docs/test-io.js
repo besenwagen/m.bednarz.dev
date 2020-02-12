@@ -190,13 +190,13 @@ function escapeAssertionValue(value) {
 }
 
 /**
- * @param {*} key
- * @param {*} value
+ * @param {string} key
+ * @param {Array} value
  * @returns {Array}
  */
-const caseToYaml = (key, value) => [
+const caseToYaml = (key, [type, value]) => [
   indent(`      ${key}:`),
-  indent(`        ${typeof value}: ${escapeAssertionValue(value)}`),
+  indent(`        ${type}: ${escapeAssertionValue(value)}`),
 ];
 
 /**

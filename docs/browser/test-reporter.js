@@ -193,6 +193,11 @@ main:not(.${CLASS_SHOW_SOURCE_LINKS})
 }
 
 @media only screen and (min-width: 768px) {
+  body {
+    display: flex;
+    justify-content: center;
+  }
+
   main h1 {
     margin: 0 4rem;
     padding: 0.75rem 0;
@@ -206,6 +211,10 @@ main:not(.${CLASS_SHOW_SOURCE_LINKS})
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  main h1 + div > p {
+    margin-right: 0.5rem;
   }
 }
 `;
@@ -274,16 +283,19 @@ function summary([modules, tests, errors]) {
 const markState = (state, children) =>
   createElement(stateMarker(state), children);
 
-const assertionTable = (testResult, [actual, expected]) =>
+const assertionTable = (testResult, [
+  [typeActual, actual],
+  [typeExpected, expected],
+]) =>
   table({ class: 'assertion' }, [
     tr([
       th({ scope: 'row' }, 'actual'),
-      td(code(typeof actual)),
+      td(code(typeActual)),
       td(pre(code(markState(testResult, String(actual))))),
     ]),
     tr([
       th({ scope: 'row' }, 'expected'),
-      td(code(typeof expected)),
+      td(code(typeExpected)),
       td(pre(code(String(expected)))),
     ]),
   ]);
@@ -652,7 +664,7 @@ function setStyle() {
 
 function onError(error) {
   main(
-    document.body.querySelector('main'),
+    document.body.querySelector(TEST_REPORT_SELECTOR),
     p(`Fatal error: ${error.message}`)
   );
 }

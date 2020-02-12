@@ -26,7 +26,10 @@ test_yamlify
   ('quotes all test case descriptions', [
     yamlify([
       ['moduleIdentifier', [
-        ['testDescription', true, [true, true]],
+        ['testDescription', true, [
+          ['boolean', true],
+          ['boolean', true],
+        ]],
       ]],
     ]),
     [
@@ -43,7 +46,10 @@ test_yamlify
   ('quotes assertion string values', [
     yamlify([
       ['moduleIdentifier', [
-        ['testDescription', true, ['foo "and" bar', 'foo "and" bar']],
+        ['testDescription', true, [
+          ['string', 'foo "and" bar'],
+          ['string', 'foo "and" bar'],
+        ]],
       ]],
     ]),
     [
@@ -61,12 +67,12 @@ test_yamlify
     yamlify([
       ['moduleIdentifier', [
         ['testDescription', true, [
-          `foo
+          ['string', `foo
 
-bar`,
-          `foo
+bar`],
+          ['string', `foo
 
-bar`,
+bar`],
         ]],
       ]],
     ]),
