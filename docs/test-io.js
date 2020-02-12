@@ -1,6 +1,7 @@
 // Environment agnostic test automation I/O utilities
 
 export {
+  failing,
   load,
   objectify,
   printReport,
@@ -106,6 +107,34 @@ function load(queue) {
 //#endregion
 
 //#region Output
+
+/**
+ * @param {Array} tuple
+ * @returns {boolean}
+ */
+const isFailing = ([, value]) => !value;
+
+/**
+ * @param {Array} accumulator
+ * @param {Array} tuple
+ * @returns {Array}
+ */
+function toFailing(accumulator, [suiteName, tests]) {
+  const failing = tests.filter(isFailing);
+
+  if (failing.length) {
+    accumulator.push([suiteName, failing]);
+  }
+
+  return accumulator;
+}
+
+/**
+ * @param {Array} result
+ * @returns {Array}
+ */
+const failing = result =>
+  result.reduce(toFailing, []);
 
 //#region Object
 
@@ -248,10 +277,11 @@ function yamlify(result) {
 }
 
 /**
+ * @param {string} label
  * @param {Array} result
  */
-function printReport(result) {
-  console.info('report:');
+function printReport(label, result) {
+  console.info(`${label}:`);
   console.info(yamlify(result));
 }
 

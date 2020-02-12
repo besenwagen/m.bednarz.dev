@@ -98,7 +98,9 @@ main.${CLASS_SHOW_SOURCE_LINKS} section > h2,
 main.${CLASS_SHOW_TESTS} section > h2 > span:first-child,
 main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > span:first-child,
 main.${CLASS_SHOW_TESTS} section > h2 > code,
-main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > code {
+main.${CLASS_SHOW_SOURCE_LINKS} section > h2 > code,
+main section[${ATTRIBUTE_FAIL}] h2,
+main section[${ATTRIBUTE_FAIL}] h2 > code {
   font-weight: bold;
 }
 
@@ -156,6 +158,14 @@ main td {
 
 main td pre {
   margin: 0;
+}
+
+main td pre code {
+  background: #eee;
+}
+
+main td pre code strong {
+  background: #ff9;
 }
 
 main a[href] {

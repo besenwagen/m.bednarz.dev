@@ -31,7 +31,7 @@
 /* global Deno */
 
 import { walk } from 'https://deno.land/std/fs/mod.ts';
-import { load, printReport } from '../test-io.js';
+import { failing, load, printReport } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
 
@@ -107,8 +107,10 @@ function onTestSuitesResolved([
 ]) {
   const exitCode = getExitCode(errors);
 
-  if (!SILENT) {
-    printReport(result);
+  if (errors) {
+    printReport('failing', failing(result));
+  } else if (!SILENT) {
+    printReport('report', result);
   }
 
   exit(exitCode);

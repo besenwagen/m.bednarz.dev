@@ -116,50 +116,41 @@ function getAssertionType(value) {
 }
 
 /**
- * @param {string} token
- * @param {number} count
- * @returns {string}
- */
-const drawTheLine = (token, count) =>
-  token.repeat(count);
-
-/**
  * @param {string} value
  * @returns {string}
  */
-const newLine = value => `\n${value}`;
+const errorLine = (value = '') => `\n! ${value}`;
 
 /**
  * @param {string} prefix
  * @param {string} value
- * @param {number} length
  * @returns {string}
  */
-function formatMultilineAssertion(prefix, value, length) {
-  const pipe = '|';
-  const tail = value.replace(/\n/gm, newLine(pipe));
-  const line = newLine([
-    pipe,
-    drawTheLine('-', (length - pipe.length)),
-  ].join(''));
+function formatMultilineAssertion(prefix, value) {
+  const INDENT = 11;
+  const indent = ' '.repeat(INDENT);
+  const newLine = `\\${errorLine(`${indent}\\`)}`;
+  const tail = value.replace(/\n/gm, newLine);
 
-  return [prefix, line, newLine(`|${tail}`)].join('');
+  return [
+    errorLine(prefix),
+    errorLine(`${indent}\\${tail}\\`),
+  ].join('');
 }
 
 /**
  * @param {string} label
  * @param {Array} value
- * @param {number} length
  * @returns {string}
  */
-function formatAssertion(label, [type, value], length) {
-  const prefix = newLine(`| ${label} (${type}):`);
+function formatAssertion(label, [type, value]) {
+  const prefix = `${label} (${type})`;
 
   if (type === 'string' && value.includes('\n')) {
-    return formatMultilineAssertion(prefix, value, length);
+    return formatMultilineAssertion(prefix, value);
   }
 
-  return `${prefix} ${value}`;
+  return errorLine(`${prefix} \\${value}\\`);
 }
 
 /**
@@ -167,11 +158,8 @@ function formatAssertion(label, [type, value], length) {
  * @returns {string}
  */
 const formatAssertionTuple = (actual, expected, length) => [
-  newLine(drawTheLine('=', length)),
-  formatAssertion('  actual', actual, length),
-  newLine(drawTheLine('~', length)),
-  formatAssertion('expected', expected, length),
-  newLine(drawTheLine('=', length)),
+  formatAssertion('  [actual]', actual, length),
+  formatAssertion('[expected]', expected, length),
 ].join('');
 
 /**
@@ -196,26 +184,23 @@ const getTypeTuple = (actual, expected) =>
  * @param {Array} typedAssertion
  * @returns {string}
  */
-function getAssertionMessage(subject, typedAssertion) {
-  const pipe = '| ';
-  const width = (subject.length + pipe.length);
-
-  return [
-    newLine(drawTheLine('=', width)),
-    newLine(pipe),
-    subject,
-    formatAssertionTuple(...typedAssertion, width),
-  ].join('');
-}
+const getAssertionMessage = ([
+  suiteName,
+  testName,
+], typedAssertion) => [
+  errorLine(`   [suite] ${suiteName}`),
+  errorLine(`    [test] ${testName}`),
+  formatAssertionTuple(...typedAssertion),
+].join('');
 
 /**
  * @param {Array} assertion
  * @param {string} subject
  */
-function assert([actual, expected], subject) {
+function assert([actual, expected], contextTuple) {
   const testResult = (actual === expected);
   const typeTuple = getTypeTuple(actual, expected);
-  const message = getAssertionMessage(subject, typeTuple);
+  const message = getAssertionMessage(contextTuple, typeTuple);
 
   console.assert(testResult, message);
 
@@ -365,9 +350,10 @@ const resultFactory = (id, label) =>
    * @returns {Array}
    */
   function onTestResultResolved(assertion) {
-    const message = [id, label].join(' > ');
-
-    return [label, ...assert(assertion, message)];
+    return [
+      label,
+      ...assert(assertion, [id, label]),
+    ];
   };
 
 /**
