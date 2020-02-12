@@ -119,7 +119,7 @@ function getAssertionType(value) {
  * @param {string} value
  * @returns {string}
  */
-const errorLine = (value = '') => `\n! ${value}`;
+const errorLine = value => `\n! ${value}`;
 
 /**
  * @param {string} prefix
