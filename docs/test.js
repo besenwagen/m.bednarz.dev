@@ -4,6 +4,7 @@ export {
 
   // private
   forceUrl,
+  formatAssertionTuple,
 };
 
 const { isArray } = Array;
@@ -167,12 +168,13 @@ function formatAssertion(label, [type, value]) {
 }
 
 /**
- * @param {Array} [info]
+ * @param {*} actual
+ * @param {*} expected
  * @returns {string}
  */
-const formatAssertionTuple = (actual, expected, length) => [
-  formatAssertion('  [actual]', actual, length),
-  formatAssertion('[expected]', expected, length),
+const formatAssertionTuple = (actual, expected) => [
+  formatAssertion('  [actual]', actual),
+  formatAssertion('[expected]', expected),
 ].join('');
 
 /**

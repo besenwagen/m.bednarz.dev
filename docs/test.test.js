@@ -1,6 +1,7 @@
 import {
   result, suite,
   forceUrl,
+  formatAssertionTuple,
 } from './test.js'
 
 const test = suite(import.meta)
@@ -96,3 +97,63 @@ test(forceUrl)
       ];
     }
   })
+
+test(formatAssertionTuple)
+  ('null', [
+    formatAssertionTuple(
+      ['null', null],
+      ['null', null],
+    ),
+    `
+!   [actual] (null) null
+! [expected] (null) null`,
+  ])
+  ('undefined', [
+    formatAssertionTuple(
+      ['undefined', undefined],
+      ['undefined', undefined],
+    ),
+    `
+!   [actual] (undefined) undefined
+! [expected] (undefined) undefined`,
+  ])
+  ('true', [
+    formatAssertionTuple(
+      ['boolean', true],
+      ['boolean', true],
+    ),
+    `
+!   [actual] (boolean) true
+! [expected] (boolean) true`,
+  ])
+  ('false', [
+    formatAssertionTuple(
+      ['boolean', false],
+      ['boolean', false],
+    ),
+    `
+!   [actual] (boolean) false
+! [expected] (boolean) false`,
+  ])
+  ('string', [
+    formatAssertionTuple(
+      ['string', 'foo bar'],
+      ['string', 'foo bar'],
+    ),
+    `
+!   [actual] (string) \\foo bar\\
+! [expected] (string) \\foo bar\\`,
+  ])
+  ('nultiline string', [
+    formatAssertionTuple(
+      ['string', 'foo \n bar'],
+      ['string', 'foo \n bar'],
+    ),
+    `
+!   [actual] (string)
+!            \\foo \\
+!            \\ bar\\
+! [expected] (string)
+!            \\foo \\
+!            \\ bar\\`,
+  ])
