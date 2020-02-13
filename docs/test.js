@@ -139,18 +139,31 @@ function formatMultilineAssertion(prefix, value) {
 }
 
 /**
+ * @param {string} prefix
+ * @param {string} value
+ * @returns {string}
+ */
+function formatStringAssertion(prefix, value) {
+  if (value.includes('\n')) {
+    return formatMultilineAssertion(prefix, value);
+  }
+
+  return errorLine(`${prefix} \\${value}\\`);
+}
+
+/**
  * @param {string} label
- * @param {Array} value
+ * @param {Array} typedAssertion
  * @returns {string}
  */
 function formatAssertion(label, [type, value]) {
   const prefix = `${label} (${type})`;
 
-  if (type === 'string' && value.includes('\n')) {
-    return formatMultilineAssertion(prefix, value);
+  if (type === 'string') {
+    return formatStringAssertion(prefix, value);
   }
 
-  return errorLine(`${prefix} \\${value}\\`);
+  return errorLine(`${prefix} ${value}`);
 }
 
 /**
