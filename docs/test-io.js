@@ -11,8 +11,7 @@ export {
   yamlify,
 };
 
-const { isArray } = Array;
-const { entries, fromEntries } = Object;
+const { entries } = Object;
 
 //#region Input
 
