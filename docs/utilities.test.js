@@ -1,5 +1,5 @@
 import { result, suite } from './test.js'
-import { callOrNothingAtAll } from './utilities.js'
+import { callOrNothingAtAll, unique } from './utilities.js'
 
 const test = suite(import.meta)
 
@@ -27,3 +27,7 @@ export default result(test)
       42,
     ])
 }
+
+test(unique)
+  ('identifier', (unique() !== unique()))
+  ('length', [unique(6).length, 6])
