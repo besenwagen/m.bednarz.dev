@@ -1,4 +1,5 @@
 export {
+  asArray,
   callOrNothingAtAll,
   unique,
 };
@@ -13,6 +14,18 @@ function callOrNothingAtAll(condition, [handler, argumentList]) {
     return handler(...argumentList);
   }
 }
+
+const { isArray } = Array;
+
+function asArray(value) {
+  if (isArray(value)) {
+    return value;
+  }
+
+  return [value];
+}
+
+//#region unique
 
 const { random, round } = Math;
 
@@ -38,3 +51,5 @@ const unique = (length = DEFAULT_LENGTH) => add(
 )
   .toString(ID_BASE)
   .substring(FIRST_INDEX, length);
+
+//#endregion

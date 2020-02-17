@@ -1,5 +1,9 @@
 import { result, suite } from './test.js'
-import { callOrNothingAtAll, unique } from './utilities.js'
+import {
+  asArray,
+  callOrNothingAtAll,
+  unique,
+} from './utilities.js'
 
 const test = suite(import.meta)
 
@@ -28,6 +32,21 @@ export default result(test)
     ])
 }
 
+test(asArray)
+  ('return the argument if it is an array', () => {
+    const myArray = []
+
+    return (asArray(myArray) === myArray)
+  })
+  ('wrap other values in an array', () => {
+    const myValue = 'Hello, world!'
+
+    return [
+      JSON.stringify(asArray(myValue)),
+      '["Hello, world!"]',
+    ]
+  })
+
 test(unique)
-  ('identifier', (unique() !== unique()))
-  ('length', [unique(6).length, 6])
+  ('create identifier', (unique() !== unique()))
+  ('limit length', [unique(6).length, 6])
