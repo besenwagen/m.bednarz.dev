@@ -21,7 +21,7 @@ const {
   },
 } = Object;
 
-// #region get
+//#region get
 
 /**
  * @param {array} selector
@@ -31,9 +31,9 @@ const {
 const select = (selector, contextNode = document) =>
   from(contextNode.querySelectorAll(selector));
 
-// #endregion
+//#endregion
 
-// #region set
+//#region set
 
 /**
  * @param {Node} from
@@ -214,4 +214,4 @@ const elementFactory = types =>
         createElement(type, ...argumentList),
     ]));
 
-// #endregion
+//#endregion
