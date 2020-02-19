@@ -3,7 +3,7 @@ export {
   subscribe,
 };
 
-/* global document */
+/* global document CustomEvent */
 
 const { parse, stringify } = JSON;
 const context = document.createDocumentFragment();
