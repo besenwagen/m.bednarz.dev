@@ -27,7 +27,7 @@ function asArray(value) {
 
 //#region unique
 
-const { random, round } = Math;
+const { random } = Math;
 
 const INITIAL_SUM = 0;
 const FIRST_INDEX = 0;
@@ -46,8 +46,7 @@ const randomInteger = () =>
 
 const unique = (length = DEFAULT_LENGTH) => add(
   randomInteger(),
-  Date.now(),
-  round(performance.now()),
+  Date.now()
 )
   .toString(ID_BASE)
   .substring(FIRST_INDEX, length);
