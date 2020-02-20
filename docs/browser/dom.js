@@ -2,6 +2,7 @@ export {
   createElement,
   createFragment,
   elementFactory,
+  getStyle,
   purge,
   select,
   setStyle,
@@ -10,7 +11,7 @@ export {
 
 import { callOrNothingAtAll } from '../utilities.js';
 
-/* global document */
+/* global window document */
 
 const { from, isArray } = Array;
 const {
@@ -30,6 +31,16 @@ const {
  */
 const select = (selector, contextNode = document) =>
   from(contextNode.querySelectorAll(selector));
+
+/**
+ * @param {HTMLElement} element
+ * @returns {Object}
+ */
+function getStyle(element) {
+  const style = window.getComputedStyle(element);
+
+  return style;
+}
 
 //#endregion
 
@@ -59,15 +70,24 @@ function toFragment(htmlLiteral) {
   return fragment;
 }
 
+function getCssText(style) {
+  if (style) {
+    return entries(style)
+      .filter(([, value]) => value)
+      .map(pair => pair.join(':'))
+      .join(';');
+  }
+
+  return '';
+}
+
 /**
  *
  * @param {HTMLElement} element
  * @param {Object} style
  */
 function setStyle(element, style) {
-  element.style.cssText = entries(style)
-    .map(pair => pair.join(':'))
-    .join(';');
+  element.style.cssText = getCssText(style);
 
   return element;
 }
@@ -86,6 +106,8 @@ function setAttribute(element, name, value) {
         name,
       ],
     ]);
+  } else if (name.startsWith('on')) {
+    element[name] = value;
   } else {
     element.setAttribute(name, value);
   }
