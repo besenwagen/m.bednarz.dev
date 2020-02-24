@@ -1,6 +1,7 @@
 export {
   asArray,
   callOrNothingAtAll,
+  concat,
   unique,
 };
 
@@ -24,6 +25,9 @@ function asArray(value) {
 
   return [value];
 }
+
+const concat = (...subStrings) =>
+  subStrings.join('');
 
 //#region unique
 
