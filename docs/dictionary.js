@@ -1,3 +1,7 @@
+export {
+  dictionary,
+};
+
 const {
   assign,
   create,
@@ -10,9 +14,6 @@ const stringTagDescriptor = {
   value: 'Dictionary',
 };
 
-/**
- * @returns {object}
- */
 const blueprint = () =>
   defineProperty(
     create(null),
@@ -20,11 +21,6 @@ const blueprint = () =>
     stringTagDescriptor
   );
 
-/**
- * @param {object} accumulator
- * @param {array} tuple key/value
- * @returns {object}
- */
 const toDescriptor = (accumulator, [key, value]) =>
   assign(accumulator, {
     [key]: {
@@ -33,11 +29,7 @@ const toDescriptor = (accumulator, [key, value]) =>
     },
   });
 
-/**
- * @param {object} descriptor
- * @returns {object}
- */
-export const dictionary = descriptor =>
+const dictionary = descriptor =>
   defineProperties(
     blueprint(),
     entries(descriptor)
