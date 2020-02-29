@@ -18,14 +18,7 @@ const ORDERED_PAIR_LENGTH = 2;
 const BASE_URL = 'https://localhost/';
 const PATH_OFFSET = 1;
 
-/**
- * Get the current working directory for removing it
- * from the file:// URL paths in Deno and Node.js.
- *
- * @todo Make this module completely environment agnostic.
- * @returns {string}
- */
-function getEnvironmentPrefix() {
+function getShellWorkingDirectory() {
   /* global Deno process */
   if (typeof Deno !== 'undefined') {
     return Deno.cwd();
@@ -38,14 +31,9 @@ function getEnvironmentPrefix() {
   return '';
 }
 
-/**
- * @param {string} pathname
- * @param {string} protocol
- * @returns {string}
- */
 function normalizePath(pathname, protocol) {
   if (protocol === 'file:') {
-    const prefix = getEnvironmentPrefix();
+    const prefix = getShellWorkingDirectory();
     const prefixExpression = new RegExp(`^${prefix}/`);
 
     return pathname.replace(prefixExpression, '');
@@ -54,10 +42,6 @@ function normalizePath(pathname, protocol) {
   return pathname.substring(PATH_OFFSET);
 }
 
-/**
- * @param {*} value
- * @returns {boolean}
- */
 const isImportMeta = value => (
   (Object
     .prototype
@@ -66,10 +50,6 @@ const isImportMeta = value => (
   && (typeof value.url === 'string')
 );
 
-/**
- * @param {Object|string} value
- * @returns {string}
- */
 function overloadIdentifier(value) {
   if (isImportMeta(value)) {
     return value.url;
@@ -93,10 +73,6 @@ function forceUrl(value) {
   return normalizePath(pathname, protocol);
 }
 
-/**
- * @param {Object|string} value
- * @returns {string}
- */
 const getModuleUrl = value =>
   forceUrl(overloadIdentifier(value));
 
@@ -104,10 +80,6 @@ const getModuleUrl = value =>
 
 //#region assertion
 
-/**
- * @param {Array} tuple
- * @returns {string}
- */
 function getAssertionType(value) {
   if (value === null) {
     return String(value);
@@ -116,17 +88,8 @@ function getAssertionType(value) {
   return typeof value;
 }
 
-/**
- * @param {string} value
- * @returns {string}
- */
 const errorLine = value => `\n! ${value}`;
 
-/**
- * @param {string} prefix
- * @param {string} value
- * @returns {string}
- */
 function formatMultilineAssertion(prefix, value) {
   const INDENT = 11;
   const indent = ' '.repeat(INDENT);
@@ -139,11 +102,6 @@ function formatMultilineAssertion(prefix, value) {
   ].join('');
 }
 
-/**
- * @param {string} prefix
- * @param {string} value
- * @returns {string}
- */
 function formatStringAssertion(prefix, value) {
   if (value.includes('\n')) {
     return formatMultilineAssertion(prefix, value);
@@ -152,11 +110,6 @@ function formatStringAssertion(prefix, value) {
   return errorLine(`${prefix} \\${value}\\`);
 }
 
-/**
- * @param {string} label
- * @param {Array} typedAssertion
- * @returns {string}
- */
 function formatAssertion(label, [type, value]) {
   const prefix = `${label} (${type})`;
 
@@ -167,38 +120,19 @@ function formatAssertion(label, [type, value]) {
   return errorLine(`${prefix} ${value}`);
 }
 
-/**
- * @param {*} actual
- * @param {*} expected
- * @returns {string}
- */
 const formatAssertionTuple = (actual, expected) => [
   formatAssertion('  [actual]', actual),
   formatAssertion('[expected]', expected),
 ].join('');
 
-/**
- * @param {*} value
- * @returns {Array}
- */
 const toTypeTuple = value => [
   getAssertionType(value),
   value,
 ];
 
-/**
- * @param {*} actual
- * @param {*} expected
- * @returns {Array}
- */
 const getTypeTuple = (actual, expected) =>
   [actual, expected].map(toTypeTuple);
 
-/**
- * @param {string} subject
- * @param {Array} typedAssertion
- * @returns {string}
- */
 const getAssertionMessage = ([
   suiteName,
   testName,
@@ -208,10 +142,6 @@ const getAssertionMessage = ([
   formatAssertionTuple(...typedAssertion),
 ].join('');
 
-/**
- * @param {Array} assertion
- * @param {string} subject
- */
 function assert([actual, expected], contextTuple) {
   const testResult = (actual === expected);
   const typeTuple = getTypeTuple(actual, expected);
@@ -226,10 +156,6 @@ function assert([actual, expected], contextTuple) {
 
 //#region test case
 
-/**
- * @param {*} value
- * @returns {boolean}
- */
 const isTestPrimitive = value => (
   testPrimitiveExpression.test(typeof value)
   || (value === null)
@@ -258,10 +184,6 @@ function forceTestPrimitives(orderedPair) {
   ].join(' '));
 }
 
-/**
- * @param {boolean} value
- * @returns {Array}
- */
 function forceBoolean(value) {
   if (typeof value === 'boolean') {
     return value;
@@ -273,19 +195,11 @@ function forceBoolean(value) {
   ].join(' '));
 }
 
-/**
- * @param {*} value
- * @returns {boolean}
- */
 const isOrderedPair = value => (
   isArray(value)
   && (value.length === ORDERED_PAIR_LENGTH)
 );
 
-/**
- * @param {boolean|Array} value
- * @returns {Array}
- */
 function overloadSync(value) {
   if (isOrderedPair(value)) {
     return forceTestPrimitives(value);
@@ -294,10 +208,6 @@ function overloadSync(value) {
   return [forceBoolean(value), true];
 }
 
-/**
- * @param {boolean|function|Array|Promise} value
- * @returns {boolean|Array|Promise}
- */
 function overloadCallable(value) {
   if (typeof value === 'function') {
     return value();
@@ -306,10 +216,6 @@ function overloadCallable(value) {
   return value;
 }
 
-/**
- * @param {*} value
- * @returns {*}
- */
 function forceValue(value) {
   if ((value === undefined) || (value === null)) {
     throw new TypeError([
@@ -321,10 +227,6 @@ function forceValue(value) {
   return value;
 }
 
-/**
- * @param {boolean|function|Array|Promise} value
- * @returns {Promise<boolean>}
- */
 function overloadPromise(value) {
   const normalized = forceValue(overloadCallable(value));
 
@@ -344,26 +246,12 @@ const registry = new WeakMap();
 
 //#region test suite
 
-/**
- * @param {string} value
- * @returns {string}
- */
 const sanitizeDescription = value =>
   value
     .replace(/\s+/gm, ' ')
     .trim();
 
-/**
- * @param {string} id
- * @param {string} label
- * @returns {function}
- */
 const resultFactory = (id, label) =>
-
-  /**
-   * @param {Array} assertion
-   * @returns {Array}
-   */
   function onTestResultResolved(assertion) {
     return [
       label,
@@ -371,19 +259,10 @@ const resultFactory = (id, label) =>
     ];
   };
 
-/**
- * @param {Object|string} id
- * @returns {Array}
- */
 function testFactory(id) {
   const identifier = getModuleUrl(id);
   const queue = [];
 
-  /**
-   * @param {string} description
-   * @param {boolean|function|Array|Promise} testCase
-   * @returns {function}
-   */
   function run(description, testCase) {
     const label = sanitizeDescription(description);
     const onResolved = resultFactory(identifier, label);
@@ -394,10 +273,6 @@ function testFactory(id) {
     return run;
   }
 
-  /**
-   * @param {function} functionUnderTest
-   * @returns {function}
-   */
   function scope(functionUnderTest) {
     const { name } = functionUnderTest;
 
@@ -415,10 +290,6 @@ function testFactory(id) {
   return [identifier, queue, run, scope];
 }
 
-/**
- * @param {Object|string} id
- * @returns {function}
- */
 function suite(id) {
   const [identifier, queue, run, scope] = testFactory(id);
 
@@ -441,11 +312,6 @@ function suite(id) {
 
 //#region default export handler
 
-/**
- * @param {number} total
- * @param {number} errors
- * @returns {string}
- */
 function getSummary(total, errors) {
   if (errors) {
     return `${errors} failed, ${total - errors} passed`;
@@ -454,18 +320,10 @@ function getSummary(total, errors) {
   return `${total} passed`;
 }
 
-/**
- * @param {Array} tuple
- * @returns {Promise}
- */
 const destructure = ([identifier, queue]) =>
   Promise
     .all([identifier, ...queue]);
 
-/**
- * @param {Array} testSuiteReport
- * @returns {Array}
- */
 function restructure([identifier, ...testSuite]) {
   const { length: total } = testSuite;
   const { length: errors } = testSuite
@@ -476,11 +334,6 @@ function restructure([identifier, ...testSuite]) {
   return [identifier, testSuite, [total, errors]];
 }
 
-/**
- * @param {function} testFunction
- *   the function returned by `suite`
- * @returns {Promise<Array>}
- */
 const result = testFunction =>
   Promise
     .resolve(registry.get(testFunction))
