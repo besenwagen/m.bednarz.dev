@@ -61,9 +61,6 @@ function apiFactory(iframe) {
   });
 }
 
-/**
- * @returns {Promise<Window>}
- */
 function sandbox() {
   const { body } = document;
   const iframe = createIframe();
@@ -81,10 +78,6 @@ function sandbox() {
   return new Promise(executor);
 }
 
-/**
- * @param {function} callback
- * @returns {*}
- */
 const run = callback =>
   sandbox()
     .then(function onIframeResolved({ destroy, ...rest }) {

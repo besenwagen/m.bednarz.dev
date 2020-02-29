@@ -13,10 +13,6 @@ import { unique } from '../utilities.js';
 const { from, isArray } = Array;
 const { assign } = Object;
 
-/**
- * @param {HTMLElement} element
- * @returns {HTMLElement}
- */
 function withId(element) {
   if (element.id) {
     return element;
@@ -27,10 +23,6 @@ function withId(element) {
   });
 }
 
-/**
- * @param {HTMLElement} element
- * @returns {string}
- */
 function forceId(element) {
   const { id } = element;
 
@@ -41,25 +33,13 @@ function forceId(element) {
   return withId(element).id;
 }
 
-/**
- * @param {HTMLElement} element
- * @returns {string}
- */
 const toId = element => forceId(element);
 
-/**
- * @param {HTMLElement} source
- * @returns {string}
- */
 const toTokenList = source =>
   source
     .map(toId)
     .join(' ');
 
-/**
- * @param {HTMLElement|HTMLElement[]} source
- * @returns {string}
- */
 function getValue(source) {
   if (isArray(source)) {
     return toTokenList(source);
@@ -68,12 +48,6 @@ function getValue(source) {
   return toId(source);
 }
 
-/**
- * @param {HTMLElement} target
- * @param {string} name
- * @param {HTMLElement|HTMLELement[]} source
- * @returns {HTMLElement}
- */
 function connectById(target, name, source) {
   const value = getValue(source);
 
@@ -82,19 +56,9 @@ function connectById(target, name, source) {
   return target;
 }
 
-/**
- * @param {HTMLElement} target
- * @param {HTMLElement} source
- * @returns {HTMLElement}
- */
 const labelWith = (target, source) =>
   connectById(target, 'aria-labelledby', source);
 
-/**
- * @param {HTMLElement} target
- * @param {HTMLElement} source
- * @returns {HTMLElement}
- */
 const describeWith = (target, source) =>
   connectById(target, 'aria-describedby', source);
 
@@ -142,10 +106,6 @@ function disableSubset(queue, filter) {
   return mutateQueue(subset, disableElement);
 }
 
-/**
- * @param {HTMLELement} [contextNode=document.body]
- * @returns {function}
- */
 function disable(contextNode = document.body) {
   const queue = from(contextNode.children);
 

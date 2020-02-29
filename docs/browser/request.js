@@ -7,12 +7,6 @@ export {
 
 const STATUS_OK = 200;
 
-/**
- * @param {string} type
- * @param {string} url
- * @param {object} [options]
- * @returns {Promise}
- */
 const request = (type, url, options) =>
   fetch(url, options)
     .then(function onResponse(response) {

@@ -24,18 +24,9 @@ const {
 
 //#region get
 
-/**
- * @param {array} selector
- * @param {Node} [contextNode=document]
- * @returns {Array}
- */
 const select = (selector, contextNode = document) =>
   from(contextNode.querySelectorAll(selector));
 
-/**
- * @param {HTMLElement} element
- * @returns {Object}
- */
 function getStyle(element) {
   const style = window.getComputedStyle(element);
 
@@ -46,20 +37,12 @@ function getStyle(element) {
 
 //#region set
 
-/**
- * @param {Node} from
- * @param {Node} to
- */
 function transfer(source, target) {
   while (source.firstChild) {
     target.appendChild(source.firstChild);
   }
 }
 
-/**
- * @param {string} htmlLiteral
- * @returns {DocumentFragment}
- */
 function toFragment(htmlLiteral) {
   const clipboard = document.createElement('DIV');
   const fragment = document.createDocumentFragment();
@@ -81,11 +64,6 @@ function getCssText(style) {
   return '';
 }
 
-/**
- *
- * @param {HTMLElement} element
- * @param {Object} style
- */
 function setStyle(element, style) {
   element.style.cssText = getCssText(style);
 
@@ -115,12 +93,6 @@ function setAttribute(element, name, value) {
   return element;
 }
 
-/**
- *
- * @param {HTMLElement} element
- * @param {Object} attributes
- * @returns {HTMLElement}
- */
 function setAttributes(element, attributes) {
   for (const [key, value] of entries(attributes)) {
     setAttribute(element, key, value);
@@ -129,10 +101,6 @@ function setAttributes(element, attributes) {
   return element;
 }
 
-/**
- * @param {HTMLElement} element
- * @returns {HTMLElement}
- */
 function purge(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
@@ -141,11 +109,6 @@ function purge(element) {
   return element;
 }
 
-/**
- * @param {HTMLElement} element
- * @param {string|number|Node} node
- * @returns {HTMLElement}
- */
 function appendNode(element, node) {
   if (/^(?:number|string)$/.test(typeof node)) {
     element.appendChild(document.createTextNode(node));
@@ -156,12 +119,6 @@ function appendNode(element, node) {
   return element;
 }
 
-/**
- *
- * @param {HTMLElement} element
- * @param {Array} children
- * @returns {HTMLElement}
- */
 const appendFragment = (element, children) =>
   children
     .reduce(
@@ -169,11 +126,6 @@ const appendFragment = (element, children) =>
       element
     );
 
-/**
- *
- * @param {HTMLElement} element
- * @param {Array|Node} children
- */
 function append(element, children) {
   if (isArray(children)) {
     return appendFragment(element, children);
@@ -182,10 +134,6 @@ function append(element, children) {
   return appendNode(element, children);
 }
 
-/**
- * @param {Array} nodeArray
- * @returns {DocumentFragment}
- */
 const createFragment = nodeArray =>
   nodeArray
     .reduce(
@@ -217,17 +165,9 @@ const arity = [
   withAttributesAndChildren,
 ];
 
-/**
- * @param {...*} argumentList
- * @returns {HTMLElement}
- */
 const createElement = (...argumentList) =>
   arity[argumentList.length](...argumentList);
 
-/**
- * @param {Array} types
- * @returns {Object}
- */
 const elementFactory = types =>
   fromEntries(types
     .map(type => [

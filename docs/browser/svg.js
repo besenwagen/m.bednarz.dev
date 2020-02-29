@@ -10,11 +10,6 @@ const { entries } = Object;
 
 const namespace = 'http://www.w3.org/2000/svg';
 
-/**
- * @param {string} type
- * @param {object} attributes
- * @returns {SVGElement}
- */
 function createElement(type, attributes = {}) {
   const element = document.createElementNS(namespace, type);
 
@@ -25,10 +20,6 @@ function createElement(type, attributes = {}) {
   return element;
 }
 
-/**
- * @param {string} id
- * @returns {SVGSVGElement}
- */
 function useSymbol(id) {
   const svgElement = createElement('svg');
   const useElement = createElement('use', {

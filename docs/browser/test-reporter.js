@@ -19,7 +19,7 @@ import {
   purge,
 } from './dom.js';
 
-/* global window, document */
+/* global window document */
 /* eslint id-length: [error, { exceptions: [a, p] }] */
 
 const { from } = Array;
@@ -237,22 +237,10 @@ const REPORT_LABEL = 'Unit test report';
 const PASS = 'pass';
 const FAIL = 'fail';
 
-/**
- * @param {boolean} state
- * @returns {string}
- */
 const statePrefix = state => (state ? PASS : FAIL);
 
-/**
- * @param {boolean} state
- * @returns {string}
- */
 const stateMarker = state => (state ? 'em' : 'strong');
 
-/**
- * @param {string} url
- * @returns {string}
- */
 const displayUrl = url =>
   url.replace(/^\//, '');
 
@@ -272,10 +260,6 @@ const {
   'code', 'pre', 'span',
 ]);
 
-/**
- * @param {Array} tuple
- * @returns {string}
- */
 function summary([modules, tests, errors]) {
   if (errors) {
     return [
@@ -386,27 +370,15 @@ const toSuiteItem = ([
     ),
   ]);
 
-/**
- * @param {Node} contextNode
- * @param {string} literal
- */
 function main(contextNode, children) {
   purge(contextNode).appendChild(children);
 }
 
-/**
- * @param {HTMLElement} element
- * @returns {boolean}
- */
 const isCheckbox = ({ nodeName, type }) => (
   (nodeName === 'INPUT')
   && (type === 'checkbox')
 );
 
-/**
- * @param {HTMLElement} node
- * @returns {boolean}
- */
 function getStatus(node, stats) {
   const [, , errors] = stats;
   const result = Boolean(errors);
@@ -414,9 +386,6 @@ function getStatus(node, stats) {
   return result;
 }
 
-/**
- * @param {HTMLElement} node
- */
 function setEvent(node) {
   function onClick({
     target,
@@ -433,10 +402,6 @@ const fromTestUrl = (url, substitute = '') =>
   url
     .replace(TEST_TAIL_EXPRESSION, substitute);
 
-/**
- * @param {string} url
- * @returns {string}
- */
 const getSourceUrl = url =>
   fromTestUrl(url, '.js');
 
@@ -450,16 +415,12 @@ function getModuleData(url) {
   };
 }
 
-/**
- * @param {Array} result
- * @param {string} basePath
- * @returns {Array}
- */
 function getResultList(result, basePath) {
   const resolve = relativePath => [
     basePath,
     relativePath,
   ].join('');
+
   const toItem = ([testUrl, testSuite, [, errorCount]]) => [
     getModuleData(testUrl),
     resolve(testUrl),
@@ -471,23 +432,12 @@ function getResultList(result, basePath) {
   return result.map(toItem);
 }
 
-/**
- * @param {HTMLElement} node
- */
 function bootstrap(node) {
   setEvent(node);
   main(node, p(STATUS_BUSY));
 }
 
-/**
- * @param {Node} node
- * @param {string} basePath
- * @returns {function}
- */
 function writeFactory(node, basePath) {
-  /**
-   * @param {Array} tuple
-   */
   function write([result, stats]) {
     const resultList = getResultList(result, basePath)
       .map(toSuiteItem);
@@ -557,30 +507,14 @@ const PATH_COMPONENT_EXPRESSION = /[^/]+$/;
 const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;
 const TEST_FILE_POSTFIX = '.test.js';
 
-/**
- * @param {string} selector
- * @param {Node} [contextNode = document]
- * @returns {Array}
- */
 const select = (selector, contextNode = document) =>
   from(contextNode.querySelectorAll(selector));
 
-/**
- * @param {...string} argumentList
- * @returns {string}
- */
 const join = (...argumentList) =>
   argumentList.join('');
 
-/**
- *
- * @param {HTMLELement} element
- */
 const getMicroDataContent = ({ content }) => content;
 
-/**
- * @returns {string}
- */
 function getDocumentPath() {
   const { pathname } = window.location;
   const basePath = pathname.replace(PATH_COMPONENT_EXPRESSION, '');
@@ -588,11 +522,6 @@ function getDocumentPath() {
   return basePath;
 }
 
-/**
- *
- * @param {HTMLElement} contextElement
- * @returns {string}
- */
 function getBasePath(contextElement) {
   const [element] = select(TEST_PATH_SELECTOR, contextElement);
 
@@ -603,37 +532,20 @@ function getBasePath(contextElement) {
   return getDocumentPath();
 }
 
-/**
- * @param {string} baseName
- * @param {string} basePath
- * @returns {string}
- */
 const resolve = (baseName, basePath) =>
   join(basePath, baseName, TEST_FILE_POSTFIX);
 
-/**
- * Get an array of modules.
- * @param {HTMLELement} contextElement
- * @param {string} basePath
- * @returns {string[]}
- */
 const parseMicroData = (contextElement, basePath) =>
   select(TEST_DATA_SELECTOR, contextElement)
     .map(getMicroDataContent)
     .map(baseName => resolve(baseName, basePath));
 
-/**
- * @returns {Array|null}
- */
 function matchQuery() {
   const { search } = window.location;
 
   return QUERY_EXPRESSION.exec(search);
 }
 
-/**
- * @returns {string}
- */
 function getQuery() {
   const match = matchQuery();
 
@@ -646,12 +558,6 @@ function getQuery() {
   return '';
 }
 
-/**
- * Get the modules from the query string or micro data.
- * @param {HTMLElement} element
- * @param {string} basePath
- * @returns {Array}
- */
 function prioritize(element, basePath) {
   const query = getQuery();
 
@@ -679,11 +585,6 @@ function onError(error) {
   );
 }
 
-/**
- * @param {Node} node
- * @param {string} basePath
- * @returns {Promise}
- */
 function overload(node, basePath) {
   const modules = prioritize(node, basePath);
   const write = writeFactory(node, basePath);
@@ -693,10 +594,6 @@ function overload(node, basePath) {
     .catch(onError);
 }
 
-/**
- * Write the report HTML into the document's MAIN element.
- * @returns {Promise<undefined>}
- */
 function run() {
   const [node] = select(TEST_REPORT_SELECTOR);
   const basePath = getBasePath(node);

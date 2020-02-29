@@ -162,10 +162,6 @@ const isTestPrimitive = value => (
   || (value === undefined)
 );
 
-/**
- * @param {Array} orderedPair
- * @returns {Array}
- */
 function forceTestPrimitives(orderedPair) {
   if (orderedPair.every(isTestPrimitive)) {
     return orderedPair;
