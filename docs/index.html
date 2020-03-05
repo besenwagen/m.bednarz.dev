@@ -9,7 +9,7 @@
     import { select, setStyle, toFragment } from '/browser/dom.js';
     import { useSymbol } from '/browser/svg.js';
 
-    function logo(id) {
+    function setLogo(id) {
       const [placeholder] = select('.placeholder');
       const symbol = useSymbol(id);
 
@@ -28,15 +28,12 @@
         const { body } = document;
 
         body.appendChild(symbols);
-        body.insertBefore(logo('logomark'), body.firstChild);
+        setLogo('logomark');
       });
 
   </script>
   <style>
-    :root {
-      --color-primary: #090;
-      --color-action: #00f;
-    }
+    @import '/style/shared.css';
 
     html,
     body {
@@ -54,7 +51,12 @@
       color: #000;
       background: #fff;
       text-align: center;
-      font: 1.3rem/1.5 Consolas, Inconsolata, Menlo, monospace;
+      font: 1.3rem/1.5 var(--typeface-copy);
+    }
+
+    body>a[href]:first-child {
+      display: inline-flex;
+      border-bottom: none;
     }
 
     .placeholder {
@@ -67,50 +69,49 @@
 
     h1 {
       margin: 2vw 0 3vw 0;
-      font-size: 8vw;
+      font: bold 8vw var(--typeface-gui);
     }
 
     h1 em {
-      color: #090;
-      background: transparent;
-
-    }
-
-    a[href] {
-      border-bottom: 1px solid var(--color-primary);
-      color: var(--color-action);
-      background: transparent;
-      text-decoration: none;
-    }
-
-    a[href]:hover {
-      border-width: 2px;
-    }
-
-    a[href]:focus {
-      outline: 2px solid var(--color-action);
-      outline-offset: 0.2rem;
-      border-color: transparent;
-      color: #000;
+      color: var(--color-primary);
       background: transparent;
     }
 
-    a[href]:focus:hover {
-      outline-width: 3px;
-      outline-color: var(--color-primary);
-      border-width: 1px;
-      color: var(--color-action);
-      background: transparent;
+    nav {
+      text-transform: lowercase;
     }
+
+    .link-farm {
+      display: flex;
+      flex-wrap: wrap;
+      list-style: none;
+      justify-content: stretch;
+      align-content: space-around;
+    }
+
+    .link-farm li {
+      padding: 0.5rem 1rem;
+    }
+
   </style>
 </head>
 <body>
 
-  <span aria-hidden="true" class="placeholder"></span>
+  <a label="eric.bednarz.dev" hreflang="nl" href="https://eric.bednarz.dev/">
+    <span aria-hidden="true" class="placeholder"></span>
+  </a>
 
-  <h1><em>m</em> is for <em>module</em></h1>
+  <main>
+    <h1><em>m</em> is for <em>module</em></h1>
 
-  <a href="/test/">and tests are for units</a>
+    <nav>
+      <a href="/test/">Unit tests</a>
+      |
+      <a href="https://github.com/eric-bednarz-dev/ECMAScript-modules">GitHub</a>
+      |
+      <a hreflang="nl" href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+    </nav>
+  </main>
 
 </body>
 </html>
