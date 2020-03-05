@@ -1,0 +1,126 @@
+@import './shared.css';
+:root {
+  --leading: 1.5;
+  --scale: calc(var(--leading) * 1rem);
+}
+
+body {
+  margin: 0;
+  color: #333;
+  background: #fff;
+  padding: 0 var(--scale);
+  font: 1rem/var(--leading) Georgia, serif;
+}
+
+main>h1, main>pre, body>footer {
+  --margin: calc(var(--scale) * -1);
+  margin-right: var(--margin);
+  margin-left: var(--margin);
+}
+
+h1, main+footer {
+  color: #fff;
+  background: var(--color-primary);
+  text-align: center;
+  font-family: var(--typeface-gui);
+}
+
+main {
+  padding-bottom: var(--scale);
+}
+
+h1 {
+  margin: 0;
+  padding: calc(var(--scale) / 4) 0;
+  font-size: var(--scale);
+}
+
+body>footer {
+  padding: calc(var(--scale) / 2) 0;
+}
+
+body>footer a[href] {
+  color: #fff;
+  text-decoration: none;
+}
+
+body>footer a[href]:focus {
+  outline-color: #fff;
+  color: #fff;
+  background: transparent;
+}
+
+main>h2, main>h3, main>p, main>ol, main>ul, main>dl, pre>code {
+  box-sizing: border-box;
+  max-width: 40rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+h1 {
+  font-weight: normal;
+}
+
+h2 {
+  margin: calc(var(--scale) / 2) 0;
+  border-bottom: 1px solid #000;
+  font-weight: normal;
+  font-size: var(--scale);
+}
+
+h3 {
+  margin: var(--scale) 0;
+  font-size: 1rem;
+}
+
+p, ol, ul {
+  margin-top: var(--scale);
+  margin-bottom: var(--scale);
+}
+
+ol, ul {
+  padding: 0;
+}
+
+li ol, li ul {
+  margin: 0 0 0 var(--scale);
+}
+
+li:not(:last-child) pre {
+  margin-bottom: var(--scale);
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin: 0;
+}
+
+pre {
+  box-sizing: border-box;
+  white-space: normal;
+  width: calc(100% + (var(--scale) * 2));
+  overflow-x: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0 var(--scale);
+  color: #fff;
+  background: linear-gradient(to right, #020, #000, #020);
+}
+
+pre>code {
+  white-space: pre;
+  display: block;
+  padding: var(--scale) 0;
+  color: inherit;
+  background: transparent;
+  font-weight: normal;
+}
+
+code {
+  color: var(--color-primary);
+  background: transparent;
+  font: 1rem/1.5 var(--typeface-gui);
+}
