@@ -1,9 +1,12 @@
 export {
+  append,
+  createTextNode,
   createElement,
   createFragment,
   elementFactory,
   getStyle,
   purge,
+  replaceElement,
   select,
   setStyle,
   toFragment,
@@ -134,12 +137,20 @@ function append(element, children) {
   return appendNode(element, children);
 }
 
+const replaceElement = (previous, next) =>
+  previous
+    .parentNode
+    .replaceChild(next, previous);
+
 const createFragment = nodeArray =>
   nodeArray
     .reduce(
       append,
       document.createDocumentFragment()
     );
+
+const createTextNode = stringLiteral =>
+  document.createTextNode(stringLiteral);
 
 const getMixedArityIndex = value =>
   Number(toString.call(value) === '[object Object]');
