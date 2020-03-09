@@ -1,53 +1,53 @@
 import { result, suite } from '../test.js'
 import {
-  defineComponents,
-  getAttributeObserverName,
-  getComponentName,
-  withAttributes,
+  component,
+  _conditional as conditional,
 } from './component.js'
 
 const test = suite(import.meta)
 
 export default result(test)
 
-test(getComponentName)
+test(conditional)
+  ('function guard', () => {
+    let foo = 0;
 
-  ('parse constructor with two humps', [
-    getComponentName(function FooBar() { }),
-    'foo-bar',
-  ])
-
-  ('parse constructor with more than two humps', [
-    getComponentName(function FooBarBaz() { }),
-    'foo-bar-baz',
-  ])
-
-  ('throw on constructor with no humps', () => {
-    try {
-      getComponentName(function Foo() { });
-
-      return false;
-    } catch ({ message }) {
-      return [
-        message,
-        'Foo is not a valid identifier'
-      ];
+    function bar(m, n) {
+      foo = m * n;
     }
+
+    conditional(bar, 4, 3);
+
+    return [
+      foo,
+      12,
+    ]
   })
+  ('guarded function falsy', () => {
+    let foo = 0;
 
-test(getAttributeObserverName)
+    function bar(m, n) {
+      foo = m * n;
+    }
 
-  ('parse attribute name with no dash', [
-    getAttributeObserverName('foo'),
-    'onFooChange'
-  ])
+    conditional(false, bar, 4, 3);
 
-  ('parse attribute name with one dash', [
-    getAttributeObserverName('foo-bar'),
-    'onFooBarChange'
-  ])
+    return [
+      foo,
+      0,
+    ]
+  })
+  ('guarded function truthy', () => {
+    let foo = 0;
 
-  ('parse attribute name with multiple dashes', [
-    getAttributeObserverName('foo-bar-quux'),
-    'onFooBarQuuxChange'
-  ])
+    function bar(m, n) {
+      foo = m * n;
+    }
+
+    conditional(true, bar, 4, 3);
+
+    return [
+      foo,
+      12,
+    ]
+  })

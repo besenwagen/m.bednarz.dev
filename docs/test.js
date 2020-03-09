@@ -1,14 +1,15 @@
+/**
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   result,
   suite,
-
-  // private
-  forceUrl,
-  formatAssertionTuple,
+  forceUrl as _forceUrl,
+  formatAssertionTuple as _formatAssertionTuple,
 };
 
 const { isArray } = Array;
-
 const testPrimitiveExpression = /^(?:string|number|boolean)$/;
 const PREFIX_INVALID = 'Invalid test case:';
 const ORDERED_PAIR_LENGTH = 2;

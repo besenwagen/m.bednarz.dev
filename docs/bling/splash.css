@@ -1,0 +1,172 @@
+@import '/bling/base.css';
+
+body {
+  padding: 0;
+  font: var(--size)/var(--leading) var(--typeface-gui);
+}
+
+body > header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--measure) 0;
+}
+
+body > footer {
+  padding: var(--vertical) var(--measure);
+}
+
+body > header > a[href] {
+  display: inline-flex;
+}
+
+.placeholder {
+  display: inline-flex;
+  transition: color 100ms ease-in;
+  color: var(--color-primary);
+  background: transparent;
+ }
+
+ header .placeholder {
+  --logo-size: calc(var(--measure) * 2);
+  width: var(--logo-size);
+  height: var(--logo-size);
+ }
+
+ main .placeholder {
+  --loader-size: calc(var(--measure) * 2);
+  width: var(--loader-size);
+  height: var(--loader-size);
+  justify-content: center;
+  align-items: center;
+  color: var(--color-background);
+  background: transparent;
+  font-size: var(--measure);
+ }
+
+.placeholder.loading {
+  border-radius: 100%;
+  background: var(--color-primary);
+}
+
+a[href]:hover .placeholder {
+  color: var(--color-foreground);
+}
+
+h1 {
+  margin: 0 0 0 var(--size);
+  font: bold var(--measure)/var(--leading) var(--typeface-gui);
+}
+
+h1 em {
+  margin: 0;
+  color: var(--color-primary);
+  background: transparent;
+}
+
+@media only screen and (min-width: 600px) {
+  body > header {
+    padding: calc(var(--measure) + 5vw) 0;
+  }
+
+  header .placeholder {
+    width: 12vw;
+    height: 12vw;
+  }
+
+  h1 {
+    margin-left: calc(var(--size) + 2.5vw);
+    font-size: calc(var(--measure) + 3vw);
+  }
+}
+
+h2 {
+  margin: 0;
+  padding: var(--vertical) 0;
+  line-height: 1;
+  font-weight: normal;
+  font-size: var(--measure);
+}
+
+h2 + p {
+  margin: calc(var(--measure) * 2) 0;
+  text-align: center;
+}
+
+section > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: var(--vertical);
+}
+
+section > ul > li {
+  padding: var(--vertical);
+}
+
+aside {
+  text-align: center;
+}
+
+aside > ul {
+  display: inline-block;
+  margin: var(--measure);
+  padding: 0;
+}
+
+aside ul li {
+  text-align: left;
+}
+
+main ul a[href] {
+  --border-width: 2px;
+  display: inline-flex;
+  border: var(--border-width) solid var(--color-primary);
+  padding:
+    calc(var(--vertical) - calc(var(--border-width) * 2))
+    var(--measure);
+    transition: all 100ms ease-in;
+}
+
+main ul a[href]:hover {
+  color: var(--color-background);
+  background: var(--color-foreground);
+}
+
+#copyleft > div {
+  max-width: 80em;
+  margin: 0 auto;
+}
+
+#copyleft p {
+  margin: var(--measure);
+  text-align: left;
+  font-family: var(--typeface-copy);
+}
+
+#copyleft p a {
+  text-decoration: underline;
+}
+
+#copyleft p big {
+  text-transform: uppercase;
+  font-size: 1em;
+}
+
+#copyleft p code {
+  white-space: nowrap;
+}
+
+@media only screen and (prefers-reduced-motion: no-preference) {
+  main .placeholder {
+    animation: 1.5s request linear infinite;
+  }
+}
+
+@keyframes request {
+  50% {
+    font-size: var(--size);
+  }
+}

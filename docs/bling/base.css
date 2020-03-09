@@ -1,0 +1,74 @@
+:root {
+  --color-primary: #080;
+  --color-primary-copy: #070;
+  --color-action: #00f;
+  --color-foreground: #333;
+  --color-background: #fff;
+  --typeface-copy: Georgia, serif;
+  --typeface-gui: Consolas, Inconsolata, Menlo, monospace;
+  --base: 1.1;
+  --size: calc(var(--base) * 1rem);
+  --leading: calc(var(--base) * 1.5);
+  --measure: calc(var(--leading) * 1rem);
+  --vertical: calc(var(--measure) / 2);
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  margin: 0;
+  color: var(--color-foreground);
+  background: var(--color-background);
+}
+
+a[href] {
+  text-decoration: none;
+}
+
+a[href]:focus {
+  transition: all 100ms ease-in;
+  outline: 2px solid;
+  outline-offset: 0.2rem;
+}
+
+:not(.reverse) > a[href] {
+  color: var(--color-action);
+  background: transparent;
+}
+
+:not(.reverse) > a[href]:hover {
+}
+
+:not(.reverse) > a[href]:focus {
+  border-color: transparent;
+  outline-color: var(--color-action);
+  color: var(--color-primary-copy);
+  background: transparent;
+}
+
+.reverse {
+  color: var(--color-background);
+  background: var(--color-primary);
+  text-align: center;
+  font-family: var(--typeface-gui);
+}
+
+.reverse a[href] {
+  padding: 0 calc(var(--size) / 2);
+  color: var(--color-background);
+  background: transparent;
+}
+
+.reverse a[href]:hover {
+  border-radius: var(--vertical);
+  color: var(--color-primary);
+  background: var(--color-background);
+}
+
+.reverse a[href]:focus {
+  outline-color: var(--color-background);
+  color: var(--color-background);
+  background: transparent;
+}

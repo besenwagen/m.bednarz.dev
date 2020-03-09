@@ -1,6 +1,19 @@
-# ECMAScript modules
+# ECMAScript modules [![License: AGPL v3][license-image]][license-url]
 
-> Make JavaScript (sic) great again with web-based ECMAScript modules.
+> Make JavaScript (sic) great again with native, web-based ECMAScript modules.
+
+## Why?
+
+The problems `npm` (the CLI tool, the registry, the company) 
+creates outweigh the problems it is supposed to solve.
+You can either face that or 
+[wait for another christmas and die of a broken heart](https://en.wikipedia.org/wiki/James_Stockdale#The_Stockdale_Paradox).
+
+Although this repository has nothing to do with the 
+[Entropic Package Manager](https://www.entropic.dev/),
+you should really watch
+[The economics of open source by C J Silverio](https://www.youtube.com/watch?v=MO8hZlgK5zc)
+at *JSConf EU 2019* anyway if you never did.
 
 ## Runtime environments
 
@@ -45,7 +58,12 @@ The following is available on all runtimes.
     - `clearTimeout`
     - `setInterval`
     - `clearInterval`
-
+    
 ## License
 
-MIT
+*GNU Affero General Public License* version 3 or later
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+[license-image]: https://img.shields.io/github/license/eric-bednarz-dev/ECMAScript-modules
+[license-url]:   https://www.gnu.org/licenses/agpl-3.0

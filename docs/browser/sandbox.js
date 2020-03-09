@@ -1,5 +1,9 @@
+/**
+ * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
-  run,
+  disposable,
   sandbox,
 };
 
@@ -38,8 +42,12 @@ function createIframe() {
 
 function apiFactory(iframe) {
   const { contentWindow: global } = iframe;
-  const { documentElement: html } = global.document;
-  const { body } = global.document;
+  const { document: root } = global;
+  const {
+    documentElement: html,
+    head,
+    body,
+  } = root;
   const { innerHTML } = html;
 
   return assign(create(null), {
@@ -47,16 +55,18 @@ function apiFactory(iframe) {
       global.document.body.innerHTML = literal;
     },
     reset() {
-      const root = global.document.createElement('html');
+      const pristine = root.createElement('html');
 
-      root.innerHTML = innerHTML;
-      html.parentNode.replaceChild(root, html);
+      pristine.innerHTML = innerHTML;
+      html.parentNode.replaceChild(pristine, html);
     },
     destroy() {
       document.body.removeChild(iframe);
     },
     global,
+    root,
     html,
+    head,
     body,
   });
 }
@@ -78,10 +88,19 @@ function sandbox() {
   return new Promise(executor);
 }
 
-const run = callback =>
+const disposable = callback =>
   sandbox()
     .then(function onIframeResolved({ destroy, ...rest }) {
       const result = callback(rest);
+
+      if (result instanceof Promise) {
+        return result
+          .then(function resolve(value) {
+            destroy();
+
+            return value;
+          });
+      }
 
       destroy();
 

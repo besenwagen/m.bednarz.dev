@@ -1,14 +1,15 @@
-// Environment agnostic test automation I/O utilities
-
+/**
+ * Environment agnostic test automation I/O utilities.
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   failing,
   load,
   printReport,
   printSummary,
-
-  // private
-  jsonEscape,
-  yamlify,
+  jsonEscape as _jsonEscape,
+  yamlify as _yamlify,
 };
 
 const { entries } = Object;
@@ -166,7 +167,5 @@ function printReport(label, result) {
   console.info(`${label}:`);
   console.info(yamlify(result));
 }
-
-//#endregion
 
 //#endregion

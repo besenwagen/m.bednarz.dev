@@ -1,157 +1,155 @@
+/**
+ * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
-  BaseComponent,
-  defineComponents,
-  withAttributes,
-  getAttributeObserverName,
-  getComponentName,
+  component,
+  conditional as _conditional,
 };
 
-import { createStore } from '../store.js';
+/* global HTMLElement customElements document */
 
-/* eslint max-classes-per-file: [error, 2] */
-/* global customElements HTMLElement */
+const { assign, create, keys, getOwnPropertyNames } = Object;
+const empty = create(null);
 
-const { assign, getOwnPropertyNames } = Object;
+function conditional(condition, ...rest) {
+  if (typeof condition === 'function') {
+    condition(...rest);
+  } else if (condition) {
+    const next = rest.shift();
 
-//#region name
-
-const TOKEN_THRESHOLD = 2;
-const HUMP_EXPRESSION = /(?=[A-Z])/;
-
-function getComponentName({ name }) {
-  const match = name.split(HUMP_EXPRESSION);
-
-  if (match.length < TOKEN_THRESHOLD) {
-    throw new Error(`${name} is not a valid identifier`);
+    next(...rest);
   }
-
-  return match
-    .join('-')
-    .toLowerCase();
 }
 
-function capitalize(word) {
-  const [firstLetter] = word;
-  const { length } = firstLetter;
+const hasMethod = (object, name) =>
+  getOwnPropertyNames(object).includes(name);
 
-  return [
-    firstLetter.toUpperCase(),
-    word.substring(length),
-  ].join('');
-}
+function getMethods(element) {
+  function toMethods(accumulator, name) {
+    const property = element[name];
 
-const toUpperCamelCase = dashed =>
-  dashed
-    .split('-')
-    .map(capitalize)
-    .join('');
-
-const getAttributeObserverName = attribute =>
-  `on${toUpperCamelCase(attribute)}Change`;
-
-//#endregion
-
-class BaseComponent extends HTMLElement {
-  static toEventType(accumulator, name) {
-    const match = /^on([A-Z][a-z]+)Event$/.exec(name);
-
-    if (match) {
-      const [, type] = match;
-
-      accumulator.push(type.toLowerCase());
+    if (typeof property === 'function') {
+      accumulator[name] = property;
     }
 
     return accumulator;
   }
 
-  constructor() {
-    super();
-    assign(this, createStore());
-    this.addListeners();
-    this.initialize();
+  return getOwnPropertyNames(element)
+    .reduce(toMethods, create(null));
+}
+
+function createInstanceState(instance) {
+  const { attributes, shadowRoot } = instance;
+
+  return assign(new Map(), {
+    root: shadowRoot,
+    attributes(...names) {
+      const toAttributeValue = name =>
+        attributes[name].value;
+
+      if (names.length === Number(true)) {
+        return toAttributeValue(names);
+      }
+
+      return names.map(toAttributeValue);
+    },
+    methods() {
+      return getMethods(instance);
+    },
+  });
+}
+
+function overloadTemplate(template) {
+  if (typeof template === 'string') {
+    return document.querySelector(template);
   }
 
-  getEvents() {
-    const {
-      toEventType,
-      prototype,
-    } = this.constructor;
+  console.info(template);
 
-    return getOwnPropertyNames(prototype)
-      .reduce(toEventType, []);
-  }
+  return template;
+}
 
-  addListeners() {
-    for (const type of this.getEvents()) {
-      this.addEventListener(type, this);
-    }
-  }
+function useTemplate(context, template) {
+  const blueprint = overloadTemplate(template);
+  const node = blueprint.content.cloneNode(true);
 
-  handleEvent(eventObject) {
-    const { type } = eventObject;
-    const method = `on${capitalize(type)}Event`;
+  context.shadowRoot.appendChild(node);
+}
 
-    if (typeof this[method] === 'function') {
-      this[method](eventObject);
-    }
-  }
+function setShadowDom(context, template) {
+  context.attachShadow({ mode: 'open' });
+  conditional(template, useTemplate, context, template);
+}
 
-  initialize() {
-    console.info('initialized');
-  }
+function addListeners(context, events) {
+  const { shadowRoot } = context;
 
-  connected() {
-    console.info('connected');
-  }
-
-  disconnected() {
-    console.info('disconnected');
-  }
-
-  connectedCallback() {
-    this.render();
-    this.connected();
-  }
-
-  disconnectedCallback() {
-    this.disconnected();
-  }
-
-  update(name, oldValue, newValue) {
-    const handler = getAttributeObserverName(name);
-
-    if (typeof this[handler] === 'function') {
-      this[handler](newValue, oldValue);
-    } else {
-      this.render();
-    }
-  }
-
-  isAttributeUpdate(oldValue, newValue) {
-    return (
-      (oldValue !== null)
-      && (oldValue !== newValue)
-    );
-  }
-
-  attributeChangedCallback(name, ...rest) {
-    if (this.isAttributeUpdate(...rest)) {
-      this.update(name, ...rest);
-    }
+  for (const type of keys(events)) {
+    shadowRoot.addEventListener(type, context);
   }
 }
 
-const withAttributes = attributes =>
-  class extends BaseComponent {
-    static get observedAttributes() {
-      return attributes;
-    }
-  };
+function removeListeners(context, events) {
+  const { shadowRoot } = context;
 
-function defineComponents(...components) {
-  for (const constructor of components) {
-    const name = getComponentName(constructor);
-
-    customElements.define(name, constructor);
+  for (const type of keys(events)) {
+    shadowRoot.removeEventListener(type, context);
   }
+}
+
+function component(componentName, {
+  template,
+  attributes = empty,
+  events,
+  initialize,
+  connect,
+  render,
+  disconnect,
+}) {
+  const state = new WeakMap();
+
+  customElements.define(componentName, class extends HTMLElement {
+    static get observedAttributes() {
+      return keys(attributes);
+    }
+
+    constructor() {
+      super();
+      setShadowDom(this, template);
+
+      const instanceState = createInstanceState(this);
+
+      state.set(this, instanceState);
+      conditional(initialize, instanceState);
+    }
+
+    connectedCallback() {
+      const instanceState = state.get(this);
+
+      conditional(events, addListeners, this, events);
+      conditional(connect, instanceState);
+      conditional(render, instanceState);
+    }
+
+    disconnectedCallback() {
+      conditional(events, removeListeners, this, events);
+      conditional(disconnect, state.get(this));
+    }
+
+    attributeChangedCallback(attributeName, oldValue, newValue) {
+      if (oldValue) {
+        attributes[attributeName](state.get(this), newValue, oldValue);
+      }
+    }
+
+    handleEvent(eventObject) {
+      const { type } = eventObject;
+
+      if (hasMethod(events, type)) {
+        events[type](eventObject, state.get(this));
+      }
+    }
+  });
 }

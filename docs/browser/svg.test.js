@@ -8,22 +8,20 @@ export default result(test)
 /* global SVGElement */
 
 test(createElement)
-  ('creates an SVGElement instance',
+  ('create an SVGElement instance',
     createElement('rect') instanceof SVGElement)
-  ('coerces attribute values to strings',
-    () => {
-      const element = createElement('rect', {
-        width: 100,
-      })
-
-      return [
-        element.getAttribute('width'),
-        '100',
-      ]
+  ('coerce attribute values to strings', () => {
+    const element = createElement('rect', {
+      width: 100,
     })
+    return [
+      element.getAttribute('width'),
+      '100',
+    ]
+  })
 
 test(useSymbol)
-  ('creates an SVGSVGElement instance', [
+  ('create an SVGSVGElement instance', [
     useSymbol('foo').constructor.name,
     'SVGSVGElement',
   ])

@@ -9,38 +9,23 @@ const test = suite(import.meta)
 
 export default result(test)
 
-{
-  const test_callOrNothingAtAll = test(callOrNothingAtAll)
-  const increment = n => n + 1
-
-  test_callOrNothingAtAll
-    ('falsy -> undefined', [
-      callOrNothingAtAll(0, [
-        increment, [
-          41,
-        ]]),
-      undefined,
-    ])
-
-  test_callOrNothingAtAll
-    ('truthy -> return value', [
-      callOrNothingAtAll(1, [
-        increment, [
-          41,
-        ]]),
-      42,
-    ])
-}
+test(callOrNothingAtAll)
+  ('falsy -> undefined', [
+    callOrNothingAtAll(false, [n => n + 1, [41]]),
+    undefined,
+  ])
+  ('truthy -> return value', [
+    callOrNothingAtAll(true, [n => n + 1, [41]]),
+    42,
+  ])
 
 test(asArray)
   ('return the argument if it is an array', () => {
     const myArray = []
-
     return (asArray(myArray) === myArray)
   })
   ('wrap other values in an array', () => {
     const myValue = 'Hello, world!'
-
     return [
       JSON.stringify(asArray(myValue)),
       '["Hello, world!"]',
@@ -49,4 +34,4 @@ test(asArray)
 
 test(unique)
   ('create identifier', (unique() !== unique()))
-  ('limit length', [unique(6).length, 6])
+  ('limit length', [unique().length, 8])

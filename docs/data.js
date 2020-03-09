@@ -1,3 +1,7 @@
+/**
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   normalize,
   serialize,
@@ -10,7 +14,7 @@ import {
 } from './introspection.js';
 
 const { stringify } = JSON;
-const { keys } = Object;
+const { create, keys } = Object;
 
 function copyArray(array) {
   const root = [];
@@ -23,7 +27,7 @@ function copyArray(array) {
 }
 
 function copyObject(object) {
-  const root = {};
+  const root = create(null);
   const sortedKeys = keys(object).sort();
 
   for (const key of sortedKeys) {

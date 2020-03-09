@@ -1,4 +1,7 @@
 /**
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * Why:  Node.js only supports file URLs for ECMAScript modules.
  * How:  Process test files with the extensions `.test.js` under
  *       one or more context directories relative to the process.
@@ -99,12 +102,12 @@ function onTestSuitesResolved([
     errors,
   ]
 ]: [
-  any[], [
-    any[],
-    number,
-    number,
-  ],
-]) {
+    any[], [
+      any[],
+      number,
+      number,
+    ],
+  ]) {
   const exitCode = getExitCode(errors);
 
   if (errors) {

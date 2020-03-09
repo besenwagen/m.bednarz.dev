@@ -1,7 +1,7 @@
 import {
   result, suite,
-  forceUrl,
-  formatAssertionTuple,
+  _forceUrl as forceUrl,
+  _formatAssertionTuple as formatAssertionTuple,
 } from './test.js'
 
 const test = suite(import.meta)
@@ -10,66 +10,42 @@ export default result(test)
 
 test
   ('expression', void 0 === undefined)
-
-test
   ('array', [void 0, undefined])
-
-test
   ('promise -> expression',
     new Promise(resolve => {
       setTimeout(() => resolve(void 0 === undefined), 10)
     }))
-
-test
   ('promise -> array',
     new Promise(resolve => {
       setTimeout(() => resolve([void 0, undefined]), 10)
     }))
-
-test
-  ('function -> expression',
-    () => {
-      return void 0 === undefined
-    })
-
-test
-  ('function -> array',
-    () => {
-      return [void 0, undefined]
-    })
-
-test
-  ('function -> promise -> expression',
-    () => {
-      return new Promise(resolve => {
-        setTimeout(() => resolve(void 0 === undefined), 10)
-      })
-    })
-
-test
-  ('function -> promise -> array',
-    () => {
-      return new Promise(resolve => {
-        setTimeout(() => resolve([void 0, undefined]), 10)
-      })
-    })
-
-test
-  ('description is sanitized',
-    () => {
-      const localTest = suite('SELFTEST')
-
-      localTest(`   foo
+  ('function -> expression', () => {
+    return void 0 === undefined
+  })
+  ('function -> array', () => {
+    return [void 0, undefined]
+  })
+  ('function -> promise -> expression', () => {
+    return new Promise(resolve =>
+      setTimeout(() =>
+        resolve(void 0 === undefined), 10))
+  })
+  ('function -> promise -> array', () => {
+    return new Promise(resolve =>
+      setTimeout(() =>
+        resolve([void 0, undefined]), 10))
+  })
+  ('sanitize description', () => {
+    const localTest = suite('SELFTEST')
+    localTest(`   foo
          bar   \t   \n       baz
       `, true)
-
-      const onTestResolved = ([, [[sanitized]]]) => [
-        sanitized,
-        'foo bar baz',
-      ]
-
-      return result(localTest).then(onTestResolved)
-    })
+    const onTestResolved = ([, [[sanitized]]]) => [
+      sanitized,
+      'foo bar baz',
+    ]
+    return result(localTest).then(onTestResolved)
+  })
 
 test(forceUrl)
   ('absolute URL', [
@@ -84,11 +60,9 @@ test(forceUrl)
     forceUrl('foo/bar.js'),
     'foo/bar.js',
   ])
-
-  ('only https: or file:', () => {
+  ('enforce https: or file: protocol', () => {
     try {
       forceUrl('http://example.org/foo/bar.js');
-
       return false;
     } catch ({ message }) {
       return [
@@ -144,7 +118,7 @@ test(formatAssertionTuple)
 !   [actual] (string) \\foo bar\\
 ! [expected] (string) \\foo bar\\`,
   ])
-  ('nultiline string', [
+  ('multiline string', [
     formatAssertionTuple(
       ['string', 'foo \n bar'],
       ['string', 'foo \n bar'],

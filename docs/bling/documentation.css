@@ -1,0 +1,150 @@
+@import './base.css';
+
+body {
+  margin: 0;
+  padding: 0 var(--measure);
+  font: var(--size)/var(--leading) var(--typeface-copy);
+}
+
+:not(.reverse) > a[href] {
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--color-action);
+  background: transparent;
+}
+
+:not(.reverse) > a[href]:hover {
+  color: var(--color-primary);
+  background: transparent;
+  border-width: 1px;
+  border-color: var(--color-action);
+}
+
+a[href]:focus:hover {
+  outline-width: 3px;
+  outline-color: var(--color-primary);
+  border-width: 1px;
+  color: var(--color-action);
+  background: transparent;
+}
+
+main a[href] code {
+  color: var(--color-action);
+  background: transparent;
+}
+
+main a[href]:hover code {
+  color: var(--color-primary);
+  background: transparent;
+}
+
+main > h1,
+main > pre,
+body > footer {
+  --margin: calc(var(--measure) * -1);
+  margin-right: var(--margin);
+  margin-left: var(--margin);
+}
+
+h1 {
+  margin: 0;
+  padding: calc(var(--measure) / 4) 0;
+  font-size: var(--measure);
+}
+
+body > footer {
+  margin-top: calc(var(--measure) * 2);
+  padding: var(--vertical) 0;
+}
+
+main > h2,
+main > h3,
+main > p,
+main > ol,
+main > ul,
+main > dl,
+body > section,
+body > aside,
+pre > code {
+  box-sizing: border-box;
+  max-width: 40rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+h1 {
+  font-size: var(--measure);
+  font-weight: normal;
+}
+
+h2 {
+  margin: var(--vertical) 0;
+  border-bottom: 1px solid var(--foreground-color);
+  font-weight: normal;
+  font-size: var(--measure);
+}
+
+h3 {
+  margin: var(--measure) 0;
+  font-size: var(--size);
+}
+
+p,
+ol,
+ul {
+  margin-top: var(--measure);
+  margin-bottom: var(--measure);
+}
+
+ol,
+ul {
+  padding: 0;
+}
+
+li ol,
+li ul {
+  margin: 0 0 0 var(--measure);
+}
+
+/*
+li:not(:last-child) pre {
+  margin-bottom: var(--measure);
+}
+*/
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin: 0;
+}
+
+pre,
+code {
+  font: var(--size)/var(--leading) var(--typeface-gui);
+}
+
+main > pre {
+  box-sizing: border-box;
+  white-space: normal;
+  width: calc(100% + (var(--measure) * 2));
+  overflow-x: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0 var(--measure);
+  color: var(--color-background);
+  background: #000;
+}
+
+main > pre > code {
+  white-space: pre;
+  display: block;
+  padding: var(--measure) 0;
+  color: inherit;
+  background: transparent;
+}
+
+code {
+  color: var(--color-primary);
+  background: transparent;
+}

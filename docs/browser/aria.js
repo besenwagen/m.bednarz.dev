@@ -1,9 +1,15 @@
+/**
+ * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   disable,
   forceId,
   withId,
   labelWith,
   describeWith,
+  relocate,
+  svgAria,
 };
 
 import { unique } from '../utilities.js';
@@ -124,3 +130,55 @@ function disable(contextNode = document.body) {
 }
 
 //#endregion
+
+//#region SVG
+
+function setMissingAttribute(element, name, value) {
+  if (!element.hasAttribute(name)) {
+    element.setAttribute(name, value);
+  }
+}
+
+function labelSvgWithDescription(root, title, description) {
+  setMissingAttribute(description, 'id', unique());
+  setMissingAttribute(root, 'aria-labelledby', [
+    title.id,
+    description.id,
+  ].join(' '));
+}
+
+function annotateSvgRoot(root, title) {
+  const description = root.querySelector('desc');
+
+  setMissingAttribute(title, 'id', unique());
+
+  if (description) {
+    labelSvgWithDescription(root, title, description);
+  } else {
+    setMissingAttribute(root, 'aria-labelledby', title.id);
+  }
+}
+
+function svgAria(svgElement) {
+  const title = svgElement.querySelector('title');
+
+  if (title) {
+    setMissingAttribute(svgElement, 'role', 'img');
+    annotateSvgRoot(svgElement, title);
+  } else {
+    setMissingAttribute(svgElement, 'aria-hidden', 'true');
+  }
+}
+
+//#endregion
+
+function relocate(element) {
+  function blur() {
+    element.removeAttribute('tabindex');
+    element.removeEventListener('blur', blur, false);
+  }
+
+  element.setAttribute('tabindex', '0');
+  element.addEventListener('blur', blur, false);
+  element.focus();
+}

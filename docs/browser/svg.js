@@ -1,3 +1,7 @@
+/**
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   createElement,
   namespace,
@@ -7,7 +11,6 @@ export {
 /* global document */
 
 const { entries } = Object;
-
 const namespace = 'http://www.w3.org/2000/svg';
 
 function createElement(type, attributes = {}) {

@@ -1,0 +1,126 @@
+pre,
+code {
+  font: 1em/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
+}
+
+section {
+  margin: 0.75em 0;
+}
+
+h2 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1em;
+}
+
+h2 a em {
+  font-weight: bold;
+}
+
+h2 > code,
+li > code {
+  color: inherit;
+  background: transparent;
+}
+
+section[data-fail] > h2 {
+  font-weight: bold;
+}
+
+section > ul {
+  margin: 0;
+  padding: 0;
+}
+
+section > ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol[data-fail] > li:not([data-fail]) {
+  display: none;
+}
+
+h2 > span:first-child,
+li > span:first-child {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 3em;
+  margin-left: -3em;
+  padding: 0 0.5em 0 0;
+  text-align: right;
+}
+
+h2 > code {
+  font-weight: inherit;
+}
+
+strong {
+  color: #900;
+  background: transparent;
+}
+
+em {
+  color: #060;
+  background: transparent;
+}
+
+li > div {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: auto;
+  margin: 0.5rem 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: right;
+  font-weight: normal;
+}
+
+th,
+td {
+  border: 1px solid #999;
+  padding: 0.1rem 0.75rem;
+  vertical-align: middle;
+}
+
+td pre {
+  margin: 0;
+  padding: 0;
+}
+
+td pre code {
+  background: #eee;
+}
+
+td pre code strong {
+  background: #ff9;
+}
+
+a[href] {
+  border-bottom: 1px solid #090;
+  color: var(--color-action);
+  background: transparent;
+  text-decoration: none;
+}
+
+a[href]:hover {
+  border-color: var(--color-action);
+  border-width: 2px;
+  color: #000;
+  background: transparent;
+}
+
+a[href]:focus {
+  outline: 2px solid var(--color-action);
+  outline-offset: 0.2rem;
+  border-color: transparent;
+  color: #000;
+  background: transparent;
+}

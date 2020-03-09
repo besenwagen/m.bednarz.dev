@@ -13,14 +13,10 @@ test
       .call(dictionary({})),
     '[object Dictionary]',
   ])
-
-test
   ('a dictionary has no constructor', [
     dictionary({}).constructor,
     undefined,
   ])
-
-test
   ('a dictionary has no prototype', [
     dictionary({}).prototype,
     undefined,

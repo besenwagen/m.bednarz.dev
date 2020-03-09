@@ -4,28 +4,71 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Unit Tests | m.bednarz.nl</title>
-  <script src="../browser/test-reporter.js" type="module"></script>
+  <script src="./component/report.js" type="module"></script>
+  <link href="/bling/documentation.css" rel="stylesheet">
+  <style>
+    @media only screen and (min-width: 768px) {
+      test-report {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    h2 {
+      margin: 1.5em 0;
+      font-weight: bold;
+      font-size: 1em;
+    }
+
+    li {
+      margin: 0.75em 0;
+    }
+
+  </style>
 </head>
 <body>
 
-  <main itemscope>
-    <meta itemprop="path" content="/">
-    <meta itemprop="test" content="data">
-    <meta itemprop="test" content="dictionary">
-    <meta itemprop="test" content="functional">
-    <meta itemprop="test" content="hook">
-    <meta itemprop="test" content="introspection">
-    <meta itemprop="test" content="test">
-    <meta itemprop="test" content="test-io">
-    <meta itemprop="test" content="utilities">
-    <meta itemprop="test" content="wait">
-    <meta itemprop="test" content="browser/aria">
-    <meta itemprop="test" content="browser/dom">
-    <meta itemprop="test" content="browser/pubsub">
-    <meta itemprop="test" content="browser/request">
-    <meta itemprop="test" content="browser/sandbox">
-    <meta itemprop="test" content="browser/svg">
+  <main id="main">
+    <h1 class="reverse">Unit test report</h1>
+    <test-report path="/">
+      <!--
+      All text node children of LI elements in this component
+      are expanded to test module URLs. All other markup is
+      part of your own progressive enhancement strategy. :-)
+      -->
+      <section>
+        <h2>
+          Modules under test
+        </h2>
+        <ol>
+          <li>data</li>
+          <li>dictionary</li>
+          <li>functional</li>
+          <li>hook</li>
+          <li>introspection</li>
+          <li>math</li>
+          <li>test</li>
+          <li>test-io</li>
+          <li>utilities</li>
+          <li>wait</li>
+          <li>browser/aria</li>
+          <li>browser/component</li>
+          <li>browser/css</li>
+          <li>browser/dom</li>
+          <li>browser/pubsub</li>
+          <li>browser/request</li>
+          <li>browser/resource</li>
+          <li>browser/sandbox</li>
+          <li>browser/storage</li>
+          <li>browser/svg</li>
+        </ol>
+      </section>
+    </test-report>
   </main>
+
+  <footer class="reverse">
+    <a href="/api/test/">Test API</a>
+  </footer>
 
 </body>
 </html>

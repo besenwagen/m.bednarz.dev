@@ -11,13 +11,13 @@ const test = suite(import.meta)
 export default result(test)
 
 test(select)
-  ('uses the documentElement as default scope', [
+  ('use the documentElement as default scope', [
     select(':scope > head > title')[0].firstChild.nodeValue,
     'Unit Tests | m.bednarz.nl',
   ])
 
 test(toFragment)
-  ('creates a DOM fragment from a string', [
+  ('create a DOM fragment from a string', [
     toFragment(' <i></i> ').childNodes.length,
     3,
   ])
@@ -25,7 +25,6 @@ test(toFragment)
 {
   const test_elementFactory = test(elementFactory)
   const { a } = elementFactory(['a'])
-
   {
     const link = a({
       href: '/',

@@ -134,15 +134,8 @@ test(isSymbol)
   ('Symbol call', isSymbol(Symbol('foobar')))
 
 test(isThenable)
-  ('must be a method', isThenable({
-    then() { },
-  }))
-  ('can not be a property', [
-    isThenable({
-      then: '',
-    }),
-    false,
-  ])
+  ('must be a method', isThenable({ then() { } }))
+  ('can not be a property', [isThenable({ then: '' }), false])
 
 test(isTrue)
   ('true', isTrue(true))

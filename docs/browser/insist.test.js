@@ -7,7 +7,6 @@ export default result(test)
 
 {
   const { warn } = console
-
   warn(
     'Calling the `insist` function blocks execution',
     'until user interaction with the browser.'
@@ -18,8 +17,7 @@ export default result(test)
   )
 }
 
-test(
-  'resolves a boolean',
+test('resolve a boolean',
   insist('Are you sure? Your answer does not matter.')
     .then(value =>
       (typeof value === 'boolean')))

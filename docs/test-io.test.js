@@ -1,29 +1,25 @@
 import { result, suite } from './test.js'
 import {
-  jsonEscape,
-  yamlify,
+  _jsonEscape as jsonEscape,
+  _yamlify as yamlify,
 } from './test-io.js'
 
 const test = suite(import.meta)
 
 export default result(test)
 
-const test_json_escape = test(jsonEscape)
-
-test_json_escape
-  ('double quotes', [
+test(jsonEscape)
+  ('escape double quotes', [
     jsonEscape('foo "bar" baz'),
     '"foo \\"bar\\" baz"',
   ])
-  ('excess double quotes', [
+  ('ignore valid json string values', [
     jsonEscape('"foo \\"bar\\" baz"'),
     '"foo \\"bar\\" baz"',
   ])
 
-const test_yamlify = test(yamlify)
-
-test_yamlify
-  ('quotes all test case descriptions', [
+test(yamlify)
+  ('quote all test case descriptions', [
     yamlify([
       ['moduleIdentifier', [
         ['testDescription', true, [
@@ -41,9 +37,7 @@ test_yamlify
       '        boolean: true',
     ].join('\n'),
   ])
-
-test_yamlify
-  ('quotes assertion string values', [
+  ('quote assertion string values', [
     yamlify([
       ['moduleIdentifier', [
         ['testDescription', true, [
@@ -61,9 +55,7 @@ test_yamlify
       '        string: "foo \\"and\\" bar"',
     ].join('\n'),
   ])
-
-test_yamlify
-  ('escapes line breaks', [
+  ('escape line breaks', [
     yamlify([
       ['moduleIdentifier', [
         ['testDescription', true, [

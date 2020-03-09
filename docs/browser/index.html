@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-wdidth,initial-scale=1.0">
-  <title>Browser modules</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser modules | m is for module</title>
+  <script type="module">
+    import '/bling/initialize.js';
+    import '/bling/logo.js';
+    import { render } from '/bling/github.js';
+
+    render();
+  </script>
+  <link href="/bling/splash.css" rel="stylesheet">
 </head>
 <body>
 
-  <h1>Modules for web browsers</h1>
+  <header>
+    <a label="Homepage" href="/">
+      <span aria-hidden="true" class="placeholder loading"></span>
+    </a>
 
-  <ul>
-    <li>
-      <a href="./dom.js">dom.js</a>
-    </li>
-    <li>
-      <a href="./insist.js">insist.js</a>
-    </li>
-    <li>
-      <a href="./request.js">request.js</a>
-    </li>
-    <li>
-      <a href="./svg.js">svg.js</a>
-    </li>
-    <li>
-      <a href="./test-reporter.js">test-reporter.js</a>
-    </li>
-  </ul>
+    <h1><em>m</em> is for <em>module</em></h1>
+  </header>
+
+  <main>
+    <section id="browser">
+      <h2 class="reverse">Browser modules</h2>
+      <p>
+        <span aria-hidden="true" class="placeholder loading">?</span>
+      </p>
+    </section>
+  </main>
+
+  <footer class="reverse">
+    <a href="/test/">Unit tests</a>
+    |
+    <a href="https://github.com/eric-bednarz-dev/ECMAScript-modules">GitHub</a>
+    |
+    <a hreflang="nl" href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
 
 </body>
 </html>

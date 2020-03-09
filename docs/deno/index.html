@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-wdidth,initial-scale=1.0">
-  <title>Deno modules</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deno modules | m is for module</title>
+  <script type="module">
+    import '/bling/initialize.js';
+    import '/bling/logo.js';
+    import { render } from '/bling/github.js';
+
+    render();
+  </script>
+  <link href="/bling/splash.css" rel="stylesheet">
 </head>
 <body>
 
-  <h1>Modules for <i>Deno</i></h1>
+  <header>
+    <a label="Homepage" href="/">
+      <span aria-hidden="true" class="placeholder loading"></span>
+    </a>
 
-  <ul>
-    <li>
-      <a href="./test_runner.ts">test_runner.ts</a>
-    </li>
-  </ul>
+    <h1><em>m</em> is for <em>module</em></h1>
+  </header>
+
+  <main>
+    <section id="deno">
+      <h2 class="reverse">Deno modules</h2>
+      <p>
+        <span aria-hidden="true" class="placeholder loading">?</span>
+      </p>
+    </section>
+  </main>
 
   <aside>
-    <h2>See also</h2>
+    <h2 class="reverse">See also</h2>
     <ul>
       <li>
         <a href="https://deno.land/">
@@ -24,12 +41,20 @@
         </a>
       </li>
       <li>
-        <a href="https://marketplace.visualstudio.com/items?itemName=justjavac.vscode-deno">
+        <a href="https://marketplace.visualstudio.com/items?itemName=axetroy.vscode-deno">
           <i>Visual Studio Code</i> extension
         </a>
       </li>
     </ul>
   </aside>
+
+  <footer class="reverse">
+    <a href="/test/">Unit tests</a>
+    |
+    <a href="https://github.com/eric-bednarz-dev/ECMAScript-modules">GitHub</a>
+    |
+    <a hreflang="nl" href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
 
 </body>
 </html>

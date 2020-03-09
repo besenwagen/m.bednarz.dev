@@ -1,3 +1,7 @@
+/**
+ * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   append,
   createTextNode,
@@ -5,14 +9,14 @@ export {
   createFragment,
   elementFactory,
   getStyle,
+  prepend,
   purge,
-  replaceElement,
+  replaceNode,
   select,
+  setAttribute,
   setStyle,
   toFragment,
 };
-
-import { callOrNothingAtAll } from '../utilities.js';
 
 /* global window document */
 
@@ -73,20 +77,17 @@ function setStyle(element, style) {
   return element;
 }
 
-function setBooleanAttribute(element, name) {
-  element.setAttribute(name, '');
-
-  return element;
+function setBooleanAttribute(element, name, value) {
+  if (value) {
+    element.setAttribute(name, '');
+  } else {
+    element.removeAttribute(name);
+  }
 }
 
 function setAttribute(element, name, value) {
   if (typeof value === 'boolean') {
-    callOrNothingAtAll(value, [
-      setBooleanAttribute, [
-        element,
-        name,
-      ],
-    ]);
+    setBooleanAttribute(element, name, value);
   } else if (name.startsWith('on')) {
     element[name] = value;
   } else {
@@ -112,32 +113,43 @@ function purge(element) {
   return element;
 }
 
-function appendNode(element, node) {
-  if (/^(?:number|string)$/.test(typeof node)) {
-    element.appendChild(document.createTextNode(node));
-  } else {
-    element.appendChild(node);
+function asNode(value) {
+  if (/^(?:number|string)$/.test(typeof value)) {
+    return document.createTextNode(value);
   }
+
+  return value;
+}
+
+function appendNode(element, children) {
+  element.appendChild(asNode(children));
 
   return element;
 }
 
-const appendFragment = (element, children) =>
-  children
-    .reduce(
-      appendNode,
-      element
-    );
+function prependNode(element, children) {
+  element.insertBefore(asNode(children), element.firstChild);
 
-function append(element, children) {
-  if (isArray(children)) {
-    return appendFragment(element, children);
-  }
-
-  return appendNode(element, children);
+  return element;
 }
 
-const replaceElement = (previous, next) =>
+function append(element, children) {
+  const node = isArray(children) ?
+    createFragment(children) :
+    children;
+
+  return appendNode(element, node);
+}
+
+function prepend(element, children) {
+  const node = isArray(children) ?
+    createFragment(children) :
+    children;
+
+  return prependNode(element, node);
+}
+
+const replaceNode = (previous, next) =>
   previous
     .parentNode
     .replaceChild(next, previous);

@@ -5,15 +5,41 @@ const test = suite(import.meta)
 
 export default result(test)
 
-test(json)
-  ('get GitHub API overview',
-    json('https://api.github.com')
-      .then(({ authorizations_url }) => [
-        authorizations_url,
-        'https://api.github.com/authorizations',
-      ])
-      .catch(error => {
-        console.error(error)
+{
+  const { origin, pathname } = document.location
+  const jsonUrl = [origin, pathname, 'stub.json'].join('/')
+  let count = 0
 
-        return false
-      }))
+  test(json)
+    ('get JSON response', () => {
+      const url = [jsonUrl, ++count].join('?')
+      return json(url)
+        .then(({ answer }) => {
+          return [
+            answer,
+            42,
+          ]
+        })
+        .catch(error => {
+          console.error(error)
+          return false
+        })
+    })
+    ('throw on concurrent calls', () => {
+      const url = [jsonUrl, ++count].join('?')
+      return Promise
+        .all([
+          json(url),
+          json(url),
+        ])
+        .then(() => {
+          return false
+        })
+        .catch(({ message }) => {
+          return [
+            message,
+            `Concurrent unsettled request: GET ${url}`,
+          ]
+        })
+    })
+}

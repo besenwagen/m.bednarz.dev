@@ -1,3 +1,7 @@
+/**
+ * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   getConstructorName,
   getFunctionName,
@@ -16,6 +20,7 @@ export {
   isDataPrimitive,
   isJsonPrimitive,
   isNaN,
+  isNotNull,
   isNull,
   isNumber,
   isObject,
@@ -44,32 +49,37 @@ const getFunctionName = ({ name }) =>
 const getConstructorName = ({ constructor }) =>
   getFunctionName(constructor);
 
+//#region isPrimitive
+
+const isUndefined = value =>
+  (value === undefined);
+
+const isNull = value =>
+  (value === null);
+
 const isBoolean = value =>
   (typeof value === 'boolean');
 
-const isComplex = value =>
-  !isPrimitive(value);
-
-const isDate = value =>
-  isInstanceOf(value, Date);
-
-const isDefined = value =>
-  !isUndefined(value);
-
-const isError = value =>
-  isInstanceOf(value, Error);
+const isTrue = value =>
+  (value === true);
 
 const isFalse = value =>
   (value === false);
 
-const isFunction = value =>
-  (typeof value === 'function');
+const isString = value =>
+  (typeof value === 'string');
 
-const isInstanceOf = (value, constructor) =>
-  (value instanceof constructor);
+const isNumber = value => (
+  (typeof value === 'number')
+  && isFinite(value)
+  && !isNaN(value)
+);
 
 const isInteger = value =>
   isSafeInteger(value);
+
+const isSymbol = value =>
+  (typeof value === 'symbol');
 
 const isDataPrimitive = value => (
   isString(value)
@@ -88,24 +98,38 @@ const isJsonPrimitive = value => (
   || isNull(value)
 );
 
-const isNull = value =>
-  (value === null);
-
-const isNumber = value => (
-  (typeof value === 'number')
-  && isFinite(value)
-  && !isNaN(value)
-);
-
-const isObject = value => (
-  !isNull(value)
-  && (getStringTag(value) === '[object Object]')
-);
-
 const isPrimitive = value => (
   isDataPrimitive(value)
   || isFixedPrimitive(value)
   || isSymbol(value)
+);
+
+//#endregion
+
+const isDefined = value =>
+  !isUndefined(value);
+
+const isNotNull = value =>
+  !isNull(value);
+
+const isComplex = value =>
+  !isPrimitive(value);
+
+const isDate = value =>
+  isInstanceOf(value, Date);
+
+const isError = value =>
+  isInstanceOf(value, Error);
+
+const isFunction = value =>
+  (typeof value === 'function');
+
+const isInstanceOf = (value, constructor) =>
+  (value instanceof constructor);
+
+const isObject = value => (
+  !isNull(value)
+  && (getStringTag(value) === '[object Object]')
 );
 
 const isRegExp = value =>
@@ -114,19 +138,7 @@ const isRegExp = value =>
 const isPromise = value =>
   isInstanceOf(value, Promise);
 
-const isString = value =>
-  (typeof value === 'string');
-
-const isSymbol = value =>
-  (typeof value === 'symbol');
-
 const isThenable = value => (
   isObject(value)
   && isFunction(value.then)
 );
-
-const isTrue = value =>
-  (value === true);
-
-const isUndefined = value =>
-  (value === undefined);
