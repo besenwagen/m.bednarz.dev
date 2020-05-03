@@ -170,7 +170,7 @@ const getUrl = (instance, extension) => [
 function load(instance) {
   const url = getUrl(instance, TEST_EXTENSION);
 
-  return import(url)
+  return import(origin + url)
     .then(resolved => resolved.default)
     .then(result => renderResult(instance, result))
     .catch(reason => delegateError(instance, reason));
@@ -272,10 +272,11 @@ component('test-suite', {
 
   render(instance) {
     const sectionNode = instance.get(SECTION_NODE);
+    const { origin } = new URL(import.meta.url);
 
     append(instance.root, [
       link({
-        href: './test-suite.css',
+        href: `${origin}/test/test-suite.css`,
         rel: 'stylesheet',
         onload() {
           sectionNode.style.visibility = '';
