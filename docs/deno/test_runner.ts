@@ -11,13 +11,13 @@
  *
  * Verbose example (try before you buy :-):
  *
- *   $ deno --allow-read --allow-net https://m.bednarz.dev/deno/test_runner.ts client server
+ *   $ deno run --unstable --allow-read --allow-net https://m.bednarz.dev/deno/test_runner.ts client server
  *
  * Runs all tests in `./client` and `./server`.
  *
  * Installation:
  *
- *   $ deno install estr https://m.bednarz.dev/deno/test_runner.ts --allow-read --allow-net
+ *   $ deno install --unstable --allow-read --allow-net --name estr https://m.bednarz.dev/deno/test_runner.ts
  *
  * where `estr` is the executable name of your choice.
  * Make sure that `~/.deno/bin` is in your `$PATH` and run
@@ -48,20 +48,21 @@ const SILENT = ARGUMENT_LIST
   .includes('-s');
 const RECURSIVE = ARGUMENT_LIST
   .includes('-r');
-const testFileExpression = /\/[^/]+\.test\.js$/;
+const testFileExpression = /\.test\.js$/;
 const DEFAULT_DEPTH = 1;
 const MAX_DEPTH = 10;
 const maxDepth = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
 
-const isTestFile = (filePath: string): boolean =>
-  testFileExpression.test(filePath);
+const isTestFile = (filePath: string) =>
+  testFileExpression
+    .test(filePath);
 
-const getFileUrl = (relativePath: string): string => [
+const getFileUrl = (relativePath: string) => [
   FILE_BASE_URL,
   relativePath,
 ].join('');
 
-const mapToFileUrl = (filePath: string): string =>
+const mapToFileUrl = (filePath: string) =>
   getFileUrl(filePath);
 
 function addTestFile(filePath: string, bucket: string[]) {
@@ -70,44 +71,37 @@ function addTestFile(filePath: string, bucket: string[]) {
   }
 }
 
-async function traverse(base: string): Promise<string[]> {
-  const bucket = [];
+async function traverse(base: string) {
+  const bucket: string[] = [];
   const options = {
     maxDepth,
   };
 
-  for await (const { filename } of walk(base, options)) {
-    addTestFile(filename, bucket);
+  for await (const { path } of walk(base, options)) {
+    addTestFile(path, bucket);
   }
 
   return bucket;
 }
 
-const onFilesResolved = (
-  directories: string[][]
-): Promise<string[]> =>
+const onFilesResolved = (directories: string[][]) =>
   Promise
     .all(
       directories
         .flat()
         .map(mapToFileUrl));
 
-const getExitCode = (errorCount: number): number =>
+const getExitCode = (errorCount: number) =>
   Number(Boolean(errorCount));
 
-function onTestSuitesResolved([
-  result, [
-    modules,
-    tests,
-    errors,
-  ]
-]: [
-    any[], [
-      any[],
-      number,
-      number,
+function onTestSuitesResolved(report: any[]) {
+  const [
+    result, [
+      modules,
+      tests,
+      errors,
     ],
-  ]) {
+  ] = report;
   const exitCode = getExitCode(errors);
 
   if (errors) {
@@ -119,11 +113,11 @@ function onTestSuitesResolved([
   exit(exitCode);
 }
 
-function onError({ message }: Error) {
+function onError() {
   exit(EXIT_CODE_ERROR);
 }
 
-const mapToFiles = (baseDirectory: string): Promise<string[]> =>
+const mapToFiles = (baseDirectory: string) =>
   traverse(baseDirectory);
 
 const queue = DIRECTORIES.map(mapToFiles);
