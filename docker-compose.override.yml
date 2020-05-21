@@ -2,5 +2,7 @@
 version: "3.6"
 services:
   app:
+    environment:
+      - PROJECT=esm
     volumes:
       - ../ECMAScript-modules/docs:/home/node/app/public
