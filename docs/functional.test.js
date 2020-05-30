@@ -1,5 +1,10 @@
 import { result, suite } from './test.js'
-import { compose, pipe, stage } from './functional.js'
+import {
+  compose,
+  pipe,
+  stage,
+  partial,
+} from './functional.js'
 
 const test = suite(import.meta)
 
@@ -44,4 +49,23 @@ test(stage)
       },
     })
     return stage(callbackSpy)(40)(2)
+  })
+
+test(partial)
+  ('bind single argument', () => {
+    const multiply = (a, b) => a * b
+    const takeFive = partial(multiply, 5)
+    return [
+      takeFive(3),
+      15,
+    ]
+  })
+  ('bind nultiple arguments', () => {
+    const greet = (greeting, firstName, lastName, punctuation) =>
+      `${greeting}, ${firstName} ${lastName}${punctuation}`
+    const greetJohn = partial(greet, 'Hello', 'John')
+    return [
+      greetJohn('Doe', '!'),
+      'Hello, John Doe!',
+    ]
   })

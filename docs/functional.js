@@ -4,6 +4,7 @@
  */
 export {
   compose,
+  partial,
   pipe,
   stage,
 };
@@ -24,3 +25,7 @@ const pipe = (...transformers) =>
 const stage = callback =>
   boundArgument =>
     callback.bind(null, boundArgument);
+
+const partial = (callback, ...head) =>
+  (...tail) =>
+    callback(...head, ...tail);
