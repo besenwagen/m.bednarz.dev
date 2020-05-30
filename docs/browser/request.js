@@ -109,7 +109,7 @@ const api = assign(create(null), {
   },
   get(url) {
     return request(url, {
-      method: 'GET',
+      method: DEFAULT_METHOD,
     });
   },
   patch(url, data) {
