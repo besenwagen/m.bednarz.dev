@@ -16,12 +16,7 @@ const { assign, create } = Object;
 // imports in dynamically imported blob/data URLs need absolute URLs
 const { origin } = window.location;
 
-/*
- * Cf. https://github.com/eslint/eslint/issues/13133
- * const { url: moduleUrl } = import.meta;
- */
-
-const moduleUrl = `${origin}/browser/vue-loader.js`;
+const { url: moduleUrl } = import.meta;
 
 const sfcImport = /^import ([^\s]+) from "([^"]+\.vue)";?$/gm;
 const esImport = /^(import {[^}]+} from) "([^"]+\.js)";?$/gm;

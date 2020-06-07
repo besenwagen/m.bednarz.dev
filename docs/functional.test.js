@@ -10,31 +10,33 @@ const test = suite(import.meta)
 
 export default result(test)
 
-const add = value1 =>
-  value2 =>
-    value1 + value2
+{
+  const add = value1 =>
+    value2 =>
+      value1 + value2
 
-const multiply = value1 =>
-  value2 =>
-    value1 * value2
+  const multiply = value1 =>
+    value2 =>
+      value1 * value2
 
-test(compose)
-  ('pass right to left', () => {
-    const doTheMath = compose(
-      add(6),
-      multiply(3)
-    )
-    return [doTheMath(12), 42]
-  })
+  test(compose)
+    ('pass right to left', () => {
+      const doTheMath = compose(
+        add(6),
+        multiply(3)
+      )
+      return [doTheMath(12), 42]
+    })
 
-test(pipe)
-  ('pass left to right', () => {
-    const doTheMath = pipe(
-      multiply(3),
-      add(6)
-    )
-    return [doTheMath(12), 42]
-  })
+  test(pipe)
+    ('pass left to right', () => {
+      const doTheMath = pipe(
+        multiply(3),
+        add(6)
+      )
+      return [doTheMath(12), 42]
+    })
+}
 
 test(stage)
   ('create a transformer with a bound argument', () => {

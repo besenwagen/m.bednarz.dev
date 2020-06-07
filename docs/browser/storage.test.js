@@ -1,6 +1,6 @@
 import { result, suite } from '../test.js'
 import { storageContext } from './storage.js'
-import { disposable } from './sandbox.js';
+import { disposable } from './sandbox.js'
 
 const test = suite(import.meta)
 
@@ -13,7 +13,7 @@ test
       const [read, write] = storageContext(global.sessionStorage)
       write(key, 'bar')
       const value = read(key, 60)
-      sessionStorage.removeItem(key)
+      global.sessionStorage.removeItem(key)
       return [
         value,
         'bar',
@@ -29,7 +29,7 @@ test
         write(key, 'bar')
         setTimeout(() => {
           const value = read(key, 1)
-          sessionStorage.removeItem(key)
+          global.sessionStorage.removeItem(key)
           resolve([
             value,
             null,

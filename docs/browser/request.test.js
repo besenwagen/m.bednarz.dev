@@ -5,6 +5,8 @@ const test = suite(import.meta)
 
 export default result(test)
 
+/* global document */
+
 {
   const { origin, pathname } = document.location
   const jsonUrl = [origin, pathname, 'stub.json'].join('/')

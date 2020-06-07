@@ -48,7 +48,7 @@ function decrement(instance, key, value = INCREMENT) {
   set(instance, key, (index - value));
 }
 
-const private_onDemand = Symbol('onDemand');
+const ON_DEMAND = Symbol('onDemand');
 
 class Vault {
   constructor() {
@@ -62,7 +62,7 @@ class Vault {
   }
 
   set(instance, ...rest) {
-    this[private_onDemand](instance)
+    this[ON_DEMAND](instance)
       .set(...rest);
   }
 
@@ -72,7 +72,7 @@ class Vault {
       .delete(key);
   }
 
-  [private_onDemand](instance) {
+  [ON_DEMAND](instance) {
     if (!this.vault.has(instance)) {
       this.vault.set(instance, new Map());
     }

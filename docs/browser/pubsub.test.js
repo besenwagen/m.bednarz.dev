@@ -31,7 +31,7 @@ test('immutable',
       answer: 42,
     }
     subscribe('foo:bar', value => {
-      value.answer = 7;
+      value.answer = 7
       resolve([data.answer, 42])
     })
     publish('foo:bar', data)

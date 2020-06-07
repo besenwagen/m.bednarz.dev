@@ -1,6 +1,9 @@
 import { result, suite } from '../test.js'
 import { disposable } from './sandbox.js'
 import {
+  maxWidth,
+  minWidth,
+  motion,
   styleSheet,
   toCssText,
   toRuleSet,
@@ -9,6 +12,26 @@ import {
 const test = suite(import.meta)
 
 export default result(test)
+
+/* global getComputedStyle */
+
+test(maxWidth)
+  ('max-width media query', [
+    maxWidth('42em'),
+    '@media only screen and (max-width:42em)',
+  ])
+
+test(minWidth)
+  ('min-width media query', [
+    minWidth('42em'),
+    '@media only screen and (min-width:42em)',
+  ])
+
+test(motion)
+  ('reduced motion media query', [
+    motion(),
+    '@media only screen and (prefers-reduced-motion:no-preference)',
+  ])
 
 test(toCssText)
   ('concatenate declarations', [
@@ -37,7 +60,7 @@ test(styleSheet)
       body,
       set,
     }) => {
-      const style = styleSheet({
+      styleSheet({
         body: {
           display: 'flex',
         },
@@ -57,9 +80,8 @@ test(styleSheet)
     disposable(({
       head,
       body,
-      set,
     }) => {
-      const style = styleSheet({
+      styleSheet({
         '@media only screen and (min-width: 1px)': {
           body: {
             fontSize: '100px',

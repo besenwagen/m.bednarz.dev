@@ -1,4 +1,4 @@
-import { result, suite } from './test.js';
+import { result, suite } from './test.js'
 import {
   centi,
   deca,
@@ -9,11 +9,11 @@ import {
   kilo,
   milli,
   quarter,
-} from './math.js';
+} from './math.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 test(quarter)
   ('a quarter of the value', [
@@ -25,13 +25,13 @@ test(half)
   ('half the value', [
     half(14),
     7,
-  ]);
+  ])
 
 test(double)
   ('twice the value', [
     double(7),
     14,
-  ]);
+  ])
 
 test(deci)
   ('a tenth of the vale', [

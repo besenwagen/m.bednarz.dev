@@ -167,7 +167,7 @@ const getUrl = (instance, extension) => [
   extension,
 ].join('');
 
-function load(instance) {
+function load(instance, origin) {
   const url = getUrl(instance, TEST_EXTENSION);
 
   return import(origin + url)
@@ -285,6 +285,6 @@ component('test-suite', {
       sectionNode,
     ]);
     setFontWeight(instance);
-    load(instance);
+    load(instance, origin);
   },
 });

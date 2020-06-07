@@ -1,9 +1,9 @@
-import { result, suite } from './test.js';
-import { hook, useState } from './hook.js';
+import { result, suite } from './test.js'
+import { hook, useState } from './hook.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
-export default result(test);
+export default result(test)
 
 test(hook)
   ('return the wrapped function return value', () => {
@@ -18,7 +18,7 @@ test(hook)
 test(useState)
   ('set the initial state',
     hook(() => {
-      const [state] = useState('foobar');
+      const [state] = useState('foobar')
       return [
         state,
         'foobar',
@@ -28,8 +28,8 @@ test(useState)
     hook(() => {
       const [fruit, setFruit] = useState('apple')
       const [cake, setCake] = useState('brownie')
-      const [newFruit, oldFruit] = setFruit('orange');
-      const [newCake, oldCake] = setCake('gingerbread');
+      const [newFruit, oldFruit] = setFruit('orange')
+      const [newCake, oldCake] = setCake('gingerbread')
       return [
         JSON.stringify([
           fruit, newFruit, oldFruit,
@@ -40,8 +40,8 @@ test(useState)
     }))
   ('state setter: return the current and previous state',
     hook(() => {
-      const [state, setState] = useState(7);
-      const tuple = setState(state * 3);
+      const [state, setState] = useState(7)
+      const tuple = setState(state * 3)
       return [
         JSON.stringify(tuple),
         '[21,7]',

@@ -62,13 +62,13 @@ test(forceUrl)
   ])
   ('enforce https: or file: protocol', () => {
     try {
-      forceUrl('http://example.org/foo/bar.js');
-      return false;
+      forceUrl('http://example.org/foo/bar.js')
+      return false
     } catch ({ message }) {
       return [
         message,
         "Expected 'https:' or 'file:' protocol, got 'http:'",
-      ];
+      ]
     }
   })
 

@@ -10,10 +10,12 @@ const test = suite(import.meta)
 
 export default result(test)
 
+/* global document */
+
 test(forceId)
   ('get the existing id attribute value, if any', () => {
     const element = document.createElement('div')
-    element.id = 'fubar';
+    element.id = 'fubar'
     return [
       forceId(element),
       'fubar',
@@ -35,17 +37,17 @@ test(withId)
 
   test_disable('set aria-hidden on child elements',
     disposable(({ body, set }) => {
-      const initial = `
+      const initialHtml = `
         <div></div>
         <div aria-disabled="false"></div>
       `
-      const result = `
+      const resultHtml = `
         <div aria-disabled="true"></div>
         <div aria-disabled="true"></div>
       `
-      set(initial)
+      set(initialHtml)
       disable(body)
-      return [body.innerHTML, result]
+      return [body.innerHTML, resultHtml]
     }))
 
   test_disable('reset aria-hidden on child elements',

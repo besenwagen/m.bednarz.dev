@@ -1,6 +1,5 @@
 import { result, suite } from '../test.js'
 import {
-  createElement,
   elementFactory,
   select,
   toFragment,

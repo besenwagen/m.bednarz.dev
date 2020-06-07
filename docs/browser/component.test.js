@@ -1,6 +1,5 @@
 import { result, suite } from '../test.js'
 import {
-  component,
   _conditional as conditional,
 } from './component.js'
 
@@ -10,13 +9,13 @@ export default result(test)
 
 test(conditional)
   ('function guard', () => {
-    let foo = 0;
+    let foo = 0
 
     function bar(m, n) {
-      foo = m * n;
+      foo = m * n
     }
 
-    conditional(bar, 4, 3);
+    conditional(bar, 4, 3)
 
     return [
       foo,
@@ -24,13 +23,13 @@ test(conditional)
     ]
   })
   ('guarded function falsy', () => {
-    let foo = 0;
+    let foo = 0
 
     function bar(m, n) {
-      foo = m * n;
+      foo = m * n
     }
 
-    conditional(false, bar, 4, 3);
+    conditional(false, bar, 4, 3)
 
     return [
       foo,
@@ -38,13 +37,13 @@ test(conditional)
     ]
   })
   ('guarded function truthy', () => {
-    let foo = 0;
+    let foo = 0
 
     function bar(m, n) {
-      foo = m * n;
+      foo = m * n
     }
 
-    conditional(true, bar, 4, 3);
+    conditional(true, bar, 4, 3)
 
     return [
       foo,

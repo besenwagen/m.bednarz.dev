@@ -5,6 +5,8 @@ const test = suite(import.meta)
 
 export default result(test)
 
+/* global document */
+
 test(disposable)
   ('global: reference a distinct host environment',
     disposable(({ global }) => [
@@ -52,7 +54,7 @@ test(sandbox)
         const count = () =>
           document
             .querySelectorAll('iframe')
-            .length;
+            .length
         const [before, , after] = [
           count(),
           destroy(),

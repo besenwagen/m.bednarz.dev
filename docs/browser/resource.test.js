@@ -1,13 +1,13 @@
 import { result, suite } from '../test.js'
 import { memory, network, resource } from './resource.js'
 
-const test = suite(import.meta);
+const test = suite(import.meta)
 
 export default result(test)
 
 test(memory)
   ('return an array of symbols', () => {
-    const [foo] = memory({ 'foo': [] })
+    const [foo] = memory({ foo: [] })
     return [
       typeof foo,
       'symbol',
@@ -16,7 +16,7 @@ test(memory)
 
 test(network)
   ('return an array of symbols', () => {
-    const [foo] = network({ 'foo': [] })
+    const [foo] = network({ foo: [] })
     return [
       typeof foo,
       'symbol',

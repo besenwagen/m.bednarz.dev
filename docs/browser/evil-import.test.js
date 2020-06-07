@@ -11,12 +11,12 @@ test
       const v = 41;
       const f = n => n + 1;
 
-      export const result = f(v);
+      export const value = f(v);
     `
 
     return evilImport(literal)
-      .then(({ result }) => [
-        result,
+      .then(({ value }) => [
+        value,
         42,
       ])
   })
