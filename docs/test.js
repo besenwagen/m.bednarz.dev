@@ -32,15 +32,30 @@ function getShellWorkingDirectory() {
   return '';
 }
 
-function normalizePath(pathname, protocol) {
-  if (protocol === 'file:') {
-    const prefix = getShellWorkingDirectory();
-    const prefixExpression = new RegExp(`^${prefix}/`);
+function getRelativeFilePath(pathname) {
+  const prefix = getShellWorkingDirectory();
+  const prefixExpression = new RegExp(`^${prefix}/`);
 
-    return pathname.replace(prefixExpression, '');
+  return pathname.replace(prefixExpression, '');
+}
+
+function getRelativeUrlPath(inputPath, protocol) {
+  if (protocol === 'blob:') {
+    const { pathname } = new URL(inputPath);
+
+    return pathname;
   }
 
-  return pathname.substring(PATH_OFFSET);
+  return inputPath;
+}
+
+function normalizePath(pathname, protocol) {
+  if (protocol === 'file:') {
+    return getRelativeFilePath(pathname);
+  }
+
+  return getRelativeUrlPath(pathname, protocol)
+    .substring(PATH_OFFSET);
 }
 
 const isImportMeta = value => (
@@ -65,10 +80,12 @@ function forceUrl(value) {
     protocol,
   } = new URL(value, BASE_URL);
 
-  if (!/^(?:https|file):$/.test(protocol)) {
-    throw new Error(
-      `Expected 'https:' or 'file:' protocol, got '${protocol}'`
-    );
+  if (!/^(?:https|file|blob):$/.test(protocol)) {
+    throw new Error([
+      "Expected 'https:', 'file:' or 'blob:' protocol, got '",
+      protocol,
+      "'",
+    ].join(''));
   }
 
   return normalizePath(pathname, protocol);

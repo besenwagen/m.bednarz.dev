@@ -67,7 +67,7 @@ test(forceUrl)
     } catch ({ message }) {
       return [
         message,
-        "Expected 'https:' or 'file:' protocol, got 'http:'",
+        "Expected 'https:', 'file:' or 'blob:' protocol, got 'http:'",
       ]
     }
   })

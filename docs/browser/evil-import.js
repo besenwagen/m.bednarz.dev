@@ -6,26 +6,12 @@ export {
   evilImport,
 };
 
-/* global Blob */
+import { resolveBlobUrl } from './url.js';
 
 const type = 'application/javascript';
-const { createObjectURL, revokeObjectURL } = URL;
-
-const toBlob = string =>
-  new Blob([string], { type });
-
-const toObjectUrl = string =>
-  createObjectURL(toBlob(string));
 
 function evilImport(sourceText) {
-  const objectUrl = toObjectUrl(sourceText);
+  const resolve = url => import(url);
 
-  function onResolved(resolvedModule) {
-    revokeObjectURL(objectUrl);
-
-    return resolvedModule;
-  }
-
-  return import(objectUrl)
-    .then(onResolved);
+  return resolveBlobUrl(resolve, sourceText, type);
 }

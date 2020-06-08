@@ -1,5 +1,7 @@
 import { result, suite } from '../test.js'
-import { evilImport } from './evil-import.js'
+import {
+  evilImport,
+} from './evil-import.js'
 
 const test = suite(import.meta.url)
 

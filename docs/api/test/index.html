@@ -37,7 +37,8 @@
       <em>unit test</em> API from the <em>test</em> module:
     </p>
 
-    <pre><code>import { suite, result } from 'https://m.bednarz.dev/test.js';</code></pre>
+    <pre
+         data-demo><code>import { suite, result } from 'https://localhost:8443/test.js';</code></pre>
 
     <p>
       Now you already know the <em>entire</em> test API surface.
@@ -54,7 +55,7 @@
       in all supported environments.
     </p>
 
-    <pre><code>const test = suite(import.meta);</code></pre>
+    <pre data-demo><code>const test = suite(import.meta);</code></pre>
 
     <p>
       The identifier for the the <em>test function</em> will
@@ -72,7 +73,7 @@
       as <code>default</code>.
     </p>
 
-    <pre><code>export default result(test);</code></pre>
+    <pre data-demo><code>export default result(test);</code></pre>
 
     <p>
       That was all the <em>test API</em> boilerplate code
@@ -84,7 +85,7 @@
       Time to run the first test:
     </p>
 
-    <pre><code>test('The truth is out there', true);</code></pre>
+    <pre data-demo><code>test('The truth is out there', true);</code></pre>
 
     <p>
       After the exported <em>test suite result</em> resolves,
@@ -92,7 +93,7 @@
       the console or STDOUT:
     </p>
 
-    <pre><code>- api/test/example.test.js (1 passed)</code></pre>
+    <pre><code>- [relative URL path component or Blob reference] (1 passed)</code></pre>
 
     <p>
       This page runs the above test suite,
@@ -100,7 +101,18 @@
       have a look in the console.
     </p>
 
-    <script src="example.test.js" type="module"></script>
+    <script type="module">
+      import { evilImport } from '/browser/evil-import.js';
+
+      const { from } = Array;
+      const lines = document.querySelectorAll('pre[data-demo]');
+
+      const source = from(lines)
+        .map(node => node.textContent)
+        .join('\n');
+
+      evilImport(source);
+    </script>
 
     <p>
       Note that the above <em>test suite summary</em>
