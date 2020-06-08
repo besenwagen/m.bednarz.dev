@@ -6,20 +6,16 @@ const test = suite(import.meta.url)
 
 export default result(test)
 
-{
+test('template string', () => {
   const source = `
-<template><div></div></template>
-<script>
-export default {};
-</script>
+    <template><div></div></template>
+    <script>
+    export default {};
+    </script>
   `
-  const type = 'text/html'
-
-  test('template string',
-    resolveBlobUrl(loadComponent, source, type)
-      .then(({ template }) => [
-        template,
-        '<div></div>',
-      ])
-  )
-}
+  return resolveBlobUrl(loadComponent, source, 'text/html')
+    .then(({ template }) => [
+      template,
+      '<div></div>',
+    ])
+})

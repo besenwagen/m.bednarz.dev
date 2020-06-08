@@ -158,6 +158,17 @@ function getModuleList(rootNode) {
   );
 }
 
+function plural(count, word) {
+  const base = `${count} ${word}`;
+  const singular = 1;
+
+  if (count === singular) {
+    return base;
+  }
+
+  return `${base}s`;
+}
+
 function getSummary(passing, failing) {
   if (failing) {
     const all = (passing + failing);
@@ -169,7 +180,7 @@ function getSummary(passing, failing) {
   }
 
   return [
-    em(`${passing} tests passing`),
+    em(`${plural(passing, 'test')} passing`),
     ' in ',
   ];
 }
@@ -279,7 +290,7 @@ component('test-report', {
             'aria-live': 'polite',
           }, [
             instance.get(SUMMARY_NODE),
-            ` ${length} test suites.`,
+            ` ${plural(length, 'test suite')}.`,
           ]),
           div([
             'Show all: ',

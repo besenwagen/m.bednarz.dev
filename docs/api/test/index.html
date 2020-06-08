@@ -37,8 +37,7 @@
       <em>unit test</em> API from the <em>test</em> module:
     </p>
 
-    <pre
-         data-demo><code>import { suite, result } from 'https://localhost:8443/test.js';</code></pre>
+    <pre data-demo><code>import { suite, result } from 'https://m.bednarz.dev/test.js';</code></pre>
 
     <p>
       Now you already know the <em>entire</em> test API surface.
@@ -89,17 +88,18 @@
 
     <p>
       After the exported <em>test suite result</em> resolves,
-      a <em>test suite summary</em> is printed to
-      the console or STDOUT:
+      a <em>test suite summary</em> is printed to the console or STDOUT.
     </p>
-
-    <pre><code>- [relative URL path component or Blob reference] (1 passed)</code></pre>
 
     <p>
-      This page runs the above test suite,
-      so if you read this in a browser,
-      have a look in the console.
+      This page concatenates the text content of the above
+      code examples and dynamically imports the resulting
+      test module source text as an object URL.
+      If you read this in a browser,
+      you should see the following in the console:
     </p>
+
+    <pre><code>- [Blob reference] (1 passed)</code></pre>
 
     <script type="module">
       import { evilImport } from '/browser/evil-import.js';
