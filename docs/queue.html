@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="">
+  <title>The `request` module</title>
+  <link href="/bling/documentation.css" rel="stylesheet">
+</head>
+<body>
+  <main id="main">
+    <h1 class="reverse">The <em>queue</em> module</h1>
+
+    <p>
+      A
+      <em>queue</em>
+      is a sequential
+      <strong>First In, First Out</strong>
+      (FIFO) data structure. Unlike the built-in ECMAScript
+      <code>Array</code>
+      data type that causes
+      <em>all</em>
+      elements to be reindexed every time an element is shifted,
+      the time complexity of removing the head of a queue is
+      <em>not</em>
+      proportional to its size.
+    </p>
+
+    <h2>Primary API</h2>
+
+    <pre><code>import {
+  queue,
+  enqueue,
+  dequeue,
+} from 'https://m.bednarz.dev/queue.js';</code></pre>
+
+    <dl>
+      <dt>
+        <code>queue(): symbol</code>
+        <br>
+        <code>queue(...api: function[]): function[]</code>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            create a new internal instance and map it to a symbol;
+            that symbol is the first argument
+            of all other API functions
+          </li>
+          <li>
+            if no arguments are passed, return the symbol
+          </li>
+          <li>
+            otherwise, return an array of functions
+            that partially apply the symbol to the
+            passed API functions
+          </li>
+        </ul>
+      </dd>
+      <dt><code>enqueue(key: symbol, value: any): number</code></dt>
+      <dd>
+        <ul>
+          <li>
+            add the value of the second argument to the end of the queue
+          </li>
+          <li>
+            increment and return the size of the queue
+          </li>
+        </ul>
+      </dd>
+      <dt><code>dequeue(key: symbol): any</code></dt>
+      <dd>
+        <ul>
+          <li>
+            if the queue is empty, return <code>undefined</code>
+          </li>
+          <li>
+            otherwise
+            <ul>
+              <li>
+                decrement the size of the queue
+              </li>
+              <li>
+                remove and return the value at the front of the cue
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <h3>Examples</h3>
+
+    <p>
+      If no arguments are passed, a symbol is returned
+      and used as first argument for
+      <code>enqueue</code>
+      and
+      <code>dequeue</code>.
+    </p>
+
+    <pre><code>const todo = queue(); // => (symbol)
+enqueue(todo, 'Buy cat food');  // => (number) 1
+enqueue(todo, 'Feed the cats'); // => (number) 2
+dequeue(todo); // => (string) 'Buy cat food'
+dequeue(todo); // => (string) 'Feed the cats'
+dequeue(todo); // => undefined</code></pre>
+
+    <p>
+      If other API functions are passed as arguments,
+      an array of functions with partial application
+      of the symbol is returned.
+      Destructuring is a convenient way to assign your
+      own identifiers.
+    </p>
+
+    <pre><code>const [schedule, select] = queue(enqueue, dequeue);
+schedule('Buy cat food');  // => (number) 1
+schedule('Feed the cats'); // => (number) 2
+select(); // => (string) 'Buy cat food'
+select(); // => (string) 'Feed the cats'
+select(); // => undefined</code></pre>
+
+    <p>
+      There is a minor performance penalty because one additional
+      function object is created for every function you pass to
+      <code>queue</code>.
+    </p>
+
+    <h2>Introspection</h2>
+
+    <h3>The <em>peek</em> export</h3>
+
+    <p>
+      The
+      <code>peek</code>
+      function returns the same value as
+      <code>dequeue</code>
+      would,
+      <em>without</em>
+      mutating the queue.
+    </p>
+
+    <pre><code>import { queue, enqueue, dequeue,
+  peek,
+} from 'https://m.bednarz.dev/queue.js';
+
+const [
+  schedule,
+  select,
+  inspect,
+] = queue(enqueue, dequeue, peek);
+
+inspect(); // => undefined
+schedule('Buy cat food'); // => (number) 1
+inspect(); // => (string) 'Buy cat food'
+select(); // => (string) 'Buy cat food'
+inspect(); // => undefined
+select(); // => undefined</code></pre>
+
+    <h2>See also</h2>
+
+    <ul>
+      <li><a href="/test/?m=queue">queue module unit tests</a></li>
+    </ul>
+
+  </main>
+  <footer class="reverse">
+    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
+</body>
+</html>
