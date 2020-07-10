@@ -119,6 +119,10 @@ dd {
   margin: 0;
 }
 
+dd ul {
+  margin: 0 0 0 1em;
+}
+
 pre,
 code {
   font: var(--size)/var(--leading) var(--typeface-gui);

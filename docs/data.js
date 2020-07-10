@@ -16,21 +16,12 @@ import {
 const { stringify } = JSON;
 const { create, keys } = Object;
 
-function copyArray(array) {
-  const root = [];
-
-  for (const value of array) {
-    root.push(normalize(value));
-  }
-
-  return root;
-}
+const copyArray = array => array.map(normalize);
 
 function copyObject(object) {
   const root = create(null);
-  const sortedKeys = keys(object).sort();
 
-  for (const key of sortedKeys) {
+  for (const key of keys(object).sort()) {
     root[key] = normalize(object[key]);
   }
 
