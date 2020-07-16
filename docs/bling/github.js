@@ -18,18 +18,43 @@ const sections = [
 const getModuleToc = directory =>
   resource(GITHUB_MODULES, directory);
 
-const createLink = relativePath =>
+const createSourceLink = relativePath =>
   createElement('A', {
     href: `/${relativePath}`,
   }, relativePath);
 
-const createListItem = relativePath =>
-  createElement('LI', createLink(relativePath));
+const createDocumentationLink = relativePath =>
+  createElement('A', {
+    href: `/${relativePath}`,
+    title: 'documentation',
+    'aria-label': `${relativePath} documentation`,
+  }, '?');
+
+const moduleTuple = [
+  function source(accumulator, relativePath) {
+    accumulator.push(createSourceLink(relativePath));
+  },
+  function documentation(accumulator, relativePath) {
+    if (relativePath) {
+      accumulator.push(createDocumentationLink(relativePath));
+    }
+  },
+];
+
+function toLinks(accumulator, relativePath, index) {
+  moduleTuple[index](accumulator, relativePath);
+
+  return accumulator;
+}
+
+const createListItem = pathPair =>
+  createElement('LI',
+    pathPair.reduce(toLinks, []));
 
 const createListFragment = list =>
   list
-    .map(relativePath =>
-      createListItem(relativePath));
+    .map(orderedPair =>
+      createListItem(orderedPair));
 
 const createList = array =>
   createElement('UL', createListFragment(array));

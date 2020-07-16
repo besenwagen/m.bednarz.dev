@@ -103,7 +103,29 @@ section > ul {
 }
 
 section > ul > li {
+  display: inline-flex;
   padding: var(--vertical);
+}
+
+section > ul > li a[href]:nth-child(2) {
+  --horizontal-padding: calc(var(--measure) / 2);
+  border: none;
+  outline-offset: 0;
+  padding-right: var(--horizontal-padding);
+  padding-left: var(--horizontal-padding);
+  color: var(--color-background);
+  background: var(--color-primary);
+  transition: all ease-in 0.2s;
+}
+
+section > ul > li a[href]:nth-child(1):focus + a[href]:nth-child(2) {
+  opacity: 0.3;
+}
+
+section > ul > li a[href]:nth-child(2):focus,
+section > ul > li a[href]:nth-child(2):hover {
+  color: var(--color-background);
+  background-color: var(--color-action);
 }
 
 aside {
@@ -127,7 +149,7 @@ main ul a[href] {
   padding:
     calc(var(--vertical) - calc(var(--border-width) * 2))
     var(--measure);
-    transition: all 100ms ease-in;
+  transition: all 100ms ease-in;
 }
 
 main ul a[href]:hover {

@@ -15,11 +15,7 @@ const DOCUMENT_ROOT = 'docs';
 const MODULE_ROOT = 'universal';
 
 const PATH_EXPRESSION = new RegExp(`^${DOCUMENT_ROOT}/`);
-const MODULE_EXPRESSION = /^(?!.*\.test\.js$).*\.(?:j|t)s$/;
-
-const isModule = file =>
-  MODULE_EXPRESSION
-    .test(file);
+const MODULE_EXPRESSION = /^(?!.*\.test\.js$)(.*)\.(?:j|t)s$/;
 
 const toRelativePath = path =>
   path
@@ -45,11 +41,44 @@ function resolveUrl(segment) {
   ].join('/');
 }
 
-const transformGithubContents = array =>
-  array
-    .map(({ path }) => path)
-    .filter(isModule)
-    .map(toRelativePath);
+function filter(input, output) {
+  function useMatch([filename, basename]) {
+    const documentation = `${basename}.html`;
+
+    if (input.includes(documentation)) {
+      output.push([filename, documentation]);
+    }
+
+    output.push([filename, null]);
+  }
+
+  return function reduceFile(file) {
+    const match = MODULE_EXPRESSION.exec(file);
+
+    if (match) {
+      useMatch(match);
+    }
+  };
+}
+
+function reduce(toc) {
+  const modules = [];
+  const process = filter(toc, modules);
+
+  for (const file of toc) {
+    process(file);
+  }
+
+  return modules;
+}
+
+const flatten = ({ path }) => toRelativePath(path);
+
+function transformGithubContents(array) {
+  const toc = array.map(flatten);
+
+  return reduce(toc);
+}
 
 //#endregion
 

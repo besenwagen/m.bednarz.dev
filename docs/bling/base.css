@@ -38,9 +38,6 @@ a[href]:focus {
   background: transparent;
 }
 
-:not(.reverse) > a[href]:hover {
-}
-
 :not(.reverse) > a[href]:focus {
   border-color: transparent;
   outline-color: var(--color-action);
