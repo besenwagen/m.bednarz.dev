@@ -10,8 +10,7 @@ const {
   assign,
   create,
   defineProperty,
-  defineProperties,
-  entries,
+  freeze,
 } = Object;
 
 const stringTagDescriptor = {
@@ -25,17 +24,5 @@ const blueprint = () =>
     stringTagDescriptor
   );
 
-const toDescriptor = (accumulator, [key, value]) =>
-  assign(accumulator, {
-    [key]: {
-      enumerable: true,
-      value,
-    },
-  });
-
-const dictionary = descriptor =>
-  defineProperties(
-    blueprint(),
-    entries(descriptor)
-      .reduce(toDescriptor, {})
-  );
+const dictionary = data =>
+  freeze(assign(blueprint(), data));
