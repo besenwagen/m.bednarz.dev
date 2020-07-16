@@ -25,7 +25,6 @@ test
     const data = dictionary({
       answer: 42,
     })
-
     try {
       data.answer = -1
       return false
@@ -37,7 +36,6 @@ test
     const data = dictionary({
       answer: 42,
     })
-
     try {
       data.question = -1
       return false
@@ -49,7 +47,6 @@ test
     const data = dictionary({
       answer: 42,
     })
-
     try {
       delete data.answer
       return false
@@ -61,7 +58,6 @@ test
     const data = dictionary({
       answer: 42,
     })
-
     return [
       JSON.stringify(Object.entries(data)),
       '[["answer",42]]',
@@ -71,7 +67,6 @@ test
     const data = dictionary({
       [Symbol('example')]: 'symbol example',
     })
-
     return [
       JSON.stringify(data.getOwnPropertySymbols),
       undefined,
