@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="">
+  <title>The `data` module</title>
+  <link href="/bling/documentation.css" rel="stylesheet">
+</head>
+<body>
+  <main id="main">
+    <h1 class="reverse">The <em>data</em> module</h1>
+
+    <p>
+      Utitlities for JSON data.
+    </p>
+
+    <h2>API</h2>
+
+    <pre><code>import {
+  normalize,
+  serialize,
+} from 'https://m.bednarz.dev/data.js';</code></pre>
+
+    <dl>
+      <dt>
+        <code>normalize(data: object|any[]): object|any[]</code>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            return a deep copy of
+            <code>data</code>
+            with object property names sorted recursively
+          </li>
+          <li>
+            throw a
+            <code>TypeError</code>
+            for values that are not JSON data types
+          </li>
+        </ul>
+      </dd>
+      <dt>
+        <code>serialize(data: object|any[]): string</code>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            <code>normalize</code>
+            the passed JSON
+            <code>data</code>
+          </li>
+          <li>
+            return it stringifed
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <h2>See also</h2>
+
+    <ul>
+      <li><a href="/test/?m=data">data module unit tests</a></li>
+    </ul>
+
+  </main>
+  <footer class="reverse">
+    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
+</body>
+</html>

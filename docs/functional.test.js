@@ -34,10 +34,14 @@ export default result(test)
       pipe(addFive, timesThree)(2),
       21,
     ])
-
   test(compose)
     ('reduce from right to left', [
       compose(addFive, timesThree)(2),
       11,
     ])
+
+  test('compose and pipe have an inverse relationship', [
+    compose(timesThree, addFive)(7),
+    pipe(addFive, timesThree)(7),
+  ])
 }
