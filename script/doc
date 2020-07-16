@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ $# -eq 0 ]] ; then
+  echo 'Error: missing module identifier argument'
+  exit 1
+fi
+
 IDENTIFIER=$1
 
 sed -e "s:__IDENTIFIER__:${IDENTIFIER}:g" script/template/documentation.html > docs/${IDENTIFIER}.html
