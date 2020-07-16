@@ -47,9 +47,9 @@ function filter(input, output) {
 
     if (input.includes(documentation)) {
       output.push([filename, documentation]);
+    } else {
+      output.push([filename, null]);
     }
-
-    output.push([filename, null]);
   }
 
   return function reduceFile(file) {
