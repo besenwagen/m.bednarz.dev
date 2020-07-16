@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="">
+  <title>The `functional` module</title>
+  <link href="/bling/documentation.css" rel="stylesheet">
+</head>
+<body>
+  <main id="main">
+    <h1 class="reverse">The <em>functional</em> module</h1>
+
+    <p>
+      Basic utitlities for functional programming.
+    </p>
+
+    <h2>Public API</h2>
+
+    <pre><code>import {
+  compose,
+  pipe,
+  partial,
+} from 'https://m.bednarz.dev/functional.js';</code></pre>
+
+    <dl>
+      <dt>
+        <code>compose(...callbacks: function[]): function</code>
+        <br>
+        <code>pipe(...callbacks: function[]): function</code>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            return a function that sequentially passes its
+            argument through its <code>callbacks</code>
+            and returns the reduced result
+            <ul>
+              <li>
+                <code>compose</code> passes from right to left
+              </li>
+              <li>
+                <code>pipe</code> passes from left to right
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </dd>
+      <dt><code>partial(callback: function, ...argumentList: any[]): function</code></dt>
+      <dd>
+        <ul>
+          <li>
+            return a function that returns the return value of
+            <code>callback</code>
+            called with
+            <code>argumentList</code>
+            and its own arguments
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <h2>Example</h2>
+
+    <p>
+      <em>Partial application</em>
+      and
+      <em>functional composition</em>:
+    </p>
+
+    <pre><code>const add = (a, b) => a + b;
+const multiply = (a, b) => a * b;
+
+const addFive = partial(add, 5);
+const timesThree = partial(multiply, 3);
+const reduceLeft = pipe(addFive, timesThree);
+const reduceRight = compose(addFive, timesThree);
+
+addFive(3) // => 8
+timesThree(4) // => 12
+
+reduceLeft(2) // => 21
+reduceRight(2) // => 11</code></pre>
+
+    <h2>See also</h2>
+
+    <ul>
+      <li><a href="/test/?m=functional">functional module unit tests</a></li>
+    </ul>
+
+  </main>
+  <footer class="reverse">
+    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
+</body>
+</html>

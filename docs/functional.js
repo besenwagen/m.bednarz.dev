@@ -6,7 +6,6 @@ export {
   compose,
   partial,
   pipe,
-  stage,
 };
 
 const passValueTo = (currentValue, transform) =>
@@ -21,10 +20,6 @@ const pipe = (...transformers) =>
   initialValue =>
     transformers
       .reduce(passValueTo, initialValue);
-
-const stage = callback =>
-  boundArgument =>
-    callback.bind(null, boundArgument);
 
 const partial = (callback, ...head) =>
   (...tail) =>
