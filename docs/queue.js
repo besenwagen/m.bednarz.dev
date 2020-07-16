@@ -1,3 +1,7 @@
+/**
+ * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 export {
   queue,
   enqueue,
