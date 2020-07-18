@@ -107,15 +107,18 @@ section > ul > li {
   padding: var(--vertical);
 }
 
+section > ul > li a[href]:focus {
+  outline-offset: 0;
+}
+
 section > ul > li a[href]:nth-child(2) {
   --horizontal-padding: calc(var(--measure) / 2);
   border: none;
-  outline-offset: 0;
   padding-right: var(--horizontal-padding);
   padding-left: var(--horizontal-padding);
   color: var(--color-background);
   background: var(--color-primary);
-  transition: all ease-in 0.2s;
+  transition: all ease-in 100ms;
 }
 
 section > ul > li a[href]:nth-child(1):focus + a[href]:nth-child(2) {
@@ -124,8 +127,9 @@ section > ul > li a[href]:nth-child(1):focus + a[href]:nth-child(2) {
 
 section > ul > li a[href]:nth-child(2):focus,
 section > ul > li a[href]:nth-child(2):hover {
+  outline-color: var(--color-primary);
   color: var(--color-background);
-  background-color: var(--color-action);
+  background: var(--color-primary);
 }
 
 aside {

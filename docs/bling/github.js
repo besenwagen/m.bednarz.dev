@@ -18,16 +18,25 @@ const sections = [
 const getModuleToc = directory =>
   resource(GITHUB_MODULES, directory);
 
+function basename(relativePath) {
+  const [, base] = /(?:^|\/)([^.]+)\.(?:html|js|ts)/
+    .exec(relativePath);
+
+  return base;
+}
+
 const createSourceLink = relativePath =>
   createElement('A', {
     href: `/${relativePath}`,
+    title: 'source',
+    'aria-label': `${basename(relativePath)} module source`,
   }, relativePath);
 
 const createDocumentationLink = relativePath =>
   createElement('A', {
     href: `/${relativePath}`,
     title: 'documentation',
-    'aria-label': `${relativePath} documentation`,
+    'aria-label': `${basename(relativePath)} module documentation`,
   }, '?');
 
 const moduleTuple = [
