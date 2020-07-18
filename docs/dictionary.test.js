@@ -6,13 +6,6 @@ const test = suite(import.meta)
 export default result(test)
 
 test
-  ('the stringTag of a dictionary is Dictionary', [
-    Object
-      .prototype
-      .toString
-      .call(dictionary({})),
-    '[object Dictionary]',
-  ])
   ('a dictionary has no constructor', [
     dictionary({}).constructor,
     undefined,
@@ -64,11 +57,13 @@ test
     ]
   })
   ('a dictionary does not take symbol properties', () => {
+    const userSymbol = Symbol('user symbol')
     const data = dictionary({
-      [Symbol('example')]: 'symbol example',
+      [userSymbol]: 42,
     })
+
     return [
-      JSON.stringify(data.getOwnPropertySymbols),
+      data[userSymbol],
       undefined,
     ]
   })

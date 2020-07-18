@@ -9,20 +9,19 @@ export {
 const {
   assign,
   create,
-  defineProperty,
+  entries,
+  fromEntries,
   freeze,
 } = Object;
 
-const stringTagDescriptor = {
-  value: 'Dictionary',
-};
+const isString = ([name]) =>
+  typeof name === 'string';
 
-const blueprint = () =>
-  defineProperty(
-    create(null),
-    Symbol.toStringTag,
-    stringTagDescriptor
+const filter = object =>
+  fromEntries(
+    entries(object)
+      .filter(isString)
   );
 
 const dictionary = data =>
-  freeze(assign(blueprint(), data));
+  freeze(assign(create(null), filter(data)));
