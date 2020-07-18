@@ -40,8 +40,17 @@ const {
   isNaN,
 } = Number;
 
-const getStringTag = value =>
+const stringTagExpression = /^\[object ([^\]]+)\]$/;
+
+const toObjectString = value =>
   Object.prototype.toString.call(value);
+
+function getStringTag(value) {
+  const objectString = toObjectString(value);
+  const [, stringTag] = stringTagExpression.exec(objectString);
+
+  return stringTag;
+}
 
 const getFunctionName = ({ name }) =>
   name;
@@ -129,7 +138,7 @@ const isInstanceOf = (value, constructor) =>
 
 const isObject = value => (
   !isNull(value)
-  && (getStringTag(value) === '[object Object]')
+  && (getStringTag(value) === 'Object')
 );
 
 const isRegExp = value =>

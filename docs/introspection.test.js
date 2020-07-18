@@ -28,9 +28,22 @@ test(getFunctionName)
   ])
 
 test(getStringTag)
-  ('object', [getStringTag({}), '[object Object]'])
-  ('array', [getStringTag([]), '[object Array]'])
-  ('function', [getStringTag(() => null), '[object Function]'])
+  ('object', [getStringTag({}), 'Object'])
+  ('object without prototype', [
+    getStringTag(Object.create(null)),
+    'Object',
+  ])
+  ('array', [getStringTag([]), 'Array'])
+  ('function', [getStringTag(() => null), 'Function'])
+  ('regexp', [getStringTag(Promise.resolve()), 'Promise'])
+  ('regexp', [getStringTag(/regexp/), 'RegExp'])
+  ('symbol', [getStringTag(Symbol('symbol')), 'Symbol'])
+  ('string', [getStringTag('string'), 'String'])
+  ('number', [getStringTag(42), 'Number'])
+  ('boolean true', [getStringTag(true), 'Boolean'])
+  ('boolean false', [getStringTag(false), 'Boolean'])
+  ('null', [getStringTag(null), 'Null'])
+  ('undefined', [getStringTag(undefined), 'Undefined'])
 
 test(isArray)
   ('array literal', isArray([]))
