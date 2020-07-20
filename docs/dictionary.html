@@ -28,29 +28,18 @@
       <dd>
         <ul>
           <li>
-            return an immutable object
-            <ul>
-              <li>
-                <em>without</em>
-                <ul>
-                  <li>a constructor</li>
-                  <li>a prototype</li>
-                </ul>
-              <li>
-                <em>with</em>
-                <ul>
-                  <li>
-                    the
-                    <code>Symbol.toStringTag</code>
-                    property set to
-                    <code>Dictionary</code>
-                  </li>
-                  <li>
-                    every enumerable own property of
-                    <code>data</code>
-                  </li>
-                </ul>
-            </ul>
+            create an object without a
+            <code>constructor</code>
+            or
+            <code>prototype</code>
+          </li>
+          <li>
+            copy all string properties of
+            <code>data</code>
+            to that object
+          </li>
+          <li>
+            freeze and return that object
           </li>
         </ul>
       </dd>
