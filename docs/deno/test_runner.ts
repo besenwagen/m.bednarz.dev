@@ -33,7 +33,7 @@
 
 /* global Deno */
 
-import { walk } from 'https://deno.land/std/fs/mod.ts';
+import { walk } from 'https://deno.land/std@0.61.0/fs/mod.ts';
 import { failing, load, printReport } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
