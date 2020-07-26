@@ -1,5 +1,5 @@
 import { result, suite } from './test.js'
-import { hook, useState } from './hook.js'
+import { hook, use_state } from './hook.js'
 
 const test = suite(import.meta)
 
@@ -15,10 +15,10 @@ test(hook)
     ]
   })
 
-test(useState)
+test(use_state)
   ('set the initial state',
     hook(() => {
-      const [state] = useState('foobar')
+      const [state] = use_state('foobar')
       return [
         state,
         'foobar',
@@ -26,22 +26,22 @@ test(useState)
     }))
   ('handle multiple calls',
     hook(() => {
-      const [fruit, setFruit] = useState('apple')
-      const [cake, setCake] = useState('brownie')
-      const [newFruit, oldFruit] = setFruit('orange')
-      const [newCake, oldCake] = setCake('gingerbread')
+      const [fruit, set_fruit] = use_state('apple')
+      const [cake, set_cake] = use_state('brownie')
+      const [new_fruit, old_fruit] = set_fruit('orange')
+      const [new_cake, old_cake] = set_cake('gingerbread')
       return [
         JSON.stringify([
-          fruit, newFruit, oldFruit,
-          cake, newCake, oldCake,
+          fruit, new_fruit, old_fruit,
+          cake, new_cake, old_cake,
         ]),
         '["apple","orange","apple","brownie","gingerbread","brownie"]',
       ]
     }))
   ('state setter: return the current and previous state',
     hook(() => {
-      const [state, setState] = useState(7)
-      const tuple = setState(state * 3)
+      const [state, set_state] = use_state(7)
+      const tuple = set_state(state * 3)
       return [
         JSON.stringify(tuple),
         '[21,7]',

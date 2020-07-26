@@ -9,7 +9,12 @@ export {
 
 /* global HTMLElement customElements document */
 
-const { assign, create, keys, getOwnPropertyNames } = Object;
+const {
+  assign,
+  create,
+  keys,
+  getOwnPropertyNames,
+} = Object;
 const empty = create(null);
 
 function conditional(condition, ...rest) {
@@ -22,11 +27,11 @@ function conditional(condition, ...rest) {
   }
 }
 
-const hasMethod = (object, name) =>
+const has_method = (object, name) =>
   getOwnPropertyNames(object).includes(name);
 
-function getMethods(element) {
-  function toMethods(accumulator, name) {
+function get_methods(element) {
+  function to_methods(accumulator, name) {
     const property = element[name];
 
     if (typeof property === 'function') {
@@ -37,31 +42,31 @@ function getMethods(element) {
   }
 
   return getOwnPropertyNames(element)
-    .reduce(toMethods, create(null));
+    .reduce(to_methods, create(null));
 }
 
-function createInstanceState(instance) {
+function create_instance_state(instance) {
   const { attributes, shadowRoot } = instance;
 
   return assign(new Map(), {
     root: shadowRoot,
     attributes(...names) {
-      const toAttributeValue = name =>
+      const to_attribute_value = name =>
         attributes[name].value;
 
       if (names.length === Number(true)) {
-        return toAttributeValue(names);
+        return to_attribute_value(names);
       }
 
-      return names.map(toAttributeValue);
+      return names.map(to_attribute_value);
     },
     methods() {
-      return getMethods(instance);
+      return get_methods(instance);
     },
   });
 }
 
-function overloadTemplate(template) {
+function overload_template(template) {
   if (typeof template === 'string') {
     return document.querySelector(template);
   }
@@ -71,19 +76,19 @@ function overloadTemplate(template) {
   return template;
 }
 
-function useTemplate(context, template) {
-  const blueprint = overloadTemplate(template);
+function use_template(context, template) {
+  const blueprint = overload_template(template);
   const node = blueprint.content.cloneNode(true);
 
   context.shadowRoot.appendChild(node);
 }
 
-function setShadowDom(context, template) {
+function set_shadow_dom(context, template) {
   context.attachShadow({ mode: 'open' });
-  conditional(template, useTemplate, context, template);
+  conditional(template, use_template, context, template);
 }
 
-function addListeners(context, events) {
+function add_listeners(context, events) {
   const { shadowRoot } = context;
 
   for (const type of keys(events)) {
@@ -91,7 +96,7 @@ function addListeners(context, events) {
   }
 }
 
-function removeListeners(context, events) {
+function remove_listeners(context, events) {
   const { shadowRoot } = context;
 
   for (const type of keys(events)) {
@@ -99,7 +104,7 @@ function removeListeners(context, events) {
   }
 }
 
-function component(componentName, {
+function component(component_name, {
   template,
   attributes = empty,
   events,
@@ -110,45 +115,48 @@ function component(componentName, {
 }) {
   const state = new WeakMap();
 
-  customElements.define(componentName, class extends HTMLElement {
+  customElements.define(component_name, class extends HTMLElement {
     static get observedAttributes() {
       return keys(attributes);
     }
 
     constructor() {
       super();
-      setShadowDom(this, template);
+      set_shadow_dom(this, template);
 
-      const instanceState = createInstanceState(this);
+      const instance_state = create_instance_state(this);
 
-      state.set(this, instanceState);
-      conditional(initialize, instanceState);
+      state.set(this, instance_state);
+      conditional(initialize, instance_state);
     }
 
     connectedCallback() {
-      const instanceState = state.get(this);
+      const instance_state = state.get(this);
 
-      conditional(events, addListeners, this, events);
-      conditional(connect, instanceState);
-      conditional(render, instanceState);
+      conditional(events, add_listeners, this, events);
+      conditional(connect, instance_state);
+      conditional(render, instance_state);
     }
 
     disconnectedCallback() {
-      conditional(events, removeListeners, this, events);
+      conditional(events, remove_listeners, this, events);
       conditional(disconnect, state.get(this));
     }
 
-    attributeChangedCallback(attributeName, oldValue, newValue) {
-      if (oldValue) {
-        attributes[attributeName](state.get(this), newValue, oldValue);
+    attributeChangedCallback(attribute_name, old_value, new_value) {
+      if (old_value) {
+        const method = attributes[attribute_name];
+        const current_state = state.get(this);
+
+        method(current_state, new_value, old_value);
       }
     }
 
-    handleEvent(eventObject) {
-      const { type } = eventObject;
+    handleEvent(event_object) {
+      const { type } = event_object;
 
-      if (hasMethod(events, type)) {
-        events[type](eventObject, state.get(this));
+      if (has_method(events, type)) {
+        events[type](event_object, state.get(this));
       }
     }
   });

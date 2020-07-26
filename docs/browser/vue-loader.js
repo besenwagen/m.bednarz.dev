@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  loadComponent,
-  mangleImports as _mangleImports,
+  load_component,
+  mangle_imports as _mangle_imports,
 };
 
-import { evilImport } from './evil-import.js';
+import { evil_import } from './evil-import.js';
 
 /* global window document fetch */
 
@@ -16,17 +16,17 @@ const { assign, create } = Object;
 // imports in dynamically imported blob/data URLs need absolute URLs
 const { origin } = window.location;
 
-const { url: moduleUrl } = import.meta;
+const { url: module_url } = import.meta;
 
-const sfcImport = /^import ([^\s]+) from "([^"]+\.vue)";?$/gm;
-const esImport = /^(import {[^}]+} from) "([^"]+\.js)";?$/gm;
+const sfc_import = /^import ([^\s]+) from "([^"]+\.vue)";?$/gm;
+const es_import = /^(import {[^}]+} from) "([^"]+\.js)";?$/gm;
 
-function mangleSfcImports(input) {
+function mangle_sfc_imports(input) {
   const output = input
     .trim()
     .replace(
-      sfcImport,
-      'const $1 = () => loadComponent("$2");'
+      sfc_import,
+      'const $1 = () => load_component("$2");'
     );
 
   if (input === output) {
@@ -34,15 +34,15 @@ function mangleSfcImports(input) {
   }
 
   return [
-    `import { loadComponent } from '${moduleUrl}'`,
+    `import { load_component } from '${module_url}'`,
     output,
   ].join('\n');
 }
 
-const mangleImports = input =>
-  mangleSfcImports(input)
+const mangle_imports = input =>
+  mangle_sfc_imports(input)
     .replace(
-      esImport,
+      es_import,
       `$1 "${origin}$2";`
     );
 
@@ -50,7 +50,7 @@ const transform = {
   script(node) {
     const { textContent } = node;
 
-    return mangleImports(textContent);
+    return mangle_imports(textContent);
   },
   style(node) {
     return node;
@@ -60,18 +60,18 @@ const transform = {
   },
 };
 
-function createDomSandbox(htmlLiteral) {
+function create_dom_sandbox(html_literal) {
   const sandbox = document.implementation.createHTMLDocument('');
 
-  sandbox.body.innerHTML = htmlLiteral;
+  sandbox.body.innerHTML = html_literal;
 
   return sandbox;
 }
 
-function parse(vueLiteral) {
-  const sandbox = createDomSandbox(vueLiteral);
+function parse(vue_literal) {
+  const sandbox = create_dom_sandbox(vue_literal);
 
-  function toNormalizedNode(accumulator, value) {
+  function to_normalized_node(accumulator, value) {
     const element = sandbox.querySelector(value);
 
     accumulator[value] = element ?
@@ -82,40 +82,40 @@ function parse(vueLiteral) {
   }
 
   return ['style', 'template', 'script']
-    .reduce(toNormalizedNode, create(null));
+    .reduce(to_normalized_node, create(null));
 }
 
 //#region Single File Component promise
 
-const onResponse = response =>
+const on_response = response =>
   response
     .text();
 
-function onResolved(vueLiteral) {
+function on_resolved(vue_literal) {
   const {
     script,
     style,
     template,
-  } = parse(vueLiteral);
+  } = parse(vue_literal);
 
   if (style) {
     document.head.appendChild(style);
   }
 
-  return evilImport(script)
+  return evil_import(script)
     .then(exported => assign(exported.default, {
       template,
     }));
 }
 
-function onRejected(reason) {
+function on_rejected(reason) {
   console.error(reason);
 }
 
-const loadComponent = url =>
+const load_component = url =>
   fetch(url)
-    .then(onResponse)
-    .then(onResolved)
-    .catch(onRejected);
+    .then(on_response)
+    .then(on_resolved)
+    .catch(on_rejected);
 
 //#endregion

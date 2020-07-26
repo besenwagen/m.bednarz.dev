@@ -1,6 +1,6 @@
 import { result, suite } from '../test.js'
-import { loadComponent } from './vue-loader.js'
-import { resolveBlobUrl } from './url.js'
+import { load_component } from './vue-loader.js'
+import { resolve_blob_url } from './url.js'
 
 const test = suite(import.meta.url)
 
@@ -13,7 +13,7 @@ test('template string', () => {
     export default {};
     </script>
   `
-  return resolveBlobUrl(loadComponent, source, 'text/html')
+  return resolve_blob_url(load_component, source, 'text/html')
     .then(({ template }) => [
       template,
       '<div></div>',

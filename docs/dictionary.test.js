@@ -57,13 +57,13 @@ test
     ]
   })
   ('a dictionary does not take symbol properties', () => {
-    const userSymbol = Symbol('user symbol')
+    const user_symbol = Symbol('user symbol')
     const data = dictionary({
-      [userSymbol]: 42,
+      [user_symbol]: 42,
     })
 
     return [
-      data[userSymbol],
+      data[user_symbol],
       undefined,
     ]
   })

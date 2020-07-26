@@ -3,151 +3,151 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  getConstructorName,
-  getFunctionName,
-  getStringTag,
-  isArray,
-  isBoolean,
-  isComplex,
-  isDate,
-  isDefined,
-  isError,
-  isFalse,
-  isFinite,
-  isFunction,
-  isInstanceOf,
-  isInteger,
-  isDataPrimitive,
-  isJsonPrimitive,
-  isNaN,
-  isNotNull,
-  isNull,
-  isNumber,
-  isObject,
-  isPrimitive,
-  isPromise,
-  isRegExp,
-  isSymbol,
-  isThenable,
-  isTrue,
-  isUndefined,
+  get_constructor_name,
+  get_function_name,
+  get_string_tag,
+  is_array,
+  is_boolean,
+  is_complex,
+  is_date,
+  is_defined,
+  is_error,
+  is_false,
+  is_finite,
+  is_function,
+  is_instance_of,
+  is_integer,
+  is_data_primitive,
+  is_json_primitive,
+  is_nan,
+  is_not_null,
+  is_null,
+  is_number,
+  is_object,
+  is_primitive,
+  is_promise,
+  is_regexp,
+  is_symbol,
+  is_thenable,
+  is_true,
+  is_undefined,
 };
 
-const { isArray } = Array;
+const { isArray: is_array } = Array;
 const {
-  isFinite,
-  isSafeInteger,
-  isNaN,
+  isFinite: is_finite,
+  isSafeInteger: is_safe_integer,
+  isNaN: is_nan,
 } = Number;
 
-const stringTagExpression = /^\[object ([^\]]+)\]$/;
+const string_tag_expression = /^\[object ([^\]]+)\]$/;
 
-const toObjectString = value =>
+const to_object_string = value =>
   Object.prototype.toString.call(value);
 
-function getStringTag(value) {
-  const objectString = toObjectString(value);
-  const [, stringTag] = stringTagExpression.exec(objectString);
+function get_string_tag(value) {
+  const object_string = to_object_string(value);
+  const [, string_tag] = string_tag_expression.exec(object_string);
 
-  return stringTag;
+  return string_tag;
 }
 
-const getFunctionName = ({ name }) =>
+const get_function_name = ({ name }) =>
   name;
 
-const getConstructorName = ({ constructor }) =>
-  getFunctionName(constructor);
+const get_constructor_name = ({ constructor }) =>
+  get_function_name(constructor);
 
-//#region isPrimitive
+//#region is_primitive
 
-const isUndefined = value =>
+const is_undefined = value =>
   (value === undefined);
 
-const isNull = value =>
+const is_null = value =>
   (value === null);
 
-const isBoolean = value =>
+const is_boolean = value =>
   (typeof value === 'boolean');
 
-const isTrue = value =>
+const is_true = value =>
   (value === true);
 
-const isFalse = value =>
+const is_false = value =>
   (value === false);
 
-const isString = value =>
+const is_string = value =>
   (typeof value === 'string');
 
-const isNumber = value => (
+const is_number = value => (
   (typeof value === 'number')
-  && isFinite(value)
-  && !isNaN(value)
+  && is_finite(value)
+  && !is_nan(value)
 );
 
-const isInteger = value =>
-  isSafeInteger(value);
+const is_integer = value =>
+  is_safe_integer(value);
 
-const isSymbol = value =>
+const is_symbol = value =>
   (typeof value === 'symbol');
 
-const isDataPrimitive = value => (
-  isString(value)
-  || isNumber(value)
+const is_data_primitive = value => (
+  is_string(value)
+  || is_number(value)
 );
 
-const isFixedPrimitive = value => (
-  isBoolean(value)
-  || isNull(value)
-  || isUndefined(value)
+const is_fixed_primitive = value => (
+  is_boolean(value)
+  || is_null(value)
+  || is_undefined(value)
 );
 
-const isJsonPrimitive = value => (
-  isDataPrimitive(value)
-  || isBoolean(value)
-  || isNull(value)
+const is_json_primitive = value => (
+  is_data_primitive(value)
+  || is_boolean(value)
+  || is_null(value)
 );
 
-const isPrimitive = value => (
-  isDataPrimitive(value)
-  || isFixedPrimitive(value)
-  || isSymbol(value)
+const is_primitive = value => (
+  is_data_primitive(value)
+  || is_fixed_primitive(value)
+  || is_symbol(value)
 );
 
 //#endregion
 
-const isDefined = value =>
-  !isUndefined(value);
+const is_defined = value =>
+  !is_undefined(value);
 
-const isNotNull = value =>
-  !isNull(value);
+const is_not_null = value =>
+  !is_null(value);
 
-const isComplex = value =>
-  !isPrimitive(value);
+const is_complex = value =>
+  !is_primitive(value);
 
-const isDate = value =>
-  isInstanceOf(value, Date);
+const is_date = value =>
+  is_instance_of(value, Date);
 
-const isError = value =>
-  isInstanceOf(value, Error);
+const is_error = value =>
+  is_instance_of(value, Error);
 
-const isFunction = value =>
+const is_function = value =>
   (typeof value === 'function');
 
-const isInstanceOf = (value, constructor) =>
+const is_instance_of = (value, constructor) =>
   (value instanceof constructor);
 
-const isObject = value => (
-  !isNull(value)
-  && (getStringTag(value) === 'Object')
+const is_object = value => (
+  !is_null(value)
+  && (get_string_tag(value) === 'Object')
 );
 
-const isRegExp = value =>
-  isInstanceOf(value, RegExp);
+const is_regexp = value =>
+  is_instance_of(value, RegExp);
 
-const isPromise = value =>
-  isInstanceOf(value, Promise);
+const is_promise = value =>
+  is_instance_of(value, Promise);
 
-const isThenable = value => (
-  isObject(value)
-  && isFunction(value.then)
+const is_thenable = value => (
+  is_object(value)
+  && is_function(value.then)
 );

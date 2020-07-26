@@ -5,11 +5,11 @@
 import { component } from '/browser/component.js';
 import {
   append,
-  createElement,
-  createFragment,
-  createTextNode,
+  create_element,
+  create_fragment,
+  create_text_node,
   purge,
-  replaceNode,
+  replace_node,
   select,
 } from '/browser/dom.js';
 import {
@@ -19,8 +19,8 @@ import {
   em, strong,
 } from '/browser/html.js';
 import {
-  cssLiteral,
-  minWidth,
+  css_literal,
+  min_width,
 } from '/browser/css.js';
 import './suite.js';
 
@@ -34,7 +34,7 @@ const BREAKPOINT = '768px';
 const SCALE = '1.5em';
 const TOOLBAR_SELECTOR = ':host > div > div:first-child';
 
-const styleContent = cssLiteral({
+const style_content = css_literal({
   ':host > div': {
     padding: `0 0 0 ${SCALE}`,
   },
@@ -65,7 +65,7 @@ const styleContent = cssLiteral({
   'input[type="checkbox"]:focus': {
     outline: `2px solid ${COLOR_ACTION}`,
   },
-  [minWidth(BREAKPOINT)]: {
+  [min_width(BREAKPOINT)]: {
     [TOOLBAR_SELECTOR]: {
       display: 'flex',
       justifyContent: 'space-between',
@@ -81,14 +81,14 @@ const styleContent = cssLiteral({
 const INCREMENT = 1;
 const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;
 
-function matchQuery() {
+function match_query() {
   const { search } = window.location;
 
   return QUERY_EXPRESSION.exec(search);
 }
 
-function getQueryModules() {
-  const match = matchQuery();
+function get_query_modules() {
+  const match = match_query();
 
   if (match) {
     const [, backReference] = match;
@@ -99,7 +99,7 @@ function getQueryModules() {
   return '';
 }
 
-function asAttributes(value) {
+function as_attributes(value) {
   if (typeof value === 'string') {
     return {
       name: value,
@@ -112,27 +112,27 @@ function asAttributes(value) {
 const checkbox = (attributes, title) =>
   label([
     input({
-      ...asAttributes(attributes),
+      ...as_attributes(attributes),
       type: 'checkbox',
     }),
     ' ',
     title,
   ]);
 
-const isCheckbox = ({ nodeName, type }) => (
+const is_checkbox = ({ nodeName, type }) => (
   (nodeName === 'INPUT')
   && (type === 'checkbox')
 );
 
-const toNodeValue = ({
+const to_node_value = ({
   firstChild: {
     nodeValue,
   },
 }) => nodeValue;
 
-const getDeclarativeModules = contextNode =>
-  select('ol li', contextNode)
-    .map(toNodeValue);
+const get_declarative_modules = context_node =>
+  select('ol li', context_node)
+    .map(to_node_value);
 
 const EXCEPTION_PREFIX = 'Fatal error:';
 const LOADING = 'Loading';
@@ -143,18 +143,18 @@ const FAILING_TESTS = Symbol('failing tests');
 const MODULE_LIST = Symbol('module list');
 const SUMMARY_NODE = Symbol('summary node');
 
-function toggleSuiteSection(rootNode, ...argumentList) {
-  const suites = select('test-suite', rootNode);
+function toggle_suite_section(root_node, ...argument_list) {
+  const suites = select('test-suite', root_node);
 
   for (const suite of suites) {
-    suite.setAttribute(...argumentList);
+    suite.setAttribute(...argument_list);
   }
 }
 
-function getModuleList(rootNode) {
+function get_module_list(root_node) {
   return (
-    getQueryModules()
-    || getDeclarativeModules(rootNode)
+    get_query_modules()
+    || get_declarative_modules(root_node)
   );
 }
 
@@ -169,7 +169,7 @@ function plural(count, word) {
   return `${base}s`;
 }
 
-function getSummary(passing, failing) {
+function get_summary(passing, failing) {
   if (failing) {
     const all = (passing + failing);
 
@@ -185,27 +185,27 @@ function getSummary(passing, failing) {
   ];
 }
 
-function getSummaryNode(instance) {
+function get_summary_node(instance) {
   const stats = [
     PASSING_TESTS,
     FAILING_TESTS,
   ]
     .map(key => instance.get(key));
 
-  const summary = getSummary(...stats);
+  const summary = get_summary(...stats);
 
-  return createFragment(summary);
+  return create_fragment(summary);
 }
 
 function done(instance) {
-  replaceNode(instance.get(SUMMARY_NODE), getSummaryNode(instance));
+  replace_node(instance.get(SUMMARY_NODE), get_summary_node(instance));
 
   for (const node of select('[aria-hidden]', instance.root)) {
     node.removeAttribute('aria-hidden');
   }
 }
 
-function updateStatus(instance) {
+function update_status(instance) {
   instance.set(SETTLED_SUITES,
     (instance.get(SETTLED_SUITES) + INCREMENT));
 
@@ -220,11 +220,11 @@ function updateStatus(instance) {
 component('test-report', {
   events: {
     click({ target }, instance) {
-      if (isCheckbox(target)) {
+      if (is_checkbox(target)) {
         const { name, checked } = target;
         const { root } = instance;
 
-        toggleSuiteSection(root, name, String(checked));
+        toggle_suite_section(root, name, String(checked));
       }
     },
   },
@@ -240,32 +240,32 @@ component('test-report', {
 
   connect(instance) {
     instance
-      .set(MODULE_LIST, getModuleList())
-      .set(SUMMARY_NODE, createTextNode(LOADING));
+      .set(MODULE_LIST, get_module_list())
+      .set(SUMMARY_NODE, create_text_node(LOADING));
   },
 
   render(instance) {
-    const moduleList = instance.get(MODULE_LIST);
-    const { length } = moduleList;
+    const module_list = instance.get(MODULE_LIST);
+    const { length } = module_list;
     const checked = (length === INCREMENT);
 
-    const toSuite = (name, index) =>
-      createElement('test-suite', {
+    const to_suite = (name, index) =>
+      create_element('test-suite', {
         module: name,
         path: instance.attributes('path'),
         index: (index + INCREMENT),
         tests: (length === INCREMENT) ? 'true' : 'false',
         assertions: 'false',
         sources: 'false',
-        onResolved(passing, failing) {
+        on_resolved(passing, failing) {
           instance
             .set(PASSING_TESTS,
               (instance.get(PASSING_TESTS) + passing))
             .set(FAILING_TESTS,
               (instance.get(FAILING_TESTS) + failing));
-          updateStatus(instance);
+          update_status(instance);
         },
-        onRejected(reason) {
+        on_rejected(reason) {
           const [echoArea] = select(
             'div > div:first-child',
             instance.root
@@ -283,7 +283,7 @@ component('test-report', {
       });
 
     append(instance.root, [
-      style(styleContent),
+      style(style_content),
       div([
         div([
           paragraph({
@@ -307,7 +307,7 @@ component('test-report', {
         ]),
         div({
           'aria-hidden': 'true',
-        }, moduleList.map(toSuite)),
+        }, module_list.map(to_suite)),
       ]),
     ]);
   },

@@ -1,7 +1,7 @@
 import {
   result, suite,
-  _forceUrl as forceUrl,
-  _formatAssertionTuple as formatAssertionTuple,
+  _force_url as force_url,
+  _format_assertion_tuple as format_assertion_tuple,
 } from './test.js'
 
 const test = suite(import.meta)
@@ -36,33 +36,33 @@ test
         resolve([void 0, undefined]), 10))
   })
   ('sanitize description', () => {
-    const localTest = suite('SELFTEST')
-    localTest(`   foo
+    const local_test = suite('SELFTEST')
+    local_test(`   foo
          bar   \t   \n       baz
       `, true)
-    const onTestResolved = ([, [[sanitized]]]) => [
+    const on_test_resolved = ([, [[sanitized]]]) => [
       sanitized,
       'foo bar baz',
     ]
-    return result(localTest).then(onTestResolved)
+    return result(local_test).then(on_test_resolved)
   })
 
-test(forceUrl)
+test(force_url)
   ('absolute URL', [
-    forceUrl('https://example.org/foo/bar.js'),
+    force_url('https://example.org/foo/bar.js'),
     'foo/bar.js',
   ])
   ('absolute path', [
-    forceUrl('/foo/bar.js'),
+    force_url('/foo/bar.js'),
     'foo/bar.js',
   ])
   ('relative path', [
-    forceUrl('foo/bar.js'),
+    force_url('foo/bar.js'),
     'foo/bar.js',
   ])
   ('enforce https: or file: protocol', () => {
     try {
-      forceUrl('http://example.org/foo/bar.js')
+      force_url('http://example.org/foo/bar.js')
       return false
     } catch ({ message }) {
       return [
@@ -72,9 +72,9 @@ test(forceUrl)
     }
   })
 
-test(formatAssertionTuple)
+test(format_assertion_tuple)
   ('null', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['null', null],
       ['null', null],
     ),
@@ -83,7 +83,7 @@ test(formatAssertionTuple)
 ! [expected] (null) null`,
   ])
   ('undefined', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['undefined', undefined],
       ['undefined', undefined],
     ),
@@ -92,7 +92,7 @@ test(formatAssertionTuple)
 ! [expected] (undefined) undefined`,
   ])
   ('true', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['boolean', true],
       ['boolean', true],
     ),
@@ -101,7 +101,7 @@ test(formatAssertionTuple)
 ! [expected] (boolean) true`,
   ])
   ('false', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['boolean', false],
       ['boolean', false],
     ),
@@ -110,7 +110,7 @@ test(formatAssertionTuple)
 ! [expected] (boolean) false`,
   ])
   ('string', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['string', 'foo bar'],
       ['string', 'foo bar'],
     ),
@@ -119,7 +119,7 @@ test(formatAssertionTuple)
 ! [expected] (string) \\foo bar\\`,
   ])
   ('multiline string', [
-    formatAssertionTuple(
+    format_assertion_tuple(
       ['string', 'foo \n bar'],
       ['string', 'foo \n bar'],
     ),

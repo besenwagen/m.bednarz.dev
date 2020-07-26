@@ -1,8 +1,8 @@
 import { result, suite } from '../test.js'
 import {
-  elementFactory,
+  element_factory,
   select,
-  toFragment,
+  to_fragment,
 } from './dom.js'
 
 const test = suite(import.meta)
@@ -15,15 +15,15 @@ test(select)
     'Unit Tests | m.bednarz.nl',
   ])
 
-test(toFragment)
+test(to_fragment)
   ('create a DOM fragment from a string', [
-    toFragment(' <i></i> ').childNodes.length,
+    to_fragment(' <i></i> ').childNodes.length,
     3,
   ])
 
 {
-  const test_elementFactory = test(elementFactory)
-  const { a } = elementFactory(['a'])
+  const test_elementFactory = test(element_factory)
+  const { a } = element_factory(['a'])
   {
     const link = a({
       href: '/',

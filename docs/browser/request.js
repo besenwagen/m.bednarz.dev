@@ -8,7 +8,7 @@ export {
   text,
   api,
   request,
-  settleRequest,
+  settle_request,
 };
 
 /* global fetch */
@@ -17,7 +17,7 @@ const { assign, create } = Object;
 const { createObjectURL } = URL;
 const DEFAULT_METHOD = 'GET';
 
-function onResponse(response) {
+function on_response(response) {
   if (response.ok) {
     return response;
   }
@@ -25,9 +25,9 @@ function onResponse(response) {
   return Promise.reject(response);
 }
 
-const settleRequest = (...argumentList) =>
-  fetch(...argumentList)
-    .then(onResponse);
+const settle_request = (...argument_list) =>
+  fetch(...argument_list)
+    .then(on_response);
 
 //#region concurrency guard
 
@@ -40,35 +40,38 @@ class ConcurrencyError extends Error {
 
 const UNSETTLED_REQUESTS = new Set();
 
-function withConcurrencyGuard(requestIdentifier, requestArguments) {
-  if (UNSETTLED_REQUESTS.has(requestIdentifier)) {
+function with_concurrency_guard(request_identifier, request_arguments) {
+  if (UNSETTLED_REQUESTS.has(request_identifier)) {
     return Promise
-      .reject(new ConcurrencyError(requestIdentifier));
+      .reject(new ConcurrencyError(request_identifier));
   }
 
-  function onRequestSettled(responseValue) {
-    UNSETTLED_REQUESTS.delete(requestIdentifier);
+  function on_request_settled(response_value) {
+    UNSETTLED_REQUESTS.delete(request_identifier);
 
-    return responseValue;
+    return response_value;
   }
 
-  UNSETTLED_REQUESTS.add(requestIdentifier);
+  UNSETTLED_REQUESTS.add(request_identifier);
 
-  return settleRequest(...requestArguments)
-    .then(onRequestSettled);
+  return settle_request(...request_arguments)
+    .then(on_request_settled);
 }
 
-const getRequestMethod = ({
+const get_request_method = ({
   method = DEFAULT_METHOD,
 } = {}) => method;
 
 function request(url, configuration) {
-  const requestIdentifier = [
-    getRequestMethod(configuration),
+  const request_identifier = [
+    get_request_method(configuration),
     url,
   ].join(' ');
 
-  return withConcurrencyGuard(requestIdentifier, [url, configuration]);
+  return with_concurrency_guard(
+    request_identifier,
+    [url, configuration]
+  );
 }
 
 //#endregion
@@ -78,7 +81,7 @@ function request(url, configuration) {
 const { stringify } = JSON;
 const MIME_JSON = 'application/json';
 
-const onJsonResolved = response => response.json();
+const on_json_resolved = response => response.json();
 
 const json = url =>
   request(url, {
@@ -86,20 +89,20 @@ const json = url =>
       Accept: MIME_JSON,
     },
   })
-    .then(onJsonResolved);
+    .then(on_json_resolved);
 
-const onTextResolved = response => response.text();
+const on_text_resolved = response => response.text();
 
 const text = url =>
   request(url)
-    .then(onTextResolved);
+    .then(on_text_resolved);
 
-const onBlobResolved = response =>
+const on_blob_resolved = response =>
   createObjectURL(response.blob());
 
 const blob = url =>
   request(url)
-    .then(onBlobResolved);
+    .then(on_blob_resolved);
 
 const api = assign(create(null), {
   delete(url) {

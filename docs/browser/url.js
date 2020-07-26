@@ -1,29 +1,29 @@
 export {
-  toBlobUrl,
-  resolveBlobUrl,
+  to_blob_url,
+  resolve_blob_url,
 };
 
 /* global Blob */
 
 const {
-  createObjectURL,
-  revokeObjectURL,
+  createObjectURL: create_object_url,
+  revokeObjectURL: revoke_object_url,
 } = URL;
 
-const toBlobUrl = (data, type) =>
-  createObjectURL(new Blob([data], {
+const to_blob_url = (data, type) =>
+  create_object_url(new Blob([data], {
     type,
   }));
 
-function resolveBlobUrl(resolve, data, type) {
-  const blobUrl = toBlobUrl(data, type);
+function resolve_blob_url(resolve, data, type) {
+  const blob_url = to_blob_url(data, type);
 
-  function onResolved(resolvedModule) {
-    revokeObjectURL(blobUrl);
+  function on_resolved(resolved_module) {
+    revoke_object_url(blob_url);
 
-    return resolvedModule;
+    return resolved_module;
   }
 
-  return resolve(blobUrl)
-    .then(onResolved);
+  return resolve(blob_url)
+    .then(on_resolved);
 }

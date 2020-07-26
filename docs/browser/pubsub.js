@@ -19,13 +19,13 @@ function publish(name, detail) {
 }
 
 function subscribe(name, callback) {
-  function onDispatch({ detail }) {
+  function on_dispatch({ detail }) {
     callback(parse(stringify(detail)));
   }
 
-  context.addEventListener(name, onDispatch);
+  context.addEventListener(name, on_dispatch);
 
   return function unsubscribe() {
-    context.removeEventListener(name, onDispatch);
+    context.removeEventListener(name, on_dispatch);
   };
 }

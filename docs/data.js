@@ -8,17 +8,17 @@ export {
 };
 
 import {
-  isArray,
-  isJsonPrimitive,
-  isObject,
+  is_array,
+  is_json_primitive,
+  is_object,
 } from './introspection.js';
 
 const { stringify } = JSON;
 const { create, keys } = Object;
 
-const copyArray = array => array.map(normalize);
+const copy_array = array => array.map(normalize);
 
-function copyObject(object) {
+function copy_object(object) {
   const root = create(null);
 
   for (const key of keys(object).sort()) {
@@ -28,24 +28,24 @@ function copyObject(object) {
   return root;
 }
 
-function copyComplexType(value) {
-  if (isArray(value)) {
-    return copyArray(value);
+function copy_complex_type(value) {
+  if (is_array(value)) {
+    return copy_array(value);
   }
 
-  if (isObject(value)) {
-    return copyObject(value);
+  if (is_object(value)) {
+    return copy_object(value);
   }
 
   throw new TypeError('unsupported type');
 }
 
 function normalize(value) {
-  if (isJsonPrimitive(value)) {
+  if (is_json_primitive(value)) {
     return value;
   }
 
-  return copyComplexType(value);
+  return copy_complex_type(value);
 }
 
 const serialize = value =>

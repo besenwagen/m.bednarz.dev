@@ -9,12 +9,12 @@ export default result(test)
 
 {
   const { origin, pathname } = document.location
-  const jsonUrl = [origin, pathname, 'stub.json'].join('/')
+  const json_url = [origin, pathname, 'stub.json'].join('/')
   let count = 0
 
   test(json)
     ('get JSON response', () => {
-      const url = [jsonUrl, ++count].join('?')
+      const url = [json_url, ++count].join('?')
       return json(url)
         .then(({ answer }) => {
           return [
@@ -28,7 +28,7 @@ export default result(test)
         })
     })
     ('throw on concurrent calls', () => {
-      const url = [jsonUrl, ++count].join('?')
+      const url = [json_url, ++count].join('?')
       return Promise
         .all([
           json(url),

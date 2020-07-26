@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  createElement,
+  create_element,
   namespace,
-  useSymbol,
+  use_symbol,
 };
 
 /* global document */
@@ -13,7 +13,7 @@ export {
 const { entries } = Object;
 const namespace = 'http://www.w3.org/2000/svg';
 
-function createElement(type, attributes = {}) {
+function create_element(type, attributes = {}) {
   const element = document.createElementNS(namespace, type);
 
   for (const [key, value] of entries(attributes)) {
@@ -23,13 +23,13 @@ function createElement(type, attributes = {}) {
   return element;
 }
 
-function useSymbol(id) {
-  const svgElement = createElement('svg');
-  const useElement = createElement('use', {
+function use_symbol(id) {
+  const svg_element = create_element('svg');
+  const use_element = create_element('use', {
     href: `#${id}`,
   });
 
-  svgElement.appendChild(useElement);
+  svg_element.appendChild(use_element);
 
-  return svgElement;
+  return svg_element;
 }

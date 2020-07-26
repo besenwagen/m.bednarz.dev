@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  cssLiteral,
-  maxWidth,
-  minWidth,
+  css_literal,
+  max_width,
+  min_width,
   motion,
-  styleSheet,
-  toCssText,
-  toRuleSet,
+  style_sheet,
+  to_css_text,
+  to_rule_set,
 };
 
 /* global document */
@@ -21,62 +21,62 @@ const dashify = property =>
     .replace(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase();
 
-const toDeclaration = ([name, value]) =>
+const to_declaration = ([name, value]) =>
   [dashify(name), value]
     .join(':');
 
-const toCssText = dictionary =>
+const to_css_text = dictionary =>
   entries(dictionary)
-    .map(toDeclaration)
+    .map(to_declaration)
     .join(';');
 
-const toBlock = value =>
+const to_block = value =>
   ['{', '}']
     .join(value);
 
-const toRuleSet = (selectors, dictionary) => [
+const to_rule_set = (selectors, dictionary) => [
   selectors,
-  toBlock(toCssText(dictionary)),
+  to_block(to_css_text(dictionary)),
 ].join('');
 
-const toMediaRuleSets = dictionary =>
+const to_media_rule_sets = dictionary =>
   entries(dictionary)
-    .map(entry => toRuleSet(...entry))
+    .map(entry => to_rule_set(...entry))
     .join('');
 
-function toRule(selectors, dictionary) {
+function to_rule(selectors, dictionary) {
   if (/^@media /.test(selectors)) {
     return [
       selectors,
-      toBlock(toMediaRuleSets(dictionary)),
+      to_block(to_media_rule_sets(dictionary)),
     ].join('');
   }
 
-  return toRuleSet(selectors, dictionary);
+  return to_rule_set(selectors, dictionary);
 }
 
-function insertRules(sheet, ruleSets) {
+function insert_rules(sheet, rule_sets) {
   const { length } = sheet.cssRules;
 
-  for (const [index, value] of entries(ruleSets).entries()) {
-    sheet.insertRule(toRule(...value), (length + index));
+  for (const [index, value] of entries(rule_sets).entries()) {
+    sheet.insertRule(to_rule(...value), (length + index));
   }
 }
 
-function styleSheet(ruleSets, contextNode = document.head) {
+function style_sheet(rule_sets, context_node = document.head) {
   // CSP: insert the target element into DOM first
-  const styleElement = contextNode
+  const style_element = context_node
     .appendChild(document.createElement('STYLE'));
-  const { sheet } = styleElement;
+  const { sheet } = style_element;
 
-  insertRules(sheet, ruleSets);
+  insert_rules(sheet, rule_sets);
 
-  return styleElement;
+  return style_element;
 }
 
-const cssLiteral = ruleSets =>
-  entries(ruleSets)
-    .map(entry => toRule(...entry))
+const css_literal = rule_sets =>
+  entries(rule_sets)
+    .map(entry => to_rule(...entry))
     .join('\n');
 
 //#region Media Query
@@ -84,15 +84,15 @@ const cssLiteral = ruleSets =>
 const MEDIA_SCREEN = '@media only screen';
 const MOTION = 'prefers-reduced-motion';
 
-const query = (...argumentList) =>
-  `and (${toDeclaration(argumentList)})`;
+const query = (...argument_list) =>
+  `and (${to_declaration(argument_list)})`;
 
-const maxWidth = width => [
+const max_width = width => [
   MEDIA_SCREEN,
   query('max-width', width),
 ].join(' ');
 
-const minWidth = width => [
+const min_width = width => [
   MEDIA_SCREEN,
   query('min-width', width),
 ].join(' ');

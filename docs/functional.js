@@ -8,18 +8,18 @@ export {
   pipe,
 };
 
-const passValueTo = (currentValue, transform) =>
-  transform(currentValue);
+const pass_through = (current_value, transform) =>
+  transform(current_value);
 
 const compose = (...transformers) =>
-  initialValue =>
+  initial_value =>
     transformers
-      .reduceRight(passValueTo, initialValue);
+      .reduceRight(pass_through, initial_value);
 
 const pipe = (...transformers) =>
-  initialValue =>
+  initial_value =>
     transformers
-      .reduce(passValueTo, initialValue);
+      .reduce(pass_through, initial_value);
 
 const partial = (callback, ...head) =>
   (...tail) =>

@@ -5,12 +5,12 @@
 export {
   result,
   suite,
-  forceUrl as _forceUrl,
-  formatAssertionTuple as _formatAssertionTuple,
+  force_url as _force_url,
+  format_assertion_tuple as _format_assertion_tuple,
 };
 
 const { isArray } = Array;
-const testPrimitiveExpression = /^(?:string|number|boolean)$/;
+const test_primitive_expression = /^(?:string|number|boolean)$/;
 const PREFIX_INVALID = 'Invalid test case:';
 const ORDERED_PAIR_LENGTH = 2;
 
@@ -19,7 +19,7 @@ const ORDERED_PAIR_LENGTH = 2;
 const BASE_URL = 'https://localhost/';
 const PATH_OFFSET = 1;
 
-function getShellWorkingDirectory() {
+function get_shell_working_directory() {
   /* global Deno process */
   if (typeof Deno !== 'undefined') {
     return Deno.cwd();
@@ -32,33 +32,33 @@ function getShellWorkingDirectory() {
   return '';
 }
 
-function getRelativeFilePath(pathname) {
-  const prefix = getShellWorkingDirectory();
-  const prefixExpression = new RegExp(`^${prefix}/`);
+function get_relative_file_path(pathname) {
+  const prefix = get_shell_working_directory();
+  const prefix_expression = new RegExp(`^${prefix}/`);
 
-  return pathname.replace(prefixExpression, '');
+  return pathname.replace(prefix_expression, '');
 }
 
-function getRelativeUrlPath(inputPath, protocol) {
+function get_relative_url_path(input_path, protocol) {
   if (protocol === 'blob:') {
-    const { pathname } = new URL(inputPath);
+    const { pathname } = new URL(input_path);
 
     return pathname;
   }
 
-  return inputPath;
+  return input_path;
 }
 
-function normalizePath(pathname, protocol) {
+function normalize_path(pathname, protocol) {
   if (protocol === 'file:') {
-    return getRelativeFilePath(pathname);
+    return get_relative_file_path(pathname);
   }
 
-  return getRelativeUrlPath(pathname, protocol)
+  return get_relative_url_path(pathname, protocol)
     .substring(PATH_OFFSET);
 }
 
-const isImportMeta = value => (
+const is_import_meta = value => (
   (Object
     .prototype
     .toString
@@ -66,15 +66,15 @@ const isImportMeta = value => (
   && (typeof value.url === 'string')
 );
 
-function overloadIdentifier(value) {
-  if (isImportMeta(value)) {
+function overload_identifier(value) {
+  if (is_import_meta(value)) {
     return value.url;
   }
 
   return value;
 }
 
-function forceUrl(value) {
+function force_url(value) {
   const {
     pathname,
     protocol,
@@ -88,17 +88,17 @@ function forceUrl(value) {
     ].join(''));
   }
 
-  return normalizePath(pathname, protocol);
+  return normalize_path(pathname, protocol);
 }
 
-const getModuleUrl = value =>
-  forceUrl(overloadIdentifier(value));
+const get_module_url = value =>
+  force_url(overload_identifier(value));
 
 //#endregion
 
 //#region assertion
 
-function getAssertionType(value) {
+function get_assertion_type(value) {
   if (value === null) {
     return String(value);
   }
@@ -106,83 +106,83 @@ function getAssertionType(value) {
   return typeof value;
 }
 
-const errorLine = value => `\n! ${value}`;
+const error_line = value => `\n! ${value}`;
 
-function formatMultilineAssertion(prefix, value) {
+function format_multiline_assertion(prefix, value) {
   const INDENT = 11;
   const indent = ' '.repeat(INDENT);
-  const newLine = `\\${errorLine(`${indent}\\`)}`;
-  const tail = value.replace(/\n/gm, newLine);
+  const newline = `\\${error_line(`${indent}\\`)}`;
+  const tail = value.replace(/\n/gm, newline);
 
   return [
-    errorLine(prefix),
-    errorLine(`${indent}\\${tail}\\`),
+    error_line(prefix),
+    error_line(`${indent}\\${tail}\\`),
   ].join('');
 }
 
-function formatStringAssertion(prefix, value) {
+function format_string_assertion(prefix, value) {
   if (value.includes('\n')) {
-    return formatMultilineAssertion(prefix, value);
+    return format_multiline_assertion(prefix, value);
   }
 
-  return errorLine(`${prefix} \\${value}\\`);
+  return error_line(`${prefix} \\${value}\\`);
 }
 
-function formatAssertion(label, [type, value]) {
+function format_assertion(label, [type, value]) {
   const prefix = `${label} (${type})`;
 
   if (type === 'string') {
-    return formatStringAssertion(prefix, value);
+    return format_string_assertion(prefix, value);
   }
 
-  return errorLine(`${prefix} ${value}`);
+  return error_line(`${prefix} ${value}`);
 }
 
-const formatAssertionTuple = (actual, expected) => [
-  formatAssertion('  [actual]', actual),
-  formatAssertion('[expected]', expected),
+const format_assertion_tuple = (actual, expected) => [
+  format_assertion('  [actual]', actual),
+  format_assertion('[expected]', expected),
 ].join('');
 
-const toTypeTuple = value => [
-  getAssertionType(value),
+const to_type_tuple = value => [
+  get_assertion_type(value),
   value,
 ];
 
-const getTypeTuple = (actual, expected) =>
-  [actual, expected].map(toTypeTuple);
+const get_type_tuple = (actual, expected) =>
+  [actual, expected].map(to_type_tuple);
 
-const getAssertionMessage = ([
-  suiteName,
-  testName,
-], typedAssertion) => [
-  errorLine(`   [suite] ${suiteName}`),
-  errorLine(`    [test] ${testName}`),
-  formatAssertionTuple(...typedAssertion),
+const get_assertion_message = ([
+  suite_name,
+  test_name,
+], typed_assertion) => [
+  error_line(`   [suite] ${suite_name}`),
+  error_line(`    [test] ${test_name}`),
+  format_assertion_tuple(...typed_assertion),
 ].join('');
 
-function assert([actual, expected], contextTuple) {
-  const testResult = (actual === expected);
-  const typeTuple = getTypeTuple(actual, expected);
-  const message = getAssertionMessage(contextTuple, typeTuple);
+function assert([actual, expected], context_tuple) {
+  const test_result = (actual === expected);
+  const type_tuple = get_type_tuple(actual, expected);
+  const message = get_assertion_message(context_tuple, type_tuple);
 
-  console.assert(testResult, message);
+  console.assert(test_result, message);
 
-  return [testResult, typeTuple];
+  return [test_result, type_tuple];
 }
 
 //#endregion
 
 //#region test case
 
-const isTestPrimitive = value => (
-  testPrimitiveExpression.test(typeof value)
+const is_test_primitive = value => (
+  test_primitive_expression.test(typeof value)
   || (value === null)
   || (value === undefined)
 );
 
-function forceTestPrimitives(orderedPair) {
-  if (orderedPair.every(isTestPrimitive)) {
-    return orderedPair;
+function force_test_primitives(ordered_pair) {
+  if (ordered_pair.every(is_test_primitive)) {
+    return ordered_pair;
   }
 
   throw new TypeError([
@@ -198,7 +198,7 @@ function forceTestPrimitives(orderedPair) {
   ].join(' '));
 }
 
-function forceBoolean(value) {
+function force_boolean(value) {
   if (typeof value === 'boolean') {
     return value;
   }
@@ -209,20 +209,20 @@ function forceBoolean(value) {
   ].join(' '));
 }
 
-const isOrderedPair = value => (
+const is_ordered_pair = value => (
   isArray(value)
   && (value.length === ORDERED_PAIR_LENGTH)
 );
 
-function overloadSync(value) {
-  if (isOrderedPair(value)) {
-    return forceTestPrimitives(value);
+function overload_sync(value) {
+  if (is_ordered_pair(value)) {
+    return force_test_primitives(value);
   }
 
-  return [forceBoolean(value), true];
+  return [force_boolean(value), true];
 }
 
-function overloadCallable(value) {
+function overload_callable(value) {
   if (typeof value === 'function') {
     return value();
   }
@@ -230,7 +230,7 @@ function overloadCallable(value) {
   return value;
 }
 
-function forceValue(value) {
+function force_value(value) {
   if ((value === undefined) || (value === null)) {
     throw new TypeError([
       PREFIX_INVALID,
@@ -241,17 +241,17 @@ function forceValue(value) {
   return value;
 }
 
-function overloadPromise(value) {
-  const normalized = forceValue(overloadCallable(value));
+function overload_promise(value) {
+  const normalized = force_value(overload_callable(value));
 
   if (normalized.constructor === Promise) {
     return normalized
-      .then(syncResult =>
-        overloadSync(syncResult));
+      .then(sync_result =>
+        overload_sync(sync_result));
   }
 
   return Promise
-    .resolve(overloadSync(normalized));
+    .resolve(overload_sync(normalized));
 }
 
 //#endregion
@@ -260,61 +260,61 @@ const registry = new WeakMap();
 
 //#region test suite
 
-const sanitizeDescription = value =>
+const sanitize_description = value =>
   value
     .replace(/\s+/gm, ' ')
     .trim();
 
-const resultFactory = (id, label) =>
-  function onTestResultResolved(assertion) {
+const result_factory = (id, label) =>
+  function on_test_result_resolved(assertion) {
     return [
       label,
       ...assert(assertion, [id, label]),
     ];
   };
 
-function testFactory(id) {
-  const identifier = getModuleUrl(id);
+function test_factory(id) {
+  const identifier = get_module_url(id);
   const queue = [];
 
-  function run(description, testCase) {
-    const label = sanitizeDescription(description);
-    const onResolved = resultFactory(identifier, label);
-    const testPromise = overloadPromise(testCase).then(onResolved);
+  function run(description, test_case) {
+    const label = sanitize_description(description);
+    const on_resolved = result_factory(identifier, label);
+    const test_promise = overload_promise(test_case).then(on_resolved);
 
-    queue.push(testPromise);
+    queue.push(test_promise);
 
     return run;
   }
 
-  function scope(functionUnderTest) {
-    const { name } = functionUnderTest;
+  function scope(function_under_test) {
+    const { name } = function_under_test;
 
-    function scopedTest(label, testCase) {
-      const scopedLabel = `${name}(): ${label}`;
+    function scoped_test(label, test_case) {
+      const scoped_label = `${name}(): ${label}`;
 
-      run(scopedLabel, testCase);
+      run(scoped_label, test_case);
 
-      return scopedTest;
+      return scoped_test;
     }
 
-    return scopedTest;
+    return scoped_test;
   }
 
   return [identifier, queue, run, scope];
 }
 
 function suite(id) {
-  const [identifier, queue, run, scope] = testFactory(id);
+  const [identifier, queue, run, scope] = test_factory(id);
 
-  function overload(...argumentList) {
-    const [first] = argumentList;
+  function overload(...argument_list) {
+    const [first] = argument_list;
 
     if (typeof first === 'function') {
       return scope(first);
     }
 
-    return run(...argumentList);
+    return run(...argument_list);
   }
 
   registry.set(overload, [identifier, queue]);
@@ -326,7 +326,7 @@ function suite(id) {
 
 //#region default export handler
 
-function getSummary(total, errors) {
+function get_summary(total, errors) {
   if (errors) {
     return `${errors} failed, ${total - errors} passed`;
   }
@@ -338,19 +338,19 @@ const destructure = ([identifier, queue]) =>
   Promise
     .all([identifier, ...queue]);
 
-function restructure([identifier, ...testSuite]) {
-  const { length: total } = testSuite;
-  const { length: errors } = testSuite
-    .filter(([, testResult]) => !testResult);
+function restructure([identifier, ...test_suite]) {
+  const { length: total } = test_suite;
+  const { length: errors } = test_suite
+    .filter(([, test_result]) => !test_result);
 
-  console.info(`- ${identifier} (${getSummary(total, errors)})`);
+  console.info(`- ${identifier} (${get_summary(total, errors)})`);
 
-  return [identifier, testSuite, [total, errors]];
+  return [identifier, test_suite, [total, errors]];
 }
 
-const result = testFunction =>
+const result = test_function =>
   Promise
-    .resolve(registry.get(testFunction))
+    .resolve(registry.get(test_function))
     .then(destructure)
     .then(restructure)
     .catch(error => error);

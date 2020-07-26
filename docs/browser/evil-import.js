@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  evilImport,
+  evil_import,
 };
 
-import { resolveBlobUrl } from './url.js';
+import { resolve_blob_url } from './url.js';
 
 const type = 'application/javascript';
 
-function evilImport(sourceText) {
+function evil_import(source_text) {
   const resolve = url => import(url);
 
-  return resolveBlobUrl(resolve, sourceText, type);
+  return resolve_blob_url(resolve, source_text, type);
 }

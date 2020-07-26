@@ -4,37 +4,40 @@
  */
 export {
   append,
-  createTextNode,
-  createElement,
-  createFragment,
-  elementFactory,
-  getStyle,
+  create_text_node,
+  create_element,
+  create_fragment,
+  element_factory,
+  get_style,
   prepend,
   purge,
-  replaceNode,
+  replace_node,
   select,
-  setAttribute,
-  setStyle,
-  toFragment,
+  set_attribute,
+  set_style,
+  to_fragment,
 };
 
 /* global window document */
 
-const { from, isArray } = Array;
+const {
+  from,
+  isArray: is_array,
+} = Array;
 const {
   entries,
-  fromEntries,
+  fromEntries: from_entries,
   prototype: {
-    toString,
+    toString: to_string,
   },
 } = Object;
 
 //#region get
 
-const select = (selector, contextNode = document) =>
-  from(contextNode.querySelectorAll(selector));
+const select = (selector, context_node = document) =>
+  from(context_node.querySelectorAll(selector));
 
-function getStyle(element) {
+function get_style(element) {
   const style = window.getComputedStyle(element);
 
   return style;
@@ -50,17 +53,17 @@ function transfer(source, target) {
   }
 }
 
-function toFragment(htmlLiteral) {
+function to_fragment(html_literal) {
   const clipboard = document.createElement('DIV');
   const fragment = document.createDocumentFragment();
 
-  clipboard.innerHTML = htmlLiteral;
+  clipboard.innerHTML = html_literal;
   transfer(clipboard, fragment);
 
   return fragment;
 }
 
-function getCssText(style) {
+function get_css_text(style) {
   if (style) {
     return entries(style)
       .filter(([, value]) => value)
@@ -71,13 +74,13 @@ function getCssText(style) {
   return '';
 }
 
-function setStyle(element, style) {
-  element.style.cssText = getCssText(style);
+function set_style(element, style) {
+  element.style.cssText = get_css_text(style);
 
   return element;
 }
 
-function setBooleanAttribute(element, name, value) {
+function set_boolean_attribute(element, name, value) {
   if (value) {
     element.setAttribute(name, '');
   } else {
@@ -85,9 +88,9 @@ function setBooleanAttribute(element, name, value) {
   }
 }
 
-function setAttribute(element, name, value) {
+function set_attribute(element, name, value) {
   if (typeof value === 'boolean') {
-    setBooleanAttribute(element, name, value);
+    set_boolean_attribute(element, name, value);
   } else if (name.startsWith('on')) {
     element[name] = value;
   } else {
@@ -97,9 +100,9 @@ function setAttribute(element, name, value) {
   return element;
 }
 
-function setAttributes(element, attributes) {
+function set_attributes(element, attributes) {
   for (const [key, value] of entries(attributes)) {
-    setAttribute(element, key, value);
+    set_attribute(element, key, value);
   }
 
   return element;
@@ -113,7 +116,7 @@ function purge(element) {
   return element;
 }
 
-function asNode(value) {
+function as_node(value) {
   if (/^(?:number|string)$/.test(typeof value)) {
     return document.createTextNode(value);
   }
@@ -121,82 +124,82 @@ function asNode(value) {
   return value;
 }
 
-function appendNode(element, children) {
-  element.appendChild(asNode(children));
+function append_node(element, children) {
+  element.appendChild(as_node(children));
 
   return element;
 }
 
-function prependNode(element, children) {
-  element.insertBefore(asNode(children), element.firstChild);
+function prepend_node(element, children) {
+  element.insertBefore(as_node(children), element.firstChild);
 
   return element;
 }
 
 function append(element, children) {
-  const node = isArray(children) ?
-    createFragment(children) :
+  const node = is_array(children) ?
+    create_fragment(children) :
     children;
 
-  return appendNode(element, node);
+  return append_node(element, node);
 }
 
 function prepend(element, children) {
-  const node = isArray(children) ?
-    createFragment(children) :
+  const node = is_array(children) ?
+    create_fragment(children) :
     children;
 
-  return prependNode(element, node);
+  return prepend_node(element, node);
 }
 
-const replaceNode = (previous, next) =>
+const replace_node = (previous, next) =>
   previous
     .parentNode
     .replaceChild(next, previous);
 
-const createFragment = nodeArray =>
-  nodeArray
+const create_fragment = node_array =>
+  node_array
     .reduce(
       append,
       document.createDocumentFragment()
     );
 
-const createTextNode = stringLiteral =>
-  document.createTextNode(stringLiteral);
+const create_text_node = string_literal =>
+  document.createTextNode(string_literal);
 
-const getMixedArityIndex = value =>
-  Number(toString.call(value) === '[object Object]');
+const get_mixed_arity_index = value =>
+  Number(to_string.call(value) === '[object Object]');
 
-const plainElement = type =>
+const plain_element = type =>
   document.createElement(type);
 
-const withAttributesOrChildren = (type, value) =>
-  mixedArity[getMixedArityIndex(value)](plainElement(type), value);
+const with_attributes_or_children = (type, value) =>
+  mixed_arity[get_mixed_arity_index(value)](plain_element(type), value);
 
-const withAttributesAndChildren = (type, attributes, children) =>
-  append(setAttributes(plainElement(type), attributes), children);
+const with_attributes_and_children = (type, attributes, children) =>
+  append(set_attributes(plain_element(type), attributes), children);
 
-const mixedArity = [
+const mixed_arity = [
   append,
-  setAttributes,
+  set_attributes,
 ];
 
 const arity = [
   undefined,
-  plainElement,
-  withAttributesOrChildren,
-  withAttributesAndChildren,
+  plain_element,
+  with_attributes_or_children,
+  with_attributes_and_children,
 ];
 
-const createElement = (...argumentList) =>
-  arity[argumentList.length](...argumentList);
+const create_element = (...argument_list) =>
+  arity[argument_list.length](...argument_list);
 
-const elementFactory = types =>
-  fromEntries(types
+const element_factory = types =>
+  from_entries(types
     .map(type => [
       type,
-      (...argumentList) =>
-        createElement(type, ...argumentList),
+      (...argument_list) =>
+        create_element(type, ...argument_list),
     ]));
 
 //#endregion

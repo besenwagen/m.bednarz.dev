@@ -14,13 +14,13 @@ const {
   freeze,
 } = Object;
 
-const isString = ([name]) =>
+const is_string = ([name]) =>
   typeof name === 'string';
 
 const filter = object =>
   fromEntries(
     entries(object)
-      .filter(isString)
+      .filter(is_string)
   );
 
 const dictionary = data =>

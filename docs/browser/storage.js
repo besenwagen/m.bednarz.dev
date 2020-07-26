@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  storageContext,
+  storage_context,
 };
 
 import { milli } from '../math.js';
@@ -13,18 +13,18 @@ import { milli } from '../math.js';
 const { now } = Date;
 const { parse, stringify } = JSON;
 
-const secondsElapsed = timestamp =>
+const seconds_elapsed = timestamp =>
   milli(now() - timestamp);
 
-function freshValue([timestamp, value], maxage) {
-  if (secondsElapsed(timestamp) < maxage) {
+function fresh_value([timestamp, value], max_age) {
+  if (seconds_elapsed(timestamp) < max_age) {
     return value;
   }
 
   return null;
 }
 
-const withTimestamp = data => stringify([
+const with_timestamp = data => stringify([
   now(),
   data,
 ]);
@@ -32,7 +32,7 @@ const withTimestamp = data => stringify([
 const context = new WeakMap();
 
 /* eslint-disable */
-function createContextApi(storage) {
+function create_context_api(storage) {
   function read(key, maxage) {
     const item = parse(storage.getItem(key));
 
@@ -40,26 +40,26 @@ function createContextApi(storage) {
       return item;
     }
 
-    return freshValue(item, maxage);
+    return fresh_value(item, maxage);
   }
 
   function write(key, value) {
-    const item = withTimestamp(value);
+    const item = with_timestamp(value);
 
     storage.setItem(key, item);
   }
 
-  const contextApi = [read, write];
+  const context_api = [read, write];
 
-  context.set(storage, contextApi);
+  context.set(storage, context_api);
 
-  return contextApi;
+  return context_api;
 }
 
-function storageContext(storage = localStorage) {
+function storage_context(storage = localStorage) {
   if (context.has(storage)) {
     return context.get(storage);
   }
 
-  return createContextApi(storage);
+  return create_context_api(storage);
 }

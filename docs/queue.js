@@ -15,13 +15,13 @@ const bucket = new Map();
 
 //#region Creators
 
-const createCollection = () => ({
+const create_collection = () => ({
   head: null,
   tail: null,
   size: 0,
 });
 
-const createNode = value => ({
+const create_node = value => ({
   next: null,
   value,
 });
@@ -54,11 +54,11 @@ function remove(collection, next) {
 
 //#endregion
 
-function partiallyApply(key, api) {
-  const toKeyMap = callback =>
+function partially_apply(key, api) {
+  const to_key_map = callback =>
     partial(callback, key);
 
-  return api.map(toKeyMap);
+  return api.map(to_key_map);
 }
 
 //#region Public API
@@ -66,10 +66,10 @@ function partiallyApply(key, api) {
 function queue(...api) {
   const key = Symbol('QUEUE');
 
-  bucket.set(key, createCollection());
+  bucket.set(key, create_collection());
 
   if (api.length) {
-    return partiallyApply(key, api);
+    return partially_apply(key, api);
   }
 
   return key;
@@ -77,7 +77,7 @@ function queue(...api) {
 
 function enqueue(key, value) {
   const collection = bucket.get(key);
-  const node = createNode(value);
+  const node = create_node(value);
 
   add(collection, node);
 

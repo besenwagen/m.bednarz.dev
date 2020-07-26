@@ -4,7 +4,7 @@ export {
 
 import { GITHUB_MODULES } from './initialize.js';
 import { resource } from '/browser/resource.js';
-import { createElement, replaceNode } from '/browser/dom.js';
+import { create_element, replace_node } from '/browser/dom.js';
 
 /* global document */
 
@@ -15,80 +15,80 @@ const sections = [
   'node',
 ];
 
-const getModuleToc = directory =>
+const get_module_toc = directory =>
   resource(GITHUB_MODULES, directory);
 
-function basename(relativePath) {
+function basename(relative_path) {
   const [, base] = /(?:^|\/)([^.]+)\.(?:html|js|ts)/
-    .exec(relativePath);
+    .exec(relative_path);
 
   return base;
 }
 
-const createSourceLink = relativePath =>
-  createElement('A', {
-    href: `/${relativePath}`,
+const create_source_link = relative_path =>
+  create_element('A', {
+    href: `/${relative_path}`,
     title: 'source',
-    'aria-label': `${basename(relativePath)} module source`,
-  }, relativePath);
+    'aria-label': `${basename(relative_path)} module source`,
+  }, relative_path);
 
-const createDocumentationLink = relativePath =>
-  createElement('A', {
-    href: `/${relativePath}`,
+const create_documentation_link = relative_path =>
+  create_element('A', {
+    href: `/${relative_path}`,
     title: 'documentation',
-    'aria-label': `${basename(relativePath)} module documentation`,
+    'aria-label': `${basename(relative_path)} module documentation`,
   }, '?');
 
-const moduleTuple = [
-  function source(accumulator, relativePath) {
-    accumulator.push(createSourceLink(relativePath));
+const module_tuple = [
+  function source(accumulator, relative_path) {
+    accumulator.push(create_source_link(relative_path));
   },
-  function documentation(accumulator, relativePath) {
-    if (relativePath) {
-      accumulator.push(createDocumentationLink(relativePath));
+  function documentation(accumulator, relative_path) {
+    if (relative_path) {
+      accumulator.push(create_documentation_link(relative_path));
     }
   },
 ];
 
-function toLinks(accumulator, relativePath, index) {
-  moduleTuple[index](accumulator, relativePath);
+function to_links(accumulator, relative_path, index) {
+  module_tuple[index](accumulator, relative_path);
 
   return accumulator;
 }
 
-const createListItem = pathPair =>
-  createElement('LI',
-    pathPair.reduce(toLinks, []));
+const create_list_Item = path_pair =>
+  create_element('LI',
+    path_pair.reduce(to_links, []));
 
-const createListFragment = list =>
+const create_list_fragment = list =>
   list
-    .map(orderedPair =>
-      createListItem(orderedPair));
+    .map(ordered_pair =>
+      create_list_Item(ordered_pair));
 
-const createList = array =>
-  createElement('UL', createListFragment(array));
+const create_list = array =>
+  create_element('UL', create_list_fragment(array));
 
-const toElement = id =>
+const to_element = id =>
   document.getElementById(id);
 
-const notNull = value =>
+const not_null = value =>
   (value !== null);
 
-function renderResult(element) {
+function render_result(element) {
   const { id } = element;
   const placeholder = element.querySelector('p');
 
-  function onResolved(array) {
-    replaceNode(placeholder, createList(array));
+  function on_resolved(array) {
+    replace_node(placeholder, create_list(array));
   }
 
-  getModuleToc(id)
-    .then(onResolved);
+  get_module_toc(id)
+    .then(on_resolved);
 }
 
 function render() {
   sections
-    .map(toElement)
-    .filter(notNull)
-    .forEach(renderResult);
+    .map(to_element)
+    .filter(not_null)
+    .forEach(render_result);
 }

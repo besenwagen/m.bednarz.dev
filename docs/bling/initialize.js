@@ -17,12 +17,12 @@ const MODULE_ROOT = 'universal';
 const PATH_EXPRESSION = new RegExp(`^${DOCUMENT_ROOT}/`);
 const MODULE_EXPRESSION = /^(?!.*\.test\.js$)(.*)\.(?:j|t)s$/;
 
-const toRelativePath = path =>
+const to_relative_path = path =>
   path
     .replace(PATH_EXPRESSION, '');
 
-function resolveUrl(segment) {
-  const pathSegments = [
+function resolve_url(segment) {
+  const path_segments = [
     'repos',
     USER_NAME,
     REPOSITORY,
@@ -31,18 +31,18 @@ function resolveUrl(segment) {
   ];
 
   if (segment !== MODULE_ROOT) {
-    pathSegments
+    path_segments
       .push(segment);
   }
 
   return [
     API_ORIGIN,
-    ...pathSegments,
+    ...path_segments,
   ].join('/');
 }
 
 function filter(input, output) {
-  function useMatch([filename, basename]) {
+  function use_match([filename, basename]) {
     const documentation = `${basename}.html`;
 
     if (input.includes(documentation)) {
@@ -52,11 +52,11 @@ function filter(input, output) {
     }
   }
 
-  return function reduceFile(file) {
+  return function reduce_file(file) {
     const match = MODULE_EXPRESSION.exec(file);
 
     if (match) {
-      useMatch(match);
+      use_match(match);
     }
   };
 }
@@ -72,9 +72,9 @@ function reduce(toc) {
   return modules;
 }
 
-const flatten = ({ path }) => toRelativePath(path);
+const flatten = ({ path }) => to_relative_path(path);
 
-function transformGithubContents(array) {
+function transform_github_contents(array) {
   const toc = array.map(flatten);
 
   return reduce(toc);
@@ -89,10 +89,10 @@ const [
   GITHUB_MODULES,
   SVG_SYMBOLS,
 ] = network({
-  ['github:modules'](subDirectory) {
+  ['github:modules'](sub_directory) {
     return [
-      [json, [resolveUrl(subDirectory)]],
-      transformGithubContents,
+      [json, [resolve_url(sub_directory)]],
+      transform_github_contents,
       LIFESPAN,
     ];
   },

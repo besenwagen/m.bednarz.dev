@@ -7,7 +7,7 @@ export {
   sandbox,
 };
 
-import { createElement } from './dom.js';
+import { create_element } from './dom.js';
 
 /* global document */
 
@@ -25,8 +25,8 @@ const HTML_DOCUMENT = `
 </html>
 `.trim();
 
-function createIframe() {
-  const iframe = createElement('iframe', {
+function create_iframe() {
+  const iframe = create_element('iframe', {
     srcdoc: HTML_DOCUMENT,
     width: SIZE,
     height: SIZE,
@@ -40,7 +40,7 @@ function createIframe() {
   return iframe;
 }
 
-function apiFactory(iframe) {
+function api_factory(iframe) {
   const { contentWindow: global } = iframe;
   const { document: root } = global;
   const {
@@ -73,14 +73,14 @@ function apiFactory(iframe) {
 
 function sandbox() {
   const { body } = document;
-  const iframe = createIframe();
+  const iframe = create_iframe();
 
   function executor(resolve) {
-    function onIframeLoad({ target }) {
-      resolve(apiFactory(target));
+    function on_iframe_load({ target }) {
+      resolve(api_factory(target));
     }
 
-    iframe.onload = onIframeLoad;
+    iframe.onload = on_iframe_load;
   }
 
   body.appendChild(iframe);
@@ -90,7 +90,7 @@ function sandbox() {
 
 const disposable = callback =>
   sandbox()
-    .then(function onIframeResolved({ destroy, ...rest }) {
+    .then(function on_iframe_resolved({ destroy, ...rest }) {
       const result = callback(rest);
 
       if (result instanceof Promise) {

@@ -6,9 +6,9 @@
 export {
   failing,
   load,
-  printReport,
-  printSummary,
-  jsonEscape as _jsonEscape,
+  print_report,
+  print_summary,
+  json_escape as _json_escape,
   yamlify as _yamlify,
 };
 
@@ -20,75 +20,75 @@ const INITIAL_COUNT = 0;
 const TOTAL_INDEX = 0;
 const ERROR_INDEX = 1;
 
-const getDefaultModule = module =>
+const get_default_module = module =>
   module.default;
 
-const loadModule = path =>
+const load_module = path =>
   import(path)
-    .then(getDefaultModule);
+    .then(get_default_module);
 
-function printSummary(modules, tests, errors) {
+function print_summary(modules, tests, errors) {
   console.info('summary:');
   console.info(`  modules: ${modules}`);
   console.info(`  tests: ${tests}`);
   console.info(`  failing: ${errors}`);
 }
 
-const reduceCount = (subTotal, value) =>
-  subTotal + value;
+const reduce_count = (sub_total, value) =>
+  sub_total + value;
 
-const reduceIndex = (array, index) =>
+const reduce_index = (array, index) =>
   array
     .map(([, , stats]) => stats[index])
-    .reduce(reduceCount, INITIAL_COUNT);
+    .reduce(reduce_count, INITIAL_COUNT);
 
-function withStats(result) {
-  const { length: moduleCount } = result;
-  const testCount = reduceIndex(result, TOTAL_INDEX);
-  const errorCount = reduceIndex(result, ERROR_INDEX);
+function with_stats(result) {
+  const { length: module_count } = result;
+  const test_count = reduce_index(result, TOTAL_INDEX);
+  const error_count = reduce_index(result, ERROR_INDEX);
 
-  printSummary(moduleCount, testCount, errorCount);
+  print_summary(module_count, test_count, error_count);
 
   return [
     result,
-    [moduleCount, testCount, errorCount],
+    [module_count, test_count, error_count],
   ];
 }
 
-function onError(error) {
+function on_error(error) {
   console.error(error);
   throw error;
 }
 
 function load(queue) {
-  const modules = queue.map(loadModule);
+  const modules = queue.map(load_module);
 
   console.info('progress:');
 
   return Promise
     .all(modules)
-    .then(withStats)
-    .catch(onError);
+    .then(with_stats)
+    .catch(on_error);
 }
 
 //#endregion
 
 //#region Output
 
-const isFailing = ([, value]) => !value;
+const is_failing = ([, value]) => !value;
 
-function toFailing(accumulator, [suiteName, tests]) {
-  const failing = tests.filter(isFailing);
+function to_failing(accumulator, [suite_name, tests]) {
+  const failing = tests.filter(is_failing);
 
   if (failing.length) {
-    accumulator.push([suiteName, failing]);
+    accumulator.push([suite_name, failing]);
   }
 
   return accumulator;
 }
 
 const failing = result =>
-  result.reduce(toFailing, []);
+  result.reduce(to_failing, []);
 
 //#region YAML
 
@@ -96,11 +96,11 @@ function indent(value) {
   return value;
 }
 
-const escapeDoubleQuotes = string =>
+const escape_double_quotes = string =>
   string
     .replace(/\\([\s\S])|(")/g, '\\$1$2');
 
-function doubleQuote(value) {
+function double_quote(value) {
   const match = /^"(.*)"|\\"(.*)\\"$/.exec(value);
 
   if (match) {
@@ -112,58 +112,58 @@ function doubleQuote(value) {
   return `"${value}"`;
 }
 
-const jsonEscape = value =>
-  doubleQuote(escapeDoubleQuotes(String(value)));
+const json_escape = value =>
+  double_quote(escape_double_quotes(String(value)));
 
-function escapeAssertionValue(value) {
+function escape_assertion_value(value) {
   if (typeof value === 'string') {
-    return jsonEscape(value.replace(/\n/gm, '\\n'));
+    return json_escape(value.replace(/\n/gm, '\\n'));
   }
 
   return value;
 }
 
-const caseToYaml = (key, [type, value]) => [
+const case_to_yaml = (key, [type, value]) => [
   indent(`      ${key}:`),
-  indent(`        ${type}: ${escapeAssertionValue(value)}`),
+  indent(`        ${type}: ${escape_assertion_value(value)}`),
 ];
 
-function assertionToYaml(name, result, [actual, expected]) {
-  const toCase = tuple => caseToYaml(...tuple);
-  const toCaseList = (accumulator, value) => [
+function assertion_to_yaml(name, result, [actual, expected]) {
+  const to_case = tuple => case_to_yaml(...tuple);
+  const to_case_list = (accumulator, value) => [
     ...accumulator,
-    ...toCase(value),
+    ...to_case(value),
   ];
-  const caseList = entries({
+  const case_list = entries({
     actual,
     expected,
   })
-    .reduce(toCaseList, []);
+    .reduce(to_case_list, []);
 
-  return [indent(`    ${jsonEscape(name)}:`), ...caseList];
+  return [indent(`    ${json_escape(name)}:`), ...case_list];
 }
 
-function suiteToYaml(suite) {
-  function toLines(buffer, [description, result, assertion]) {
-    buffer.push(...assertionToYaml(description, result, assertion));
+function suite_to_yaml(suite) {
+  function to_lines(buffer, [description, result, assertion]) {
+    buffer.push(...assertion_to_yaml(description, result, assertion));
 
     return buffer;
   }
 
-  return suite.reduce(toLines, []);
+  return suite.reduce(to_lines, []);
 }
 
 function yamlify(result) {
   const buffer = [];
 
   for (const [id, suite] of result) {
-    buffer.push(indent(`  ${id}:`), ...suiteToYaml(suite));
+    buffer.push(indent(`  ${id}:`), ...suite_to_yaml(suite));
   }
 
   return buffer.join('\n');
 }
 
-function printReport(label, result) {
+function print_report(label, result) {
   console.info(`${label}:`);
   console.info(yamlify(result));
 }

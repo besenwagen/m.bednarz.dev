@@ -8,7 +8,7 @@ export {
   resource,
 };
 
-import { storageContext } from './storage.js';
+import { storage_context } from './storage.js';
 
 const { sign } = Math;
 const { isSafeInteger } = Number;
@@ -16,66 +16,66 @@ const { entries } = Object;
 const DEFAULT_LIFESPAN = 3600;
 const POSITIVE_SIGN = 1;
 
-const isPositiveNumber = value =>
+const is_positive_number = value =>
   sign(value) === POSITIVE_SIGN;
 
-const isPositiveInteger = value =>
-  isPositiveNumber(value)
+const is_positive_integer = value =>
+  is_positive_number(value)
   && isSafeInteger(value);
 
-const isCallable = value =>
+const is_callable = value =>
   typeof value === 'function';
 
-function overloadWithCallable(value, argumentList) {
-  if (isCallable(value)) {
-    return value(...argumentList);
+function overload_with_callable(value, argument_list) {
+  if (is_callable(value)) {
+    return value(...argument_list);
   }
 
   return value;
 }
 
-const inMemoryStore = new Map();
+const in_memory_store = new Map();
 
 function memory(object) {
-  function toSymbols(accumulator, [name, value]) {
+  function to_symbols(accumulator, [name, value]) {
     const key = Symbol(name);
 
-    inMemoryStore.set(key, value);
+    in_memory_store.set(key, value);
     accumulator.push(key);
 
     return accumulator;
   }
 
-  return entries(object).reduce(toSymbols, []);
+  return entries(object).reduce(to_symbols, []);
 }
 
-const networkResolutionStore = new Map();
+const network_resolution_store = new Map();
 
 function network(object) {
-  function toSymbols(accumulator, [name, value]) {
+  function to_symbols(accumulator, [name, value]) {
     const key = Symbol(name);
 
-    networkResolutionStore.set(key, value);
+    network_resolution_store.set(key, value);
     accumulator.push(key);
 
     return accumulator;
   }
 
-  return entries(object).reduce(toSymbols, []);
+  return entries(object).reduce(to_symbols, []);
 }
 
-const withNetwork = ([callback, argumentList]) =>
-  callback(...argumentList);
+const with_network = ([callback, argument_list]) =>
+  callback(...argument_list);
 
-function withStorage(callDescriptor, transform, lifespan) {
-  function withFallback(stored) {
+function with_storage(call_descriptor, transform, lifespan) {
+  function with_fallback(stored) {
     if (stored) {
       return stored;
     }
 
-    return withNetwork(callDescriptor)
-      .then(function onResolved(responseValue) {
-        const transformed = transform(responseValue);
+    return with_network(call_descriptor)
+      .then(function on_resolved(response_value) {
+        const transformed = transform(response_value);
 
         write(url, transformed);
 
@@ -83,43 +83,43 @@ function withStorage(callDescriptor, transform, lifespan) {
       });
   }
 
-  const [read, write] = storageContext();
-  const [, [url]] = callDescriptor;
+  const [read, write] = storage_context();
+  const [, [url]] = call_descriptor;
 
   return Promise
     .resolve(read(url, lifespan))
-    .then(withFallback);
+    .then(with_fallback);
 }
 
-function normalizeOverloaded(candidates) {
+function normalize_overloaded(candidates) {
   const [
     transform = value => value,
-  ] = candidates.filter(isCallable);
+  ] = candidates.filter(is_callable);
   const [
     lifespan = DEFAULT_LIFESPAN,
-  ] = candidates.filter(isPositiveInteger);
+  ] = candidates.filter(is_positive_integer);
 
   return [transform, lifespan];
 }
 
-function strategy([callbackDescriptor, ...overloaded]) {
-  const [transform, lifespan] = normalizeOverloaded(overloaded);
+function strategy([callback_descriptor, ...overloaded]) {
+  const [transform, lifespan] = normalize_overloaded(overloaded);
 
   if (lifespan) {
-    return withStorage(callbackDescriptor, transform, lifespan);
+    return with_storage(callback_descriptor, transform, lifespan);
   }
 
-  const onResolved = responseValue =>
-    transform(responseValue);
+  const on_resolved = response_value =>
+    transform(response_value);
 
-  return withNetwork(callbackDescriptor)
-    .then(onResolved);
+  return with_network(callback_descriptor)
+    .then(on_resolved);
 }
 
-function getResourceDescriptor(id, query) {
-  const descriptor = networkResolutionStore.get(id);
+function get_resource_descriptor(id, query) {
+  const descriptor = network_resolution_store.get(id);
 
-  return overloadWithCallable(descriptor, query);
+  return overload_with_callable(descriptor, query);
 }
 
 function error(id) {
@@ -131,12 +131,12 @@ function error(id) {
 }
 
 function resource(id, ...query) {
-  if (inMemoryStore.has(id)) {
-    return overloadWithCallable(inMemoryStore.get(id), query);
+  if (in_memory_store.has(id)) {
+    return overload_with_callable(in_memory_store.get(id), query);
   }
 
-  if (networkResolutionStore.has(id)) {
-    return strategy(getResourceDescriptor(id, query));
+  if (network_resolution_store.has(id)) {
+    return strategy(get_resource_descriptor(id, query));
   }
 
   return Promise.reject(error(id));

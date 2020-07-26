@@ -1,7 +1,7 @@
 import { result, suite } from './test.js'
 import {
-  asArray,
-  callOrNothingAtAll,
+  as_array,
+  call_or_nothing_at_all,
   unique,
 } from './utilities.js'
 
@@ -9,25 +9,25 @@ const test = suite(import.meta)
 
 export default result(test)
 
-test(callOrNothingAtAll)
+test(call_or_nothing_at_all)
   ('falsy -> undefined', [
-    callOrNothingAtAll(false, [n => n + 1, [41]]),
+    call_or_nothing_at_all(false, [n => n + 1, [41]]),
     undefined,
   ])
   ('truthy -> return value', [
-    callOrNothingAtAll(true, [n => n + 1, [41]]),
+    call_or_nothing_at_all(true, [n => n + 1, [41]]),
     42,
   ])
 
-test(asArray)
+test(as_array)
   ('return the argument if it is an array', () => {
-    const myArray = []
-    return (asArray(myArray) === myArray)
+    const my_array = []
+    return (as_array(my_array) === my_array)
   })
   ('wrap other values in an array', () => {
-    const myValue = 'Hello, world!'
+    const my_value = 'Hello, world!'
     return [
-      JSON.stringify(asArray(myValue)),
+      JSON.stringify(as_array(my_value)),
       '["Hello, world!"]',
     ]
   })

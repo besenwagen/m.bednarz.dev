@@ -1,6 +1,6 @@
 import { result, suite } from '../test.js'
 import {
-  evilImport,
+  evil_import,
 } from './evil-import.js'
 
 const test = suite(import.meta.url)
@@ -16,7 +16,7 @@ test
       export const value = f(v);
     `
 
-    return evilImport(literal)
+    return evil_import(literal)
       .then(({ value }) => [
         value,
         42,
@@ -30,9 +30,9 @@ test
       export default f(v);
     `
 
-    return evilImport(literal)
-      .then(resolvedModule => [
-        resolvedModule.default,
+    return evil_import(literal)
+      .then(resolved_module => [
+        resolved_module.default,
         42,
       ])
   })

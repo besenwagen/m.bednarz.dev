@@ -1,12 +1,12 @@
 import { result, suite } from '../test.js'
 import { disposable } from './sandbox.js'
 import {
-  maxWidth,
-  minWidth,
+  max_width,
+  min_width,
   motion,
-  styleSheet,
-  toCssText,
-  toRuleSet,
+  style_sheet,
+  to_css_text,
+  to_rule_set,
 } from './css.js'
 
 const test = suite(import.meta)
@@ -15,15 +15,15 @@ export default result(test)
 
 /* global getComputedStyle */
 
-test(maxWidth)
+test(max_width)
   ('max-width media query', [
-    maxWidth('42em'),
+    max_width('42em'),
     '@media only screen and (max-width:42em)',
   ])
 
-test(minWidth)
+test(min_width)
   ('min-width media query', [
-    minWidth('42em'),
+    min_width('42em'),
     '@media only screen and (min-width:42em)',
   ])
 
@@ -33,18 +33,18 @@ test(motion)
     '@media only screen and (prefers-reduced-motion:no-preference)',
   ])
 
-test(toCssText)
+test(to_css_text)
   ('concatenate declarations', [
-    toCssText({
+    to_css_text({
       color: 'red',
       display: 'flex',
     }),
     'color:red;display:flex',
   ])
 
-test(toRuleSet)
+test(to_rule_set)
   ('create ruleset', [
-    toRuleSet('main > h1', {
+    to_rule_set('main > h1', {
       color: 'red',
       display: 'flex',
     }),
@@ -53,14 +53,14 @@ test(toRuleSet)
 
 // Don't test resolved values that are different from used values here
 // https://drafts.csswg.org/cssom/#resolved-values
-test(styleSheet)
+test(style_sheet)
   ('insert multiple rule sets',
     disposable(({
       head,
       body,
       set,
     }) => {
-      styleSheet({
+      style_sheet({
         body: {
           display: 'flex',
         },
@@ -69,10 +69,10 @@ test(styleSheet)
         },
       }, head)
       set('<h1>Hello, CSS!</h1>')
-      const bodyStyle = getComputedStyle(body)
-      const h1Style = getComputedStyle(body.firstChild)
+      const body_style = getComputedStyle(body)
+      const h1_style = getComputedStyle(body.firstChild)
       return [
-        [bodyStyle.display, h1Style.textAlign].join(),
+        [body_style.display, h1_style.textAlign].join(),
         'flex,center',
       ]
     }))
@@ -81,16 +81,16 @@ test(styleSheet)
       head,
       body,
     }) => {
-      styleSheet({
+      style_sheet({
         '@media only screen and (min-width: 1px)': {
           body: {
             fontSize: '100px',
           },
         },
       }, head)
-      const bodyStyle = getComputedStyle(body)
+      const body_style = getComputedStyle(body)
       return [
-        bodyStyle.fontSize,
+        body_style.fontSize,
         '100px',
       ]
     }))

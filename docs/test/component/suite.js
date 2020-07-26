@@ -5,10 +5,10 @@
 import { component } from '/browser/component.js';
 import {
   append,
-  createTextNode,
-  replaceNode,
+  create_text_node,
+  replace_node,
   select,
-  setAttribute,
+  set_attribute,
 } from '/browser/dom.js';
 import {
   link,
@@ -31,21 +31,21 @@ const SECTION_NODE = Symbol('section node');
 const STATUS_NODE = Symbol('status node');
 const HEADING_NODE = Symbol('heading node');
 
-const stateMarker = state => (state ? em : strong);
+const state_marker = state => (state ? em : strong);
 
-const markState = (state, children) =>
-  stateMarker(state)(children);
+const mark_state = (state, children) =>
+  state_marker(state)(children);
 
-const displayUrl = url =>
+const display_url = url =>
   url.replace(/^\//, '');
 
-const sourceLink = href =>
+const source_link = href =>
   anchor({
     href,
     target: '_blank',
-  }, displayUrl(href));
+  }, display_url(href));
 
-function isHidden(value) {
+function is_hidden(value) {
   return !parse(value);
 }
 
@@ -57,7 +57,7 @@ const marker = ([main, sub]) =>
     ' ',
   ]);
 
-const assertionTable = ({
+const assertion_table = ({
   isAssertionHidden,
   isTestPassing,
   assertion: [
@@ -71,7 +71,7 @@ const assertionTable = ({
     tr([
       th({ scope: 'row' }, 'actual'),
       td(code(actualType)),
-      td(pre(code(markState(isTestPassing, String(actualValue))))),
+      td(pre(code(mark_state(isTestPassing, String(actualValue))))),
     ]),
     tr([
       th({ scope: 'row' }, 'expected'),
@@ -80,7 +80,7 @@ const assertionTable = ({
     ]),
   ]));
 
-function callMethod(instance, name, argumentList) {
+function call_method(instance, name, argumentList) {
   const methods = instance.methods();
 
   if (methods[name]) {
@@ -88,7 +88,7 @@ function callMethod(instance, name, argumentList) {
   }
 }
 
-function delegateError(instance, reason) {
+function delegate_error(instance, reason) {
   const [
     index,
     module,
@@ -96,87 +96,90 @@ function delegateError(instance, reason) {
 
   console.error(index, module, reason);
 
-  callMethod(instance, 'onRejected', [reason]);
+  call_method(instance, 'on_rejected', [reason]);
 }
 
-function renderResult(instance, [, list, [tests, failing]]) {
-  updateSection(instance, tests, failing);
+function render_result(instance, [, list, [tests, failing]]) {
+  update_section(instance, tests, failing);
   instance.set(FAILING, failing);
 
   append(instance.get(SECTION_NODE), [
     ul({
-      hidden: isHidden(instance.attributes('sources')),
+      hidden: is_hidden(instance.attributes('sources')),
     }, [
       li([
         'test module: ',
-        sourceLink(getUrl(instance, TEST_EXTENSION)),
+        source_link(get_url(instance, TEST_EXTENSION)),
       ]),
       li([
         'module under test: ',
-        sourceLink(getUrl(instance, EXTENSION)),
+        source_link(get_url(instance, EXTENSION)),
       ]),
     ]),
-    createResultList(instance, list, failing),
+    create_result_list(instance, list, failing),
   ]);
 
-  callMethod(instance, 'onResolved', [(tests - failing), failing]);
+  call_method(instance, 'on_resolved', [(tests - failing), failing]);
 }
 
-function updateSection(instance, tests, failingCount) {
-  const status = statusList[sign(failingCount)];
+function update_section(instance, tests, failing_count) {
+  const status = statusList[sign(failing_count)];
 
-  replaceNode(instance.get(STATUS_NODE), createTextNode(status));
+  replace_node(instance.get(STATUS_NODE), create_text_node(status));
   instance.get(HEADING_NODE)
-    .appendChild(createTextNode(` (${tests} tests)`));
+    .appendChild(create_text_node(` (${tests} tests)`));
 
-  if (failingCount) {
+  if (failing_count) {
     instance.get(SECTION_NODE)
       .setAttribute(ATTRIBUTE_FAIL, '');
   }
 }
 
-function createResultList(instance, suite, failing) {
-  const toListItem = ([
+function create_result_list(instance, suite, failing) {
+  const to_list_item = ([
     description,
-    isTestPassing,
+    is_test_passing,
     assertion,
   ], testIndex) =>
     li({
-      [ATTRIBUTE_FAIL]: !isTestPassing,
+      [ATTRIBUTE_FAIL]: !is_test_passing,
     }, [
       marker([instance.attributes('index'), testIndex]),
-      code(`[${statusList[Number(!isTestPassing)]}]`),
+      code(`[${statusList[Number(!is_test_passing)]}]`),
       ' ',
-      markState(isTestPassing, description),
-      assertionTable({
-        isAssertionHidden: isHidden(instance.attributes('assertions')),
-        isTestPassing,
+      mark_state(is_test_passing, description),
+      assertion_table({
+        isAssertionHidden: is_hidden(instance.attributes('assertions')),
+        isTestPassing: is_test_passing,
         assertion,
       }),
     ]);
-  const isSuiteFailing = Boolean(failing);
+  const is_suite_failing = Boolean(failing);
 
   return ol({
-    hidden: isHidden(instance.attributes('tests')) && !isSuiteFailing,
-    [ATTRIBUTE_FAIL]: isSuiteFailing,
-  }, suite.map(toListItem));
+    hidden: (
+      is_hidden(instance.attributes('tests'))
+      && !is_suite_failing
+    ),
+    [ATTRIBUTE_FAIL]: is_suite_failing,
+  }, suite.map(to_list_item));
 }
 
-const getUrl = (instance, extension) => [
+const get_url = (instance, extension) => [
   ...instance.attributes('path', 'module'),
   extension,
 ].join('');
 
 function load(instance, origin) {
-  const url = getUrl(instance, TEST_EXTENSION);
+  const url = get_url(instance, TEST_EXTENSION);
 
   return import(origin + url)
     .then(resolved => resolved.default)
-    .then(result => renderResult(instance, result))
-    .catch(reason => delegateError(instance, reason));
+    .then(result => render_result(instance, result))
+    .catch(reason => delegate_error(instance, reason));
 }
 
-function createHeading(status, module, index) {
+function create_heading(status, module, index) {
   const children = [
     code([
       '[', status, ']',
@@ -195,25 +198,25 @@ function createHeading(status, module, index) {
   return h2(children);
 }
 
-function setHeadingNode(instance) {
+function set_heading_node(instance) {
   const [index, module] = instance.attributes('index', 'module');
-  const statusNode = createTextNode('loading');
+  const statusNode = create_text_node('loading');
 
   instance
     .set(STATUS_NODE, statusNode)
-    .set(HEADING_NODE, createHeading(statusNode, module, index));
+    .set(HEADING_NODE, create_heading(statusNode, module, index));
 }
 
 function setup(instance) {
-  setHeadingNode(instance);
+  set_heading_node(instance);
 
-  const sectionNode = section(instance.get(HEADING_NODE));
+  const section_node = section(instance.get(HEADING_NODE));
 
-  sectionNode.style.visibility = 'hidden';
-  instance.set(SECTION_NODE, sectionNode);
+  section_node.style.visibility = 'hidden';
+  instance.set(SECTION_NODE, section_node);
 }
 
-function overloadSelector(selector, value, failing) {
+function overload_selector(selector, value, failing) {
   const boolean = parse(value);
 
   if (selector === 'ul') {
@@ -224,23 +227,23 @@ function overloadSelector(selector, value, failing) {
 }
 
 function toggle(instance, selector, value) {
-  const nodeArray = select(selector, instance.root);
-  const isVisible = overloadSelector(
+  const node_array = select(selector, instance.root);
+  const is_visible = overload_selector(
     selector,
     value,
     instance.get(FAILING)
   );
 
-  for (const contextNode of nodeArray) {
-    setAttribute(contextNode, 'hidden', !isVisible);
+  for (const context_node of node_array) {
+    set_attribute(context_node, 'hidden', !is_visible);
   }
 }
 
-function setFontWeight(instance) {
+function set_font_weight(instance) {
   const [tests, sources] = instance.attributes('tests', 'sources');
   const collapsed = (
-    isHidden(tests)
-    && isHidden(sources)
+    is_hidden(tests)
+    && is_hidden(sources)
   );
 
   assign(instance.get(HEADING_NODE).style, {
@@ -252,7 +255,7 @@ component('test-suite', {
   attributes: {
     tests(instance, value) {
       toggle(instance, 'ol', value);
-      setFontWeight(instance);
+      set_font_weight(instance);
     },
 
     assertions(instance, value) {
@@ -261,7 +264,7 @@ component('test-suite', {
 
     sources(instance, value) {
       toggle(instance, 'ul', value);
-      setFontWeight(instance);
+      set_font_weight(instance);
     },
   },
 
@@ -271,7 +274,7 @@ component('test-suite', {
   },
 
   render(instance) {
-    const sectionNode = instance.get(SECTION_NODE);
+    const section_node = instance.get(SECTION_NODE);
     const { origin } = new URL(import.meta.url);
 
     append(instance.root, [
@@ -279,12 +282,12 @@ component('test-suite', {
         href: `${origin}/test/test-suite.css`,
         rel: 'stylesheet',
         onload() {
-          sectionNode.style.visibility = '';
+          section_node.style.visibility = '';
         },
       }),
-      sectionNode,
+      section_node,
     ]);
-    setFontWeight(instance);
+    set_font_weight(instance);
     load(instance, origin);
   },
 });

@@ -1,6 +1,6 @@
 import { result, suite } from './test.js'
 import {
-  _jsonEscape as jsonEscape,
+  _json_escape as json_escape,
   _yamlify as yamlify,
 } from './test-io.js'
 
@@ -8,13 +8,13 @@ const test = suite(import.meta)
 
 export default result(test)
 
-test(jsonEscape)
+test(json_escape)
   ('escape double quotes', [
-    jsonEscape('foo "bar" baz'),
+    json_escape('foo "bar" baz'),
     '"foo \\"bar\\" baz"',
   ])
   ('ignore valid json string values', [
-    jsonEscape('"foo \\"bar\\" baz"'),
+    json_escape('"foo \\"bar\\" baz"'),
     '"foo \\"bar\\" baz"',
   ])
 

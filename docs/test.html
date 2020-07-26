@@ -102,7 +102,7 @@
     <pre><code>- [Blob reference] (1 passed)</code></pre>
 
     <script type="module">
-      import { evilImport } from '/browser/evil-import.js';
+      import { evil_import } from '/browser/evil-import.js';
 
       const { from } = Array;
       const lines = document.querySelectorAll('pre[data-demo]');
@@ -111,7 +111,7 @@
         .map(node => node.textContent)
         .join('\n');
 
-      evilImport(source);
+      evil_import(source);
     </script>
 
     <p>
@@ -354,9 +354,9 @@ test(foo)
     </p>
 
     <pre><code>{
-  const testFoo = test(foo);
-  testFoo('description one', true);
-  testFoo('description two', [42, 42]);
+  const test_foo = test(foo);
+  test_foo('description one', true);
+  test_foo('description two', [42, 42]);
 }</code></pre>
 
     <h2>What about &#8230;</h2>

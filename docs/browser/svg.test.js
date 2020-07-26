@@ -1,5 +1,5 @@
 import { result, suite } from '../test.js'
-import { createElement, useSymbol } from './svg.js'
+import { create_element, use_symbol } from './svg.js'
 
 const test = suite(import.meta)
 
@@ -7,11 +7,11 @@ export default result(test)
 
 /* global SVGElement */
 
-test(createElement)
+test(create_element)
   ('create an SVGElement instance',
-    createElement('rect') instanceof SVGElement)
+    create_element('rect') instanceof SVGElement)
   ('coerce attribute values to strings', () => {
-    const element = createElement('rect', {
+    const element = create_element('rect', {
       width: 100,
     })
     return [
@@ -20,8 +20,8 @@ test(createElement)
     ]
   })
 
-test(useSymbol)
+test(use_symbol)
   ('create an SVGSVGElement instance', [
-    useSymbol('foo').constructor.name,
+    use_symbol('foo').constructor.name,
     'SVGSVGElement',
   ])

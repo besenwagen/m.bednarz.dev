@@ -8,177 +8,177 @@
  * @see https://html.spec.whatwg.org/multipage/
  */
 
-import { createElement } from './dom.js';
+import { create_element } from './dom.js';
 
 export const link = attributes =>
-  createElement('link', attributes);
+  create_element('link', attributes);
 
-export const style = (...argumentList) =>
-  createElement('style', ...argumentList);
+export const style = (...argument_list) =>
+  create_element('style', ...argument_list);
 
 //#region Sections (WHATWG 4.3)
 
-export const article = (...argumentList) =>
-  createElement('article', ...argumentList);
+export const article = (...argument_list) =>
+  create_element('article', ...argument_list);
 
-export const section = (...argumentList) =>
-  createElement('section', ...argumentList);
+export const section = (...argument_list) =>
+  create_element('section', ...argument_list);
 
-export const nav = (...argumentList) =>
-  createElement('nav', ...argumentList);
+export const nav = (...argument_list) =>
+  create_element('nav', ...argument_list);
 
-export const aside = (...argumentList) =>
-  createElement('aside', ...argumentList);
+export const aside = (...argument_list) =>
+  create_element('aside', ...argument_list);
 
-export const h1 = (...argumentList) =>
-  createElement('h1', ...argumentList);
+export const h1 = (...argument_list) =>
+  create_element('h1', ...argument_list);
 
-export const h2 = (...argumentList) =>
-  createElement('h2', ...argumentList);
+export const h2 = (...argument_list) =>
+  create_element('h2', ...argument_list);
 
-export const h3 = (...argumentList) =>
-  createElement('h3', ...argumentList);
+export const h3 = (...argument_list) =>
+  create_element('h3', ...argument_list);
 
-export const h4 = (...argumentList) =>
-  createElement('h4', ...argumentList);
+export const h4 = (...argument_list) =>
+  create_element('h4', ...argument_list);
 
-export const header = (...argumentList) =>
-  createElement('header', ...argumentList);
+export const header = (...argument_list) =>
+  create_element('header', ...argument_list);
 
-export const footer = (...argumentList) =>
-  createElement('footer', ...argumentList);
+export const footer = (...argument_list) =>
+  create_element('footer', ...argument_list);
 
 //#endregion
 
 //#region Grouping content (WHATWG 4.4)
 
-export const paragraph = (...argumentList) =>
-  createElement('p', ...argumentList);
+export const paragraph = (...argument_list) =>
+  create_element('p', ...argument_list);
 
-export const pre = (...argumentList) =>
-  createElement('pre', ...argumentList);
+export const pre = (...argument_list) =>
+  create_element('pre', ...argument_list);
 
-export const blockquote = (...argumentList) =>
-  createElement('blockquotes', ...argumentList);
+export const blockquote = (...argument_list) =>
+  create_element('blockquotes', ...argument_list);
 
-export const ol = (...argumentList) =>
-  createElement('ol', ...argumentList);
+export const ol = (...argument_list) =>
+  create_element('ol', ...argument_list);
 
-export const ul = (...argumentList) =>
-  createElement('ul', ...argumentList);
+export const ul = (...argument_list) =>
+  create_element('ul', ...argument_list);
 
-export const li = (...argumentList) =>
-  createElement('li', ...argumentList);
+export const li = (...argument_list) =>
+  create_element('li', ...argument_list);
 
-export const figure = (...argumentList) =>
-  createElement('figure', ...argumentList);
+export const figure = (...argument_list) =>
+  create_element('figure', ...argument_list);
 
-export const figcaption = (...argumentList) =>
-  createElement('figcaption', ...argumentList);
+export const figcaption = (...argument_list) =>
+  create_element('figcaption', ...argument_list);
 
-export const div = (...argumentList) =>
-  createElement('div', ...argumentList);
+export const div = (...argument_list) =>
+  create_element('div', ...argument_list);
 
 //#endregion
 
 //#region Text-level semantics
 
-export const anchor = (...argumentList) =>
-  createElement('a', ...argumentList);
+export const anchor = (...argument_list) =>
+  create_element('a', ...argument_list);
 
-export const em = (...argumentList) =>
-  createElement('em', ...argumentList);
+export const em = (...argument_list) =>
+  create_element('em', ...argument_list);
 
-export const strong = (...argumentList) =>
-  createElement('strong', ...argumentList);
+export const strong = (...argument_list) =>
+  create_element('strong', ...argument_list);
 
-export const small = (...argumentList) =>
-  createElement('small', ...argumentList);
+export const small = (...argument_list) =>
+  create_element('small', ...argument_list);
 
-export const cite = (...argumentList) =>
-  createElement('cite', ...argumentList);
+export const cite = (...argument_list) =>
+  create_element('cite', ...argument_list);
 
-export const code = (...argumentList) =>
-  createElement('code', ...argumentList);
+export const code = (...argument_list) =>
+  create_element('code', ...argument_list);
 
-export const italic = (...argumentList) =>
-  createElement('italic', ...argumentList);
+export const italic = (...argument_list) =>
+  create_element('italic', ...argument_list);
 
-export const bold = (...argumentList) =>
-  createElement('bold', ...argumentList);
+export const bold = (...argument_list) =>
+  create_element('bold', ...argument_list);
 
-export const span = (...argumentList) =>
-  createElement('span', ...argumentList);
+export const span = (...argument_list) =>
+  create_element('span', ...argument_list);
 
 //#endregion
 
 //#region Tabular data (WHATWG #4.9)
 
-export const table = (...argumentList) =>
-  createElement('table', ...argumentList);
+export const table = (...argument_list) =>
+  create_element('table', ...argument_list);
 
-export const caption = (...argumentList) =>
-  createElement('caption', ...argumentList);
+export const caption = (...argument_list) =>
+  create_element('caption', ...argument_list);
 
-export const colgroup = (...argumentList) =>
-  createElement('colgroup', ...argumentList);
+export const colgroup = (...argument_list) =>
+  create_element('colgroup', ...argument_list);
 
-export const col = (...argumentList) =>
-  createElement('col', ...argumentList);
+export const col = (...argument_list) =>
+  create_element('col', ...argument_list);
 
-export const thead = (...argumentList) =>
-  createElement('thead', ...argumentList);
+export const thead = (...argument_list) =>
+  create_element('thead', ...argument_list);
 
-export const tfoot = (...argumentList) =>
-  createElement('tfoot', ...argumentList);
+export const tfoot = (...argument_list) =>
+  create_element('tfoot', ...argument_list);
 
-export const tbody = (...argumentList) =>
-  createElement('tbody', ...argumentList);
+export const tbody = (...argument_list) =>
+  create_element('tbody', ...argument_list);
 
-export const tr = (...argumentList) =>
-  createElement('tr', ...argumentList);
+export const tr = (...argument_list) =>
+  create_element('tr', ...argument_list);
 
-export const td = (...argumentList) =>
-  createElement('td', ...argumentList);
+export const td = (...argument_list) =>
+  create_element('td', ...argument_list);
 
-export const th = (...argumentList) =>
-  createElement('th', ...argumentList);
+export const th = (...argument_list) =>
+  create_element('th', ...argument_list);
 
 //#endregion
 
 //#region Form (WHATWG #4.10)
 
-export const form = (...argumentList) =>
-  createElement('form', ...argumentList);
+export const form = (...argument_list) =>
+  create_element('form', ...argument_list);
 
-export const label = (...argumentList) =>
-  createElement('label', ...argumentList);
+export const label = (...argument_list) =>
+  create_element('label', ...argument_list);
 
-export const input = (...argumentList) =>
-  createElement('input', ...argumentList);
+export const input = (...argument_list) =>
+  create_element('input', ...argument_list);
 
-export const button = (...argumentList) =>
-  createElement('button', ...argumentList);
+export const button = (...argument_list) =>
+  create_element('button', ...argument_list);
 
-export const select = (...argumentList) =>
-  createElement('select', ...argumentList);
+export const select = (...argument_list) =>
+  create_element('select', ...argument_list);
 
-export const datalist = (...argumentList) =>
-  createElement('datalist', ...argumentList);
+export const datalist = (...argument_list) =>
+  create_element('datalist', ...argument_list);
 
-export const optgroup = (...argumentList) =>
-  createElement('optgroup', ...argumentList);
+export const optgroup = (...argument_list) =>
+  create_element('optgroup', ...argument_list);
 
-export const option = (...argumentList) =>
-  createElement('option', ...argumentList);
+export const option = (...argument_list) =>
+  create_element('option', ...argument_list);
 
-export const textarea = (...argumentList) =>
-  createElement('textarea', ...argumentList);
+export const textarea = (...argument_list) =>
+  create_element('textarea', ...argument_list);
 
-export const fieldset = (...argumentList) =>
-  createElement('fieldset', ...argumentList);
+export const fieldset = (...argument_list) =>
+  create_element('fieldset', ...argument_list);
 
-export const legend = (...argumentList) =>
-  createElement('legend', ...argumentList);
+export const legend = (...argument_list) =>
+  create_element('legend', ...argument_list);
 
 //#endregion

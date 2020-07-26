@@ -1,5 +1,5 @@
 import { result, suite } from '../test.js'
-import { storageContext } from './storage.js'
+import { storage_context } from './storage.js'
 import { disposable } from './sandbox.js'
 
 const test = suite(import.meta)
@@ -10,7 +10,7 @@ test
   ('create a timestamp',
     disposable(({ global }) => {
       const key = `foo-${Date.now()}`
-      const [read, write] = storageContext(global.sessionStorage)
+      const [read, write] = storage_context(global.sessionStorage)
       write(key, 'bar')
       const value = read(key, 60)
       global.sessionStorage.removeItem(key)
@@ -25,7 +25,7 @@ test
     disposable(({ global }) => {
       return new Promise(resolve => {
         const key = `foo-${Date.now()}`
-        const [read, write] = storageContext(global.sessionStorage)
+        const [read, write] = storage_context(global.sessionStorage)
         write(key, 'bar')
         setTimeout(() => {
           const value = read(key, 1)

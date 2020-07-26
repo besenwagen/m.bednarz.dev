@@ -2,8 +2,8 @@ import { result, suite } from '../test.js'
 import { disposable } from './sandbox.js'
 import {
   disable,
-  forceId,
-  withId,
+  force_id,
+  with_id,
 } from './aria.js'
 
 const test = suite(import.meta)
@@ -12,24 +12,24 @@ export default result(test)
 
 /* global document */
 
-test(forceId)
+test(force_id)
   ('get the existing id attribute value, if any', () => {
     const element = document.createElement('div')
     element.id = 'fubar'
     return [
-      forceId(element),
+      force_id(element),
       'fubar',
     ]
   })
   ('set and get an id attribute value if none exists', () => {
     const element = document.createElement('div')
-    return /^[a-z\d]+$/.test(forceId(element))
+    return /^[a-z\d]+$/.test(force_id(element))
   })
 
-test(withId)
+test(with_id)
   ('create an id attribute value if none exists', () => {
     const element = document.createElement('div')
-    return /^[a-z\d]+$/.test(withId(element).id)
+    return /^[a-z\d]+$/.test(with_id(element).id)
   })
 
 {
@@ -37,17 +37,17 @@ test(withId)
 
   test_disable('set aria-hidden on child elements',
     disposable(({ body, set }) => {
-      const initialHtml = `
+      const initial_html = `
         <div></div>
         <div aria-disabled="false"></div>
       `
-      const resultHtml = `
+      const result_html = `
         <div aria-disabled="true"></div>
         <div aria-disabled="true"></div>
       `
-      set(initialHtml)
+      set(initial_html)
       disable(body)
-      return [body.innerHTML, resultHtml]
+      return [body.innerHTML, result_html]
     }))
 
   test_disable('reset aria-hidden on child elements',

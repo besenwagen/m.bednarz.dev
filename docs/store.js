@@ -3,26 +3,26 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  createStore,
+  create_store,
 };
 
 const { assign, create } = Object;
 
-function createStore() {
+function create_store() {
   const store = create(null);
 
   return assign(create(null), {
-    getProperty(key) {
+    get_property(key) {
       return store[key];
     },
-    setProperty(key, value) {
+    set_property(key, value) {
       const previous = store[key];
 
       store[key] = value;
 
       return [value, previous];
     },
-    unsetProperty(key) {
+    unset_property(key) {
       return delete store[key];
     },
   });

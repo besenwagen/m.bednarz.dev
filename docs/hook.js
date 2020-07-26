@@ -4,14 +4,14 @@
  */
 export {
   hook,
-  useState,
+  use_state,
 };
 
 const store = new WeakMap();
-const callStack = [];
+const call_stack = [];
 const ARRAY_EMPTY = 0;
 
-function createState(context) {
+function create_state(context) {
   const state = [];
 
   store.set(context, state);
@@ -19,64 +19,64 @@ function createState(context) {
   return state;
 }
 
-function getState() {
-  const [context] = callStack;
+function get_state() {
+  const [context] = call_stack;
 
   if (store.has(context)) {
     return store.get(context);
   }
 
-  return createState(context);
+  return create_state(context);
 }
 
-const isStateHook = call =>
-  call === useState;
+const is_state_hook = call =>
+  call === use_state;
 
-const getCurrentStateIndex = () =>
-  callStack
-    .filter(isStateHook)
+const get_current_state_index = () =>
+  call_stack
+    .filter(is_state_hook)
     .length;
 
-function initialize(initialState) {
-  const state = getState();
-  const currentIndex = getCurrentStateIndex();
+function initialize(initial_state) {
+  const state = get_state();
+  const current_index = get_current_state_index();
 
-  if (state.length === currentIndex) {
-    state.push(initialState);
+  if (state.length === current_index) {
+    state.push(initial_state);
   }
 
   return {
     get() {
-      return state[currentIndex];
+      return state[current_index];
     },
-    set(nextState) {
-      state[currentIndex] = nextState;
+    set(next_state) {
+      state[current_index] = next_state;
 
-      return nextState;
+      return next_state;
     },
   };
 }
 
-function useState(initialState) {
-  const { get, set } = initialize(initialState);
+function use_state(initial_state) {
+  const { get, set } = initialize(initial_state);
 
-  const setState = nextState => [
+  const set_state = next_state => [
     get(),
-    set(nextState),
+    set(next_state),
   ].reverse();
 
-  callStack.push(useState);
+  call_stack.push(use_state);
 
-  return [get(), setState];
+  return [get(), set_state];
 }
 
 const hook = callable =>
-  function withStateHook(...argumentList) {
-    callStack.push(callable);
+  function with_state_hook(...argument_list) {
+    call_stack.push(callable);
 
-    const returnValue = callable(...argumentList);
+    const return_value = callable(...argument_list);
 
-    callStack.length = ARRAY_EMPTY;
+    call_stack.length = ARRAY_EMPTY;
 
-    return returnValue;
+    return return_value;
   };

@@ -9,7 +9,7 @@ export {
 const NEWLINE_EXPRESSION = /\s*\n\s*/;
 const OFFSET_SELF = 1;
 
-const notEmpty = line =>
+const not_empty = line =>
   line !== 'Error'
   && line !== '';
 
@@ -17,7 +17,7 @@ const format = stack =>
   stack
     .trim()
     .split(NEWLINE_EXPRESSION)
-    .filter(notEmpty)
+    .filter(not_empty)
     .slice(OFFSET_SELF);
 
 function stacktrace() {

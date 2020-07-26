@@ -4,12 +4,12 @@
  */
 export {
   disable,
-  forceId,
-  withId,
-  labelWith,
-  describeWith,
+  force_id,
+  with_id,
+  label_with,
+  describe_with,
   relocate,
-  svgAria,
+  svg_aria,
 };
 
 import { unique } from '../utilities.js';
@@ -19,7 +19,7 @@ import { unique } from '../utilities.js';
 const { from, isArray } = Array;
 const { assign } = Object;
 
-function withId(element) {
+function with_id(element) {
   if (element.id) {
     return element;
   }
@@ -29,50 +29,50 @@ function withId(element) {
   });
 }
 
-function forceId(element) {
+function force_id(element) {
   const { id } = element;
 
   if (id) {
     return id;
   }
 
-  return withId(element).id;
+  return with_id(element).id;
 }
 
-const toId = element => forceId(element);
+const to_id = element => force_id(element);
 
-const toTokenList = source =>
+const to_token_list = source =>
   source
-    .map(toId)
+    .map(to_id)
     .join(' ');
 
-function getValue(source) {
+function get_value(source) {
   if (isArray(source)) {
-    return toTokenList(source);
+    return to_token_list(source);
   }
 
-  return toId(source);
+  return to_id(source);
 }
 
-function connectById(target, name, source) {
-  const value = getValue(source);
+function connect_by_id(target, name, source) {
+  const value = get_value(source);
 
   target.setAttribute(name, value);
 
   return target;
 }
 
-const labelWith = (target, source) =>
-  connectById(target, 'aria-labelledby', source);
+const label_with = (target, source) =>
+  connect_by_id(target, 'aria-labelledby', source);
 
-const describeWith = (target, source) =>
-  connectById(target, 'aria-describedby', source);
+const describe_with = (target, source) =>
+  connect_by_id(target, 'aria-describedby', source);
 
 //#region aria-disabled
 
 const ATTRIBUTE_DISABLED = 'aria-disabled';
 
-function mutateQueue(queue, callback) {
+function mutate_queue(queue, callback) {
   for (const element of queue) {
     callback(element);
   }
@@ -80,52 +80,52 @@ function mutateQueue(queue, callback) {
   return queue;
 }
 
-function disableElement(element) {
+function disable_element(element) {
   element.setAttribute(ATTRIBUTE_DISABLED, 'true');
 
   return element;
 }
 
-function enableImplicitly(element) {
+function enable_implicitly(element) {
   element.removeAttribute(ATTRIBUTE_DISABLED);
 
   return element;
 }
 
-function enableExplicitly(element) {
+function enable_explicitly(element) {
   element.setAttribute(ATTRIBUTE_DISABLED, 'false');
 
   return element;
 }
 
-const isImplicitlyEnabled = element =>
+const is_implicitly_enabled = element =>
   !element
     .hasAttribute(ATTRIBUTE_DISABLED);
 
-const isExplicitlyEnabled = element =>
+const is_explicitly_enabled = element =>
   element
     .getAttribute(ATTRIBUTE_DISABLED) === 'false';
 
-function disableSubset(queue, filter) {
+function disable_subset(queue, filter) {
   const subset = queue.filter(filter);
 
-  return mutateQueue(subset, disableElement);
+  return mutate_queue(subset, disable_element);
 }
 
-function disable(contextNode = document.body) {
-  const queue = from(contextNode.children);
+function disable(context_node = document.body) {
+  const queue = from(context_node.children);
 
-  const toSubset = callback =>
-    disableSubset(queue, callback);
+  const to_subset = callback =>
+    disable_subset(queue, callback);
 
   const [added, toggled] = [
-    isImplicitlyEnabled,
-    isExplicitlyEnabled,
-  ].map(toSubset);
+    is_implicitly_enabled,
+    is_explicitly_enabled,
+  ].map(to_subset);
 
-  return function resetDisabled() {
-    mutateQueue(added, enableImplicitly);
-    mutateQueue(toggled, enableExplicitly);
+  return function reset_disabled() {
+    mutate_queue(added, enable_implicitly);
+    mutate_queue(toggled, enable_explicitly);
   };
 }
 
@@ -133,40 +133,40 @@ function disable(contextNode = document.body) {
 
 //#region SVG
 
-function setMissingAttribute(element, name, value) {
+function set_missing_attribute(element, name, value) {
   if (!element.hasAttribute(name)) {
     element.setAttribute(name, value);
   }
 }
 
-function labelSvgWithDescription(root, title, description) {
-  setMissingAttribute(description, 'id', unique());
-  setMissingAttribute(root, 'aria-labelledby', [
+function label_svg_with_description(root, title, description) {
+  set_missing_attribute(description, 'id', unique());
+  set_missing_attribute(root, 'aria-labelledby', [
     title.id,
     description.id,
   ].join(' '));
 }
 
-function annotateSvgRoot(root, title) {
+function annotate_svg_root(root, title) {
   const description = root.querySelector('desc');
 
-  setMissingAttribute(title, 'id', unique());
+  set_missing_attribute(title, 'id', unique());
 
   if (description) {
-    labelSvgWithDescription(root, title, description);
+    label_svg_with_description(root, title, description);
   } else {
-    setMissingAttribute(root, 'aria-labelledby', title.id);
+    set_missing_attribute(root, 'aria-labelledby', title.id);
   }
 }
 
-function svgAria(svgElement) {
-  const title = svgElement.querySelector('title');
+function svg_aria(svg_element) {
+  const title = svg_element.querySelector('title');
 
   if (title) {
-    setMissingAttribute(svgElement, 'role', 'img');
-    annotateSvgRoot(svgElement, title);
+    set_missing_attribute(svg_element, 'role', 'img');
+    annotate_svg_root(svg_element, title);
   } else {
-    setMissingAttribute(svgElement, 'aria-hidden', 'true');
+    set_missing_attribute(svg_element, 'aria-hidden', 'true');
   }
 }
 

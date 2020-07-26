@@ -14,7 +14,7 @@ export {
 const INCREMENT = 1;
 const vault = new WeakMap();
 
-function onDemand(instance) {
+function on_demand(instance) {
   if (!vault.has(instance)) {
     vault.set(instance, new Map());
   }
@@ -28,7 +28,7 @@ const get = (instance, key) =>
     .get(key);
 
 const set = (instance, ...rest) =>
-  onDemand(instance)
+  on_demand(instance)
     .set(...rest);
 
 const unset = (instance, key) =>
@@ -48,7 +48,7 @@ function decrement(instance, key, value = INCREMENT) {
   set(instance, key, (index - value));
 }
 
-const ON_DEMAND = Symbol('onDemand');
+const ON_DEMAND = Symbol('on_demand');
 
 class Vault {
   constructor() {
