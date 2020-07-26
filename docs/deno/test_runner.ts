@@ -34,7 +34,7 @@
 /* global Deno */
 
 import { walk } from 'https://deno.land/std@0.61.0/fs/mod.ts';
-import { failing, load, printReport } from '../test-io.js';
+import { failing, load, print_report } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
 
@@ -48,53 +48,53 @@ const SILENT = ARGUMENT_LIST
   .includes('-s');
 const RECURSIVE = ARGUMENT_LIST
   .includes('-r');
-const testFileExpression = /\.test\.js$/;
+const test_file_expression = /\.test\.js$/;
 const DEFAULT_DEPTH = 1;
 const MAX_DEPTH = 10;
-const maxDepth = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
+const RECURSION_DEPTH = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
 
-const isTestFile = (filePath: string) =>
-  testFileExpression
-    .test(filePath);
+const is_test_file = (file_path: string) =>
+  test_file_expression
+    .test(file_path);
 
-const getFileUrl = (relativePath: string) => [
+const get_file_url = (relative_path: string) => [
   FILE_BASE_URL,
-  relativePath,
+  relative_path,
 ].join('');
 
-const mapToFileUrl = (filePath: string) =>
-  getFileUrl(filePath);
+const map_to_file_url = (file_path: string) =>
+  get_file_url(file_path);
 
-function addTestFile(filePath: string, bucket: string[]) {
-  if (isTestFile(filePath)) {
-    bucket.push(filePath);
+function add_test_file(file_path: string, bucket: string[]) {
+  if (is_test_file(file_path)) {
+    bucket.push(file_path);
   }
 }
 
 async function traverse(base: string) {
   const bucket: string[] = [];
   const options = {
-    maxDepth,
+    maxDepth: RECURSION_DEPTH,
   };
 
   for await (const { path } of walk(base, options)) {
-    addTestFile(path, bucket);
+    add_test_file(path, bucket);
   }
 
   return bucket;
 }
 
-const onFilesResolved = (directories: string[][]) =>
+const on_files_resolved = (directories: string[][]) =>
   Promise
     .all(
       directories
         .flat()
-        .map(mapToFileUrl));
+        .map(map_to_file_url));
 
-const getExitCode = (errorCount: number) =>
-  Number(Boolean(errorCount));
+const get_exit_code = (error_count: number) =>
+  Number(Boolean(error_count));
 
-function onTestSuitesResolved(report: any[]) {
+function on_test_suites_resolved(report: any[]) {
   const [
     result, [
       modules,
@@ -102,29 +102,29 @@ function onTestSuitesResolved(report: any[]) {
       errors,
     ],
   ] = report;
-  const exitCode = getExitCode(errors);
+  const exit_code = get_exit_code(errors);
 
   if (errors) {
-    printReport('failing', failing(result));
+    print_report('failing', failing(result));
   } else if (!SILENT) {
-    printReport('report', result);
+    print_report('report', result);
   }
 
-  exit(exitCode);
+  exit(exit_code);
 }
 
-function onError() {
+function on_error() {
   exit(EXIT_CODE_ERROR);
 }
 
-const mapToFiles = (baseDirectory: string) =>
-  traverse(baseDirectory);
+const map_to_files = (base_directory: string) =>
+  traverse(base_directory);
 
-const queue = DIRECTORIES.map(mapToFiles);
+const queue = DIRECTORIES.map(map_to_files);
 
 Promise
   .all(queue)
-  .then(onFilesResolved)
+  .then(on_files_resolved)
   .then(load)
-  .then(onTestSuitesResolved)
-  .catch(onError);
+  .then(on_test_suites_resolved)
+  .catch(on_error);
