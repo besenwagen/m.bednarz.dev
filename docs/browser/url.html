@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="">
+  <title>The 'browser/url' module</title>
+  <link href="/bling/documentation.css" rel="stylesheet">
+</head>
+<body>
+  <main id="main">
+    <h1 class="reverse">The <em>browser/url</em> module</h1>
+
+    <p>
+
+    </p>
+
+    <h2>API</h2>
+
+    <pre><code>import {
+  to_blob_url,
+  resolve_blob_url,
+} from 'https://m.bednarz.dev/browser/url.js';</code></pre>
+
+    <dl>
+      <dt>
+        <code>to_blob_url(data: string, type: string): string</code>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            create a blob from
+            <code>data</code> and <code>type</code>
+          </li>
+          <li>
+            create and return an object URL from that blob
+          </li>
+        </ul>
+      </dd>
+      <dt>
+        <pre><code>resolve_blob_url(
+  resolve: (url: string) => Promise&lt;any&gt;,
+  data: string,
+  type: string
+): Promise&lt;any &gt;</code></pre>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            call <code>to_blob_url</code> with <code>data</code> and <code>type</code>
+          </li>
+          <li>
+            call <code>resolve</code> with the returned URL
+          </li>
+          <li>
+            revoke the object url when
+            <code>resolve</code>
+            is settled
+          </li>
+          <li>
+            return the settled promise
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <h2>See also</h2>
+
+    <ul>
+      <li><a href="/test/?m=browser/url"><em>browser/url</em> module unit tests</a></li>
+    </ul>
+
+  </main>
+  <footer class="reverse">
+    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
+</body>
+</html>
