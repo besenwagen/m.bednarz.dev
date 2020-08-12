@@ -275,7 +275,7 @@ component('test-suite', {
 
   render(instance) {
     const section_node = instance.get(SECTION_NODE);
-    const { origin } = new URL(import.meta.url);
+    const { origin } = new URL(window.location.href);
 
     append(instance.root, [
       link({
