@@ -275,11 +275,12 @@ component('test-suite', {
 
   render(instance) {
     const section_node = instance.get(SECTION_NODE);
-    const { origin } = new URL(window.location.href);
+    const { origin: testOrigin } = new URL(window.location.href);
+    const { origin: assetOrigin } = new URL(import.meta.url);
 
     append(instance.root, [
       link({
-        href: `${origin}/test/test-suite.css`,
+        href: `${assetOrigin}/test/test-suite.css`,
         rel: 'stylesheet',
         onload() {
           section_node.style.visibility = '';
@@ -288,6 +289,6 @@ component('test-suite', {
       section_node,
     ]);
     set_font_weight(instance);
-    load(instance, origin);
+    load(instance, testOrigin);
   },
 });
