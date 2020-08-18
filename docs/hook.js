@@ -8,7 +8,7 @@ export {
 };
 
 const store = new WeakMap();
-const call_stack = [];
+const callstack = [];
 const ARRAY_EMPTY = 0;
 
 function create_state(context) {
@@ -20,7 +20,7 @@ function create_state(context) {
 }
 
 function get_state() {
-  const [context] = call_stack;
+  const [context] = callstack;
 
   if (store.has(context)) {
     return store.get(context);
@@ -33,13 +33,16 @@ const is_state_hook = call =>
   call === use_state;
 
 const get_current_state_index = () =>
-  call_stack
+  callstack
     .filter(is_state_hook)
     .length;
 
 function initialize(initial_state) {
-  const state = get_state();
-  const current_index = get_current_state_index();
+  const [
+    state,
+    current_index,
+    [update],
+  ] = [get_state(), get_current_state_index(), callstack];
 
   if (state.length === current_index) {
     state.push(initial_state);
@@ -51,8 +54,7 @@ function initialize(initial_state) {
     },
     set(next_state) {
       state[current_index] = next_state;
-
-      return next_state;
+      update();
     },
   };
 }
@@ -60,23 +62,19 @@ function initialize(initial_state) {
 function use_state(initial_state) {
   const { get, set } = initialize(initial_state);
 
-  const set_state = next_state => [
-    get(),
-    set(next_state),
-  ].reverse();
+  callstack.push(use_state);
 
-  call_stack.push(use_state);
-
-  return [get(), set_state];
+  return [get(), set];
 }
 
-const hook = callable =>
-  function with_state_hook(...argument_list) {
-    call_stack.push(callable);
+function hook(callback, update) {
+  return function with_hook(...argument_list) {
+    callstack.push(update);
 
-    const return_value = callable(...argument_list);
+    const return_value = callback(...argument_list);
 
-    call_stack.length = ARRAY_EMPTY;
+    callstack.length = ARRAY_EMPTY;
 
     return return_value;
   };
+}
