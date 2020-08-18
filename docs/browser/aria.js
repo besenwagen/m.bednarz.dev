@@ -10,6 +10,7 @@ export {
   describe_with,
   relocate,
   svg_aria,
+  flip_boolean_string,
 };
 
 import { unique } from '../utilities.js';
@@ -17,6 +18,7 @@ import { unique } from '../utilities.js';
 /* global document */
 
 const { from, isArray } = Array;
+const { parse } = JSON;
 const { assign } = Object;
 
 function with_id(element) {
@@ -181,4 +183,15 @@ function relocate(element) {
   element.setAttribute('tabindex', '0');
   element.addEventListener('blur', blur, false);
   element.focus();
+}
+
+const flip_boolean_string = boolean_string =>
+  String(!parse(boolean_string));
+
+function flip_boolean_string_atribute(element, attribute) {
+  const value = element.getAttribute(attribute);
+
+  if (value === 'true' || value === 'false') {
+    element.setAttribute(attribute, flip_boolean_string(value));
+  }
 }

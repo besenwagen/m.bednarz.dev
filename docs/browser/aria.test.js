@@ -4,6 +4,7 @@ import {
   disable,
   force_id,
   with_id,
+  flip_boolean_string,
 } from './aria.js'
 
 const test = suite(import.meta)
@@ -61,3 +62,13 @@ test(with_id)
       return [body.innerHTML, initial]
     }))
 }
+
+test(flip_boolean_string)
+  ('true to false', [
+    flip_boolean_string('true'),
+    'false',
+  ])
+  ('false to true', [
+    flip_boolean_string('false'),
+    'true',
+  ])
