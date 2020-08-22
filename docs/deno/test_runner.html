@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="">
+  <title>The 'deno/test_runner' module</title>
+  <link href="/bling/documentation.css" rel="stylesheet">
+</head>
+<body>
+  <main id="main">
+    <h1 class="reverse">The <em>deno/test_runner</em> module</h1>
+
+    <p>
+      This module provides a
+      <i>test runner</i>
+      executable for
+      <i>Deno</i>,
+      complementing the
+      <a href="/test.html"><i>test</i> module</a>
+      with automation.
+      It traverses one or more directories in the
+      local file system in order to
+    </p>
+
+    <ul>
+      <li>
+        match files with the extensions
+        <ul>
+          <li><code>.test.js</code></li>
+          <li><code>.test.mjs</code></li>
+          <li><code>.test.ts</code></li>
+        </ul>
+        as
+        <i>test suites</i>
+      </li>
+      <li>
+        run their tests
+      </li>
+      <li>
+        generate a
+        <i>YAML</i>
+        report
+      </li>
+    </ul>
+
+    <p>
+      If any test fails, the executable exits with status code
+      <code>1</code>.
+    </p>
+
+    <h2>Usage</h2>
+
+    <p>
+      All of the following examples would run any
+      <i>test suites</i>
+      in the hypothetical directories
+      <code>./server</code>
+      and
+      <code>./client</code>.
+    </p>
+
+    <h3>Verbose example (try before you buy :-)</h3>
+
+    <p>
+      You
+      <i>can</i>
+      run this module straight from the network:
+    </p>
+
+    <pre><code>$ deno run \
+  --unstable --quiet --allow-read --allow-net \
+  https://m.bednarz.dev/deno/test_runner.ts client server</code></pre>
+
+    <h4>All options explained</h4>
+
+    <dl>
+      <dt><code>--unstable</code></dt>
+      <dd>
+        <p>
+          Some file system APIs that are used for traversal
+          are currently still unstable.
+        </p>
+      </dd>
+      <dt><code>--quiet</code></dt>
+      <dd>
+        <p>
+          The
+          <i>test runner module</i>
+          sends its progress and result to
+          <code>STDOUT</code>.
+          If you want to inspect the result in the shell,
+          you probably don't want that mixed with
+          <i>Deno</i>'s diagnostic information.
+          Since the latter uses <code>STDERR</code>,
+          this option is redundant if you redirect
+          the report to a file instead.
+        </p>
+      </dd>
+      <dt><code>--allow-read</code></dt>
+      <dd>
+        <p>
+          <i>Deno</i>
+          is secure by default.
+          This option grants read access to the local file system
+          for finding the test suite files.
+        </p>
+      </dd>
+      <dt><code>--allow-net</code></dt>
+      <dd>
+        <p>
+          This option allows resolving modules from the network.
+          At the time of writing, network support for
+          <i>ECMAScript modules</i>
+          is the primary advantage of using
+          <i>Deno</i>
+          over
+          <i>Node.js</i>.
+        </p>
+      </dd>
+    </dl>
+
+    <h3>Installation</h3>
+
+    <p>
+      The above is quite a lot to remember and type,
+      but <i>Deno</i> makes it easy to install modules
+      as executables.
+    </p>
+
+    <pre><code>$ deno install \
+  --unstable --quiet --allow-read --allow-net \
+  --root ~/.local \
+  --name estr \
+  --force \
+  https://m.bednarz.dev/deno/test_runner.ts</code></pre>
+
+    <h4>Additional options explained</h4>
+
+    <dl>
+      <dt><code>--root</code></dt>
+      <dd>
+        <p>
+          The installation path
+          <em>without</em>
+          the
+          <code>bin</code>
+          subdirectory. Note that it defaults to
+          <code>~/.deno</code>.
+          The advantage of a canonical destination like
+          <code>~/.local</code> for all installations in
+          the
+          <code>$HOME</code>
+          directory is that you only need to add the
+          <code>bin</code>
+          sub directory to your
+          <code>$PATH</code>
+          once.
+        </p>
+      </dd>
+      <dt><code>--name</code></dt>
+      <dd>
+        <p>
+          Your name of choice for the executable.
+          Preferably it doesn&#8217;t conflict with
+          <em>any</em>
+          binary in your shell
+          <code>$PATH</code>. Before you choose one,
+          make sure it does not conflict with a different
+          executable under
+          <code>--root</code>.
+        </p>
+      </dd>
+      <dt><code>--force</code></dt>
+      <dd>
+        <p>
+          If the file
+          <code>--name</code>
+          already exists in the
+          <code>bin</code>
+          directory under
+          <code>--root</code>,
+          overwrite it.
+          This is only necessary to
+          <em>update</em>
+          an
+          <em>existing</em>
+          installation.
+        </p>
+      </dd>
+    </dl>
+
+    <h3>Using the executable</h3>
+
+    <p>
+      After installation you can run the first example like this:
+    </p>
+
+    <pre><code>$ estr client server</code></pre>
+
+    <p>
+      The executable has two options:
+    </p>
+
+    <dl>
+      <dt><code>-r</code> (mnemonic: recursive, optional)</dt>
+      <dd>
+        <p>
+          By default, file system traversal is
+          <em>not</em>
+          recursive. Setting this option traverses
+          a maximum of 10 levels deep.
+        </p>
+      </dd>
+      <dt><code>-s</code> (mnemonic: silent, optional)</dt>
+      <dd>
+        <p>
+          Only send the summary to STDOUT.
+          This is useful for inspecting the report in the shell.
+          Note that details of
+          <em>failing</em>
+          tests are shown anyway.
+        </p>
+      </dd>
+    </dl>
+
+    <pre><code>$ estr -r -s client server</code></pre>
+
+    <p>
+      Please note that the argument parsing is currently extremely primitive.
+      While order does not matter at all, you
+      <strong>cannot combine options</strong> yet.
+    </p>
+
+    <p>
+      To save the report, simply redirect it to a file:
+    </p>
+
+    <pre><code>$ estr client server > report.yml</code></pre>
+
+    <h2>See also</h2>
+
+    <ul>
+      <li>The <a href="/test.html"><i>test</i> module</a></li>
+    </ul>
+
+  </main>
+  <footer class="reverse">
+    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+  </footer>
+</body>
+</html>

@@ -2,38 +2,12 @@
  * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
- * Why:  Node.js only supports file URLs for ECMAScript modules.
- * How:  Process test files with the extensions `.test.js` under
- *       one or more context directories relative to the process.
- * What: Deno test runner for native ECMAScript modules.
- *
- * @see https://m.bednarz.dev/test.js for writing tests.
- *
- * Verbose example (try before you buy :-):
- *
- *   $ deno run --unstable --allow-read --allow-net https://m.bednarz.dev/deno/test_runner.ts client server
- *
- * Runs all tests in `./client` and `./server`.
- *
- * Installation:
- *
- *   $ deno install --unstable --quiet --allow-read --allow-net --name estr https://m.bednarz.dev/deno/test_runner.ts
- *
- * where `estr` is the executable name of your choice.
- * Make sure that `~/.deno/bin` is in your `$PATH` and run
- *
- *   $ estr client server
- *
- * Options:
- *
- *  -r  recursive  traverse all sub directories 10 levels deep
- *  -s  silent     write only the summary to stdout
- *
+ * @see https://m.bednarz.dev/deno/test_runner.html
  */
 
 /* global Deno */
 
-import { walk } from 'https://deno.land/std@0.61.0/fs/mod.ts';
+import { walk } from 'https://deno.land/std@0.66.0/fs/mod.ts';
 import { failing, load, print_report } from '../test-io.js';
 
 const { args, cwd, exit } = Deno;
