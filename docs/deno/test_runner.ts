@@ -17,7 +17,7 @@
  *
  * Installation:
  *
- *   $ deno install --unstable --allow-read --allow-net --name estr https://m.bednarz.dev/deno/test_runner.ts
+ *   $ deno install --unstable --quiet --allow-read --allow-net --name estr https://m.bednarz.dev/deno/test_runner.ts
  *
  * where `estr` is the executable name of your choice.
  * Make sure that `~/.deno/bin` is in your `$PATH` and run
@@ -48,7 +48,7 @@ const SILENT = ARGUMENT_LIST
   .includes('-s');
 const RECURSIVE = ARGUMENT_LIST
   .includes('-r');
-const test_file_expression = /\.test\.js$/;
+const test_file_expression = /\.test\.(?:m?js|ts)$/;
 const DEFAULT_DEPTH = 1;
 const MAX_DEPTH = 10;
 const RECURSION_DEPTH = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
