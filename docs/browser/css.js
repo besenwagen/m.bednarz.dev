@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 export {
-  css_literal,
+  css,
   max_width,
   min_width,
   motion,
@@ -15,6 +15,22 @@ export {
 /* global document */
 
 const { entries } = Object;
+
+function css(strings, ...properties) {
+  const { length } = properties;
+
+  function to_style_sheet(css_text, substring, index) {
+    const value = `${css_text}${substring}`;
+
+    if (index < length) {
+      return `${value}${properties[index]}`;
+    }
+
+    return value;
+  }
+
+  return strings.reduce(to_style_sheet, '');
+}
 
 const dashify = property =>
   property
@@ -73,11 +89,6 @@ function style_sheet(rule_sets, context_node = document.head) {
 
   return style_element;
 }
-
-const css_literal = rule_sets =>
-  entries(rule_sets)
-    .map(entry => to_rule(...entry))
-    .join('\n');
 
 //#region Media Query
 

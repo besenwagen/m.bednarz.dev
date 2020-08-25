@@ -2,7 +2,7 @@
  * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { component } from '/browser/component.js';
+import { component } from './component.js';
 import {
   append,
   create_element,
@@ -18,13 +18,12 @@ import {
   label, input,
   em, strong,
 } from '/browser/html.js';
-import {
-  css_literal,
-  min_width,
-} from '/browser/css.js';
+import { css, min_width } from '/browser/css.js';
 import './suite.js';
 
 /* global window */
+
+//#region Style Sheet
 
 const COLOR_ACTION = '#00c';
 const COLOR_PASSING = '#060';
@@ -34,49 +33,60 @@ const BREAKPOINT = '768px';
 const SCALE = '1.5em';
 const TOOLBAR_SELECTOR = ':host > div > div:first-child';
 
-const style_content = css_literal({
-  ':host > div': {
-    padding: `0 0 0 ${SCALE}`,
-  },
-  [TOOLBAR_SELECTOR]: {
-    paddingRight: SCALE,
-  },
-  '.fatal-error': {
-    border: `1px solid ${ERROR_FOREGROUND}`,
-    padding: `0 calc(${SCALE} / 2)`,
-    color: ERROR_FOREGROUND,
-    background: ERROR_BACKGROUND,
-  },
-  strong: {
-    color: ERROR_FOREGROUND,
-    background: 'transparent',
-  },
-  em: {
-    color: COLOR_PASSING,
-    background: 'transparent',
-  },
-  'input[type="checkbox"]': {
-    margin: '0',
-    verticalAlign: 'middle',
-  },
-  'input[type="checkbox"]:not([disabled]):hover': {
-    cursor: 'pointer',
-  },
-  'input[type="checkbox"]:focus': {
-    outline: `2px solid ${COLOR_ACTION}`,
-  },
-  [min_width(BREAKPOINT)]: {
-    [TOOLBAR_SELECTOR]: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      margin: `${SCALE} 0`,
-    },
-    [`${TOOLBAR_SELECTOR} > p`]: {
-      margin: `0 calc(${SCALE} / 2) 0 0`,
-    },
-  },
-});
+const style_content = css`
+:host > div {
+  padding: 0 0 0 ${SCALE};
+}
+
+${TOOLBAR_SELECTOR} {
+  padding-right: ${SCALE};
+}
+
+.fatal-error {
+  border: 1px solid ${ERROR_FOREGROUND};
+  padding: 0 calc(${SCALE} / 2);
+  color: ${ERROR_FOREGROUND};
+  background: ${ERROR_BACKGROUND};
+}
+
+strong {
+  color: ${ERROR_FOREGROUND};
+  background: transparent;
+}
+
+em {
+  color: ${COLOR_PASSING};
+  background: transparent;
+}
+
+input[type="checkbox"] {
+  margin: 0;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:not([disabled]):hover {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:focus {
+  outline: 2px solid ${COLOR_ACTION};
+}
+
+${min_width(BREAKPOINT)} {
+  ${TOOLBAR_SELECTOR} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: ${ SCALE} 0;
+  }
+
+  ${TOOLBAR_SELECTOR} > p {
+    margin: 0 calc(${SCALE} / 2) 0 0;
+  }
+}
+`;
+
+//#endregion
 
 const INCREMENT = 1;
 const QUERY_EXPRESSION = /(?:\?|&)m=([^&]+)(?:&|$)/i;

@@ -2,7 +2,7 @@
  * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { component } from '/browser/component.js';
+import { component } from './component.js';
 import {
   append,
   create_text_node,
@@ -11,15 +11,148 @@ import {
   set_attribute,
 } from '/browser/dom.js';
 import {
-  link,
+  style,
   section, h2, ul, ol, li, div, table, tr, th, td,
   em, strong,
   pre, code, span, anchor,
 } from '/browser/html.js';
+import { css } from '/browser/css.js';
+
+/* global window */
 
 const { sign } = Math;
 const { parse } = JSON;
 const { assign } = Object;
+
+const style_content = css`
+pre,
+code {
+  font: 1em/1.5 Consolas, Inconsolata, Menlo, Monaco, monospace;
+}
+
+section {
+  margin: 0.75em 0;
+}
+
+h2 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1em;
+}
+
+h2 a em {
+  font-weight: bold;
+}
+
+h2 > code,
+li > code {
+  color: inherit;
+  background: transparent;
+}
+
+section[data-fail] > h2 {
+  font-weight: bold;
+}
+
+section > ul {
+  margin: 0;
+  padding: 0;
+}
+
+section > ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol[data-fail] > li:not([data-fail]) {
+  display: none;
+}
+
+h2 > span:first-child,
+li > span:first-child {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 3em;
+  margin-left: -3em;
+  padding: 0 0.5em 0 0;
+  text-align: right;
+}
+
+h2 > code {
+  font-weight: inherit;
+}
+
+strong {
+  color: #900;
+  background: transparent;
+}
+
+em {
+  color: #060;
+  background: transparent;
+}
+
+li > div {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: auto;
+  margin: 0.5rem 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: right;
+  font-weight: normal;
+}
+
+th,
+td {
+  border: 1px solid #999;
+  padding: 0.1rem 0.75rem;
+  vertical-align: middle;
+}
+
+td pre {
+  margin: 0;
+  padding: 0;
+}
+
+td pre code {
+  background: #eee;
+}
+
+td pre code strong {
+  background: #ff9;
+}
+
+a[href] {
+  border-bottom: 1px solid #090;
+  color: var(--color-action);
+  background: transparent;
+  text-decoration: none;
+}
+
+a[href]:hover {
+  border-color: var(--color-action);
+  border-width: 2px;
+  color: #000;
+  background: transparent;
+}
+
+a[href]:focus {
+  outline: 2px solid var(--color-action);
+  outline-offset: 0.2rem;
+  border-color: transparent;
+  color: #000;
+  background: transparent;
+}
+`;
+
 const INCREMENT = 1;
 const EXTENSION = '.js';
 const TEST_EXTENSION = `.test${EXTENSION}`;
@@ -212,7 +345,6 @@ function setup(instance) {
 
   const section_node = section(instance.get(HEADING_NODE));
 
-  section_node.style.visibility = 'hidden';
   instance.set(SECTION_NODE, section_node);
 }
 
@@ -275,20 +407,13 @@ component('test-suite', {
 
   render(instance) {
     const section_node = instance.get(SECTION_NODE);
-    const { origin: testOrigin } = new URL(window.location.href);
-    const { origin: assetOrigin } = new URL(import.meta.url);
+    const { origin } = new URL(window.location.href);
 
     append(instance.root, [
-      link({
-        href: `${assetOrigin}/test/test-suite.css`,
-        rel: 'stylesheet',
-        onload() {
-          section_node.style.visibility = '';
-        },
-      }),
+      style(style_content),
       section_node,
     ]);
     set_font_weight(instance);
-    load(instance, testOrigin);
+    load(instance, origin);
   },
 });
