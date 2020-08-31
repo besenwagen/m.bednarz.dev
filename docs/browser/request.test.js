@@ -9,7 +9,7 @@ export default result(test)
 
 {
   const { origin, pathname } = document.location
-  const json_url = [origin, pathname, 'stub.json'].join('/')
+  const json_url = [origin, pathname, 'stub.json'].join('')
   let count = 0
 
   test(json)
