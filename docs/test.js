@@ -161,14 +161,27 @@ const get_assertion_message = ([
   format_assertion_tuple(...typed_assertion),
 ].join('');
 
-function assert([actual, expected], context_tuple) {
-  const test_result = is(actual, expected);
-  const type_tuple = get_type_tuple(actual, expected);
-  const message = get_assertion_message(context_tuple, type_tuple);
+const parse_assertion = (actual, expected) => [
+  is(actual, expected),
+  get_type_tuple(actual, expected),
+];
 
-  console.assert(test_result, message);
+function log_assertion(test_result, type_tuple, context_tuple) {
+  const [suite_identifier] = context_tuple;
 
-  return [test_result, type_tuple];
+  if (suite_identifier) {
+    const message = get_assertion_message(context_tuple, type_tuple);
+
+    console.assert(test_result, message);
+  }
+}
+
+function assert(assertion, context_tuple) {
+  const parsed = parse_assertion(...assertion);
+
+  log_assertion(...parsed, context_tuple);
+
+  return parsed;
 }
 
 //#endregion
@@ -344,7 +357,9 @@ function restructure([identifier, ...test_suite]) {
   const { length: errors } = test_suite
     .filter(([, test_result]) => !test_result);
 
-  console.info(`- ${identifier} (${get_summary(total, errors)})`);
+  if (identifier) {
+    console.info(`- ${identifier} (${get_summary(total, errors)})`);
+  }
 
   return [identifier, test_suite, [total, errors]];
 }

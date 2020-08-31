@@ -36,7 +36,7 @@ test
         resolve([void 0, undefined]), 10))
   })
   ('sanitize description', () => {
-    const local_test = suite('SELFTEST')
+    const local_test = suite('')
     local_test(`   foo
          bar   \t   \n       baz
       `, true)
@@ -46,7 +46,16 @@ test
     ]
     return result(local_test).then(on_test_resolved)
   })
-  ('NaN', [
+  ('positive zero does not equal negative zero', () => {
+    const local_test = suite('')
+    local_test('', [0, -0])
+    const on_test_resolved = ([, [[, resolved]]]) => [
+      resolved,
+      false,
+    ]
+    return result(local_test).then(on_test_resolved)
+  })
+  ('NaN equals NaN', [
     NaN,
     NaN,
   ])
