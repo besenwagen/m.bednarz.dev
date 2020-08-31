@@ -10,6 +10,7 @@ export {
 };
 
 const { isArray } = Array;
+const { is } = Object;
 const test_primitive_expression = /^(?:string|number|boolean)$/;
 const PREFIX_INVALID = 'Invalid test case:';
 const ORDERED_PAIR_LENGTH = 2;
@@ -161,7 +162,7 @@ const get_assertion_message = ([
 ].join('');
 
 function assert([actual, expected], context_tuple) {
-  const test_result = (actual === expected);
+  const test_result = is(actual, expected);
   const type_tuple = get_type_tuple(actual, expected);
   const message = get_assertion_message(context_tuple, type_tuple);
 

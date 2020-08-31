@@ -46,6 +46,10 @@ test
     ]
     return result(local_test).then(on_test_resolved)
   })
+  ('NaN', [
+    NaN,
+    NaN,
+  ])
 
 test(force_url)
   ('absolute URL', [
