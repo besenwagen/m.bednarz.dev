@@ -4,6 +4,7 @@ import {
   enqueue,
   dequeue,
   peek,
+  size,
 } from './queue.js'
 
 const test = suite(import.meta)
@@ -132,6 +133,34 @@ test(peek)
     inspect()
     return [
       schedule('BAR'),
+      2,
+    ]
+  })
+
+test(size)
+  ('pristine collection', () => {
+    const [count] = queue(size)
+    return [
+      count(),
+      0,
+    ]
+  })
+  ('collection increment', () => {
+    const [add, count] = queue(enqueue, size)
+    let repeat = 3
+    while (repeat--) add(repeat)
+    return [
+      count(),
+      3,
+    ]
+  })
+  ('collection decrement', () => {
+    const [add, remove, count] = queue(enqueue, dequeue, size)
+    let repeat = 3
+    while (repeat--) add(repeat)
+    remove()
+    return [
+      count(),
       2,
     ]
   })

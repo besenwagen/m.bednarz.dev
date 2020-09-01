@@ -7,6 +7,7 @@ export {
   enqueue,
   dequeue,
   peek,
+  size,
 };
 
 import { partial } from './functional.js';
@@ -108,5 +109,10 @@ function peek(key) {
     return head.value;
   }
 }
+
+const size = key =>
+  bucket
+    .get(key)
+    .size;
 
 //#endregion
