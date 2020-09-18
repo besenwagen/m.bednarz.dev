@@ -1,8 +1,8 @@
-# copy to ../Node.js
+# copy to ../../container/node
 version: "3.6"
 services:
   app:
     environment:
-      - PROJECT=esm
+      - PROJECT=m.bednarz.dev
     volumes:
-      - ../m.bednarz.dev/docs:/home/node/app/public
+      - ../../domain/m.bednarz.dev/docs:/home/node/app/public
