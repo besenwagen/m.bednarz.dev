@@ -5,4 +5,4 @@ services:
     environment:
       - PROJECT=esm
     volumes:
-      - ../ECMAScript-modules/docs:/home/node/app/public
+      - ../m.bednarz.dev/docs:/home/node/app/public
