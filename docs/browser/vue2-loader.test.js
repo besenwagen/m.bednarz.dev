@@ -2,20 +2,21 @@ import { result, suite } from '../test.js'
 import {
   _mangle_imports as mangle_imports,
   _parse as parse,
-} from './vue-loader.js'
+  _EXPORT as EXPORT,
+  _IMPORT as IMPORT,
+} from './vue2-loader.js'
 
 const test = suite(import.meta.url)
 
 export default result(test)
 
 const { origin } = window.location
-const ID = '$DEFER'
 
 test(parse)
   ('script literal', () => {
     const expected = 'export default {}';
     const source = `<script>${expected}</script>`
-    const { script } = parse(source, origin, origin)
+    const { script } = parse(source, origin)
     return [
       script,
       expected,
@@ -24,7 +25,7 @@ test(parse)
   ('template literal', () => {
     const expected = '<div>FOOBAR</div>'
     const source = `<template>${expected}</template>`
-    const { template } = parse(source, origin, origin)
+    const { template } = parse(source, origin)
     return [
       template,
       expected,
@@ -37,7 +38,7 @@ test(parse)
       style: {
         textContent,
       },
-    } = parse(source, origin, origin)
+    } = parse(source, origin)
     return [
       textContent,
       expected,
@@ -48,18 +49,18 @@ test(mangle_imports)
   ('no-op', () => {
     const expected = 'export default {}'
     return [
-      mangle_imports(expected, origin, origin),
+      mangle_imports(expected, origin),
       expected,
     ]
   })
   ('SFC import', () => {
     const source = 'import FooBar from "./foobar.vue"'
     const expected = [
-      `import ${ID} from '${origin}';`,
-      `const FooBar = ${ID}('${origin}/foobar.vue');`,
+      `import ${EXPORT} from '${IMPORT}';`,
+      `const FooBar = ${EXPORT}('${origin}/foobar.vue');`,
     ].join('\n')
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -67,7 +68,7 @@ test(mangle_imports)
     const source = 'import { FooBar } from "./foobar.js"'
     const expected = `import { FooBar } from '${origin}/foobar.js';`
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -75,7 +76,7 @@ test(mangle_imports)
     const source = 'import FooBar from "./foobar.js"'
     const expected = `import FooBar from '${origin}/foobar.js';`
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -85,12 +86,12 @@ test(mangle_imports)
       "import Bar from './bar.vue'",
     ].join('\n')
     const expected = [
-      `import ${ID} from '${origin}';`,
-      `const Foo = ${ID}('${origin}/foo.vue');`,
-      `const Bar = ${ID}('${origin}/bar.vue');`,
+      `import ${EXPORT} from '${IMPORT}';`,
+      `const Foo = ${EXPORT}('${origin}/foo.vue');`,
+      `const Bar = ${EXPORT}('${origin}/bar.vue');`,
     ].join('\n')
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -104,7 +105,7 @@ test(mangle_imports)
       `import { Bar } from '${origin}/bar.js';`,
     ].join('\n')
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -122,7 +123,7 @@ test(mangle_imports)
       `} from '${origin}/foobar.js';`,
     ].join('\n')
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })
@@ -134,14 +135,14 @@ test(mangle_imports)
       "import BarVue from './bar.vue'",
     ].join('\n')
     const expected = [
-      `import ${ID} from '${origin}';`,
+      `import ${EXPORT} from '${IMPORT}';`,
       `import { FooJs } from '${origin}/foo.js';`,
-      `const FooVue = ${ID}('${origin}/foo.vue');`,
+      `const FooVue = ${EXPORT}('${origin}/foo.vue');`,
       `import { BarJs } from '${origin}/bar.js';`,
-      `const BarVue = ${ID}('${origin}/bar.vue');`,
+      `const BarVue = ${EXPORT}('${origin}/bar.vue');`,
     ].join('\n')
     return [
-      mangle_imports(source, origin, origin),
+      mangle_imports(source, origin),
       expected,
     ]
   })

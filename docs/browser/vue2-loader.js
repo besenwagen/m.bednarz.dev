@@ -9,17 +9,19 @@
  * @todo: add basic scoped style support
  */
 export {
-  // When in Rome, Capitalize as the Romans do
-  asyncomponent,
+  loadComponent as default,
   mangle_imports as _mangle_imports,
   parse as _parse,
+  EXPORT as _EXPORT,
+  IMPORT as _IMPORT,
 };
 
 /* global Blob URL document fetch */
 
 const { assign, create } = Object;
 const { createObjectURL, revokeObjectURL } = URL;
-const EXPORT = '$MONKEY_PATCH$';
+const { url: IMPORT } = import.meta;
+const EXPORT = '$VUE_SFC$';
 
 function evil_import(source) {
   const blob = new Blob([source], {
@@ -46,23 +48,23 @@ function parse_captured([,
   head,
   double_quoted,
   single_quoted,
-], sfc_url) {
+], url) {
   const import_url = (double_quoted || single_quoted);
 
   return [
     head,
-    new URL(import_url, sfc_url).href,
+    new URL(import_url, url).href,
   ];
 }
 
-function mangle_sfc_imports(sfc_source, sfc_url, initiator) {
+function mangle_sfc_imports(source, url) {
   function resolve_sfc_import(...argument_list) {
-    const [head, tail] = parse_captured(argument_list, sfc_url);
+    const [head, tail] = parse_captured(argument_list, url);
 
     return `const ${head} = ${EXPORT}('${tail}');`;
   }
 
-  const input = sfc_source.trim();
+  const input = source.trim();
   const output = input
     .replace(sfc_regexp, resolve_sfc_import);
 
@@ -71,32 +73,32 @@ function mangle_sfc_imports(sfc_source, sfc_url, initiator) {
   }
 
   return [
-    `import ${EXPORT} from '${initiator}';`,
+    `import ${EXPORT} from '${IMPORT}';`,
     output,
   ].join('\n');
 }
 
-function mangle_imports(sfc_source, sfc_url, iniitator) {
+function mangle_imports(source, url) {
   function replace_es_import(...argument_list) {
-    const [head, tail] = parse_captured(argument_list, sfc_url);
+    const [head, tail] = parse_captured(argument_list, url);
 
     return `${head} '${tail}';`;
   }
 
   // Resolve ES imports before SFC resolving adds an ES import
-  const clipboard = sfc_source
+  const clipboard = source
     .replace(es_regexp, replace_es_import);
 
-  return mangle_sfc_imports(clipboard, sfc_url, iniitator);
+  return mangle_sfc_imports(clipboard, url);
 }
 
 //#endregion
 
 const transform = {
-  script(node, url, initiator) {
+  script(node, url) {
     const { textContent } = node;
 
-    return mangle_imports(textContent, url, initiator);
+    return mangle_imports(textContent, url);
   },
   style(node) {
     return node;
@@ -116,14 +118,14 @@ function create_dom_sandbox(html_literal) {
   return sandbox;
 }
 
-function parse(source_text, source_url, initiator) {
-  const sandbox = create_dom_sandbox(source_text);
+function parse(text, url) {
+  const sandbox = create_dom_sandbox(text);
 
   function to_normalized_node(accumulator, value) {
     const element = sandbox.querySelector(value);
 
     accumulator[value] = element ?
-      transform[value](element, source_url, initiator) :
+      transform[value](element, url) :
       element;
 
     return accumulator;
@@ -141,14 +143,17 @@ function parse(source_text, source_url, initiator) {
 const on_response = response =>
   response
     .text()
-    .then(body => [body, response.url]);
+    .then(body => [
+      body,
+      response.url,
+    ]);
 
-function on_resolved(data, initiator) {
+function on_resolved(data) {
   const {
     script,
     style,
     template,
-  } = parse(...data, initiator);
+  } = parse(...data);
 
   if (style) {
     document.head.appendChild(style);
@@ -164,11 +169,11 @@ function on_rejected(reason) {
   console.error(reason);
 }
 
-const asyncomponent = (path, initiator) =>
+const loadComponent = path =>
   () =>
     fetch(path)
       .then(on_response)
-      .then(data => on_resolved(data, initiator))
+      .then(on_resolved)
       .catch(on_rejected);
 
 //#endregion
