@@ -27,6 +27,8 @@ const HTML_DOCUMENT = `
 
 function create_iframe() {
   const iframe = create_element('iframe', {
+    'aria-hidden': 'true',
+    tabindex: '-1',
     srcdoc: HTML_DOCUMENT,
     width: SIZE,
     height: SIZE,
