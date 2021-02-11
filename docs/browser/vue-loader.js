@@ -9,7 +9,6 @@
  * @todo: add basic scoped style support
  */
 export {
-  // When in Rome, Capitalize as the Romans do
   asyncomponent,
   mangle_imports as _mangle_imports,
   parse as _parse,
