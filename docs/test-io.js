@@ -1,13 +1,11 @@
 /**
- * Environment agnostic test automation I/O utilities.
- * Copyright 2019, 2020 Eric Bednarz <https://m.bednarz.dev>
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
+* Environment agnostic test automation I/O utilities.
+* Copyright 2019, 2020, 2021 Eric Bednarz <https://m.bednarz.dev>
+* SPDX-License-Identifier: AGPL-3.0-or-later
+*/
 export {
-  failing,
+  io_factory,
   load,
-  print_report,
-  print_summary,
   json_escape as _json_escape,
   yamlify as _yamlify,
 };
@@ -166,6 +164,61 @@ function yamlify(result) {
 function print_report(label, result) {
   console.info(`${label}:`);
   console.info(yamlify(result));
+}
+
+//#endregion
+
+//#region I/O
+
+const EXIT_CODE_ERROR = 1;
+
+const get_exit_code = error_count =>
+  Number(Boolean(error_count));
+
+function io_factory({
+  exit,
+  pwd,
+  silent,
+}) {
+  const file_base_url = `file://${pwd}/`;
+
+  const get_file_url = relative_path => [
+    file_base_url,
+    relative_path,
+  ].join('');
+
+  const map_to_file_url = file_path =>
+    get_file_url(file_path);
+
+  const expand = matches =>
+    matches
+      .flat()
+      .map(map_to_file_url);
+
+  return {
+    on_glob_resolved(matches) {
+      const expanded = expand(matches);
+
+      return Promise.all(expand(matches));
+    },
+
+    on_suites_resolved([result, [, , errors]]) {
+      const exit_code = get_exit_code(errors);
+
+      if (errors) {
+        print_report('failing', failing(result));
+      } else if (!silent) {
+        print_report('report', result);
+      }
+
+      exit(exit_code);
+    },
+
+    on_rejected(reason) {
+      console.error(reason);
+      exit(EXIT_CODE_ERROR);
+    },
+  };
 }
 
 //#endregion
