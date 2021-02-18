@@ -5,19 +5,18 @@
  * @see https://m.bednarz.dev/deno/test_runner.html
  */
 import { walk } from "https://deno.land/std@0.66.0/fs/mod.ts";
-import { failing, load, print_report } from "../test-io.js";
+import { io_factory, load } from "../test-io.js";
 
 /* global Deno */
 
 const { args, cwd, exit } = Deno;
 
-const EXIT_CODE_ERROR = 1;
-const FILE_BASE_URL = `file://${cwd()}/`;
+const pwd = cwd();
 const ARGUMENT_LIST = args
   .filter((value) => value.startsWith("-"));
 const DIRECTORIES = args
   .filter((value) => !value.startsWith("-"));
-const SILENT = ARGUMENT_LIST
+const silent = ARGUMENT_LIST
   .includes("-s");
 const RECURSIVE = ARGUMENT_LIST
   .includes("-r");
@@ -29,14 +28,6 @@ const RECURSION_DEPTH = RECURSIVE ? MAX_DEPTH : DEFAULT_DEPTH;
 const is_test_file = (file_path: string) =>
   test_file_expression
     .test(file_path);
-
-const get_file_url = (relative_path: string) =>
-  [
-    FILE_BASE_URL,
-    relative_path,
-  ].join("");
-
-const map_to_file_url = (file_path: string) => get_file_url(file_path);
 
 function add_test_file(file_path: string, bucket: string[]) {
   if (is_test_file(file_path)) {
@@ -57,49 +48,24 @@ async function traverse(base: string) {
   return bucket;
 }
 
-const on_files_resolved = (directories: string[][]) =>
-  Promise
-    .all(
-      directories
-        .flat()
-        .map(map_to_file_url),
-    );
-
-const get_exit_code = (error_count: number) => Number(Boolean(error_count));
-
-// TODO: stabilize and define report signature
-// deno-lint-ignore no-explicit-any
-function on_test_suites_resolved(report: any[]) {
-  const [
-    result,
-    [
-      modules,
-      tests,
-      errors,
-    ],
-  ] = report;
-  const exit_code = get_exit_code(errors);
-
-  if (errors) {
-    print_report("failing", failing(result));
-  } else if (!SILENT) {
-    print_report("report", result);
-  }
-
-  exit(exit_code);
-}
-
-function on_error() {
-  exit(EXIT_CODE_ERROR);
-}
-
 const map_to_files = (base_directory: string) => traverse(base_directory);
 
 const queue = DIRECTORIES.map(map_to_files);
 
+const {
+  on_glob_resolved,
+  on_suites_resolved,
+  on_rejected,
+} = io_factory({
+  exit,
+  pwd,
+  silent,
+});
+
 Promise
   .all(queue)
-  .then(on_files_resolved)
+  .then(on_glob_resolved)
   .then(load)
-  .then(on_test_suites_resolved)
-  .catch(on_error);
+  // @ts-ignore
+  .then(on_suites_resolved)
+  .catch(on_rejected);

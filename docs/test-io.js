@@ -171,19 +171,26 @@ function print_report(label, result) {
 //#region I/O
 
 const EXIT_CODE_ERROR = 1;
+const SCHEME = 'file:';
 
 const get_exit_code = error_count =>
   Number(Boolean(error_count));
+
+function get_file_base_url(path) {
+  if (path.startsWith(SCHEME)) {
+    return path;
+  }
+
+  return `${SCHEME}//${path}/`;
+}
 
 function io_factory({
   exit,
   pwd,
   silent,
 }) {
-  const file_base_url = `file://${pwd}/`;
-
   const get_file_url = relative_path => [
-    file_base_url,
+    get_file_base_url(pwd),
     relative_path,
   ].join('');
 
