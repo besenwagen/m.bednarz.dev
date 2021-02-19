@@ -6,8 +6,8 @@ import {
   Application,
   Context,
   HttpError,
-  Status,
   send,
+  Status,
 } from "https://deno.land/x/oak@v6.0.2/mod.ts";
 import { parse } from "https://deno.land/std@0.65.0/flags/mod.ts";
 import { blue, green, red } from "https://deno.land/std@0.65.0/fmt/colors.ts";
@@ -92,8 +92,8 @@ const configure = ({
   hostname,
   port,
   secure: true,
-  certFile: `${certificates}/${hostname}.crt`,
-  keyFile: `${certificates}/${hostname}.key`,
+  certFile: `${certificates}/${hostname}-cert.pem`,
+  keyFile: `${certificates}/${hostname}-key.pem`,
 });
 
 const configuration = configure(configurable);
