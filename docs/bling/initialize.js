@@ -82,7 +82,7 @@ function transform_github_contents(array) {
 
 //#endregion
 
-const SVG_SYMBOLS_URL = 'https://eric.bednarz.dev/symbols.svg';
+const SVG_SYMBOLS_URL = '/bling/symbols.svg';
 const LIFESPAN = 3600;
 
 const [
