@@ -9,7 +9,7 @@ const test = suite(import.meta.url)
 export default result(test)
 
 const { origin } = window.location
-const ID = '$DEFER'
+const ID = '$MONKEY_PATCH$'
 
 test(parse)
   ('script literal', () => {
