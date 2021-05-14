@@ -10,11 +10,13 @@ const test = suite(import.meta.url)
 
 export default result(test)
 
+/* global window */
+
 const { origin } = window.location
 
 test(parse)
   ('script literal', () => {
-    const expected = 'export default {}';
+    const expected = 'export default {}'
     const source = `<script>${expected}</script>`
     const { script } = parse(source, origin)
     return [

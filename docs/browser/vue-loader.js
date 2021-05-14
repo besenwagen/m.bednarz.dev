@@ -2,7 +2,7 @@
  * Copyright 2020, 2021 Eric Bednarz <https://m.bednarz.dev>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  *
- * Runtime loader for Vue Single-File Components (SFC)
+ * Runtime loader for Vue 3 Single-File Components (SFC)
  * - no dependencies
  * - development only
  *
@@ -14,7 +14,7 @@ export {
   parse as _parse,
 };
 
-/* global Blob URL document fetch */
+/* global Blob document fetch */
 
 const { assign, create } = Object;
 const { createObjectURL, revokeObjectURL } = URL;
@@ -38,8 +38,8 @@ function evil_import(source) {
 
 //#region Blob import URLs must be absolute
 
-const sfc_regexp = /^import (\S+) from (?:"([^"]+\.vue)"|'([^']+\.vue)');?$/gm
-const es_regexp = /^(import (?:{[^}]+}|\S+) from) (?:"([^"]+\.m?js)"|'([^']+\.m?js)');?$/gm
+const sfc_regexp = /^import (\S+) from (?:"([^"]+\.vue)"|'([^']+\.vue)');?$/gm;
+const es_regexp = /^(import (?:{[^}]+}|\S+) from) (?:"([^"]+\.m?js)"|'([^']+\.m?js)');?$/gm;
 
 function parse_captured([,
   head,
