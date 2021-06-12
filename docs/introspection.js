@@ -40,7 +40,7 @@ const {
   isNaN: is_nan,
 } = Number;
 
-const string_tag_expression = /^\[object ([^\]]+)\]$/;
+const string_tag_expression = /^\[object ([^\]]+)]$/;
 
 const to_object_string = value =>
   Object.prototype.toString.call(value);
