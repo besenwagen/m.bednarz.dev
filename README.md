@@ -1,4 +1,4 @@
-# ECMAScript modules [![License: AGPL v3][license-image]][license-url]
+# ECMAScript modules [![License: EUPL v1.2][license-image]][license-url]
 
 > Make JavaScript (sic) great again with native, web-based ECMAScript modules.
 
