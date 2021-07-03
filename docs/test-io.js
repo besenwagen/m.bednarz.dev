@@ -1,7 +1,7 @@
 /**
 * Environment agnostic test automation I/O utilities.
 * Copyright 2019, 2020, 2021 Eric Bednarz <https://m.bednarz.dev>
-* SPDX-License-Identifier: AGPL-3.0-or-later
+* SPDX-License-Identifier: EUPL-1.2
 */
 export {
   io_factory,

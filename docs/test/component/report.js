@@ -1,6 +1,6 @@
 /**
  * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-License-Identifier: EUPL-1.2
  */
 import { component } from './component.js';
 import {
@@ -77,7 +77,7 @@ ${min_width(BREAKPOINT)} {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: ${ SCALE} 0;
+    margin: ${SCALE} 0;
   }
 
   ${TOOLBAR_SELECTOR} > p {

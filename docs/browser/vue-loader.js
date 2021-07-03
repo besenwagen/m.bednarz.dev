@@ -1,6 +1,6 @@
 /**
  * Copyright 2020, 2021 Eric Bednarz <https://m.bednarz.dev>
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-License-Identifier: EUPL-1.2
  *
  * Runtime loader for Vue 3 Single-File Components (SFC)
  * - no dependencies

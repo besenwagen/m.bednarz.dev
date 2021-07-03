@@ -4,12 +4,12 @@
 
 ## Why?
 
-The problems `npm` (the CLI tool, the registry, the company) 
+The problems `npm` (the CLI tool, the registry, the company)
 creates outweigh the problems it is supposed to solve.
-You can either face that or 
+You can either face that or
 [wait for another christmas and die of a broken heart](https://en.wikipedia.org/wiki/James_Stockdale#The_Stockdale_Paradox).
 
-Although this repository has nothing to do with the 
+Although this repository has nothing to do with the
 [Entropic Package Manager](https://www.entropic.dev/),
 you should really watch
 [The economics of open source by C J Silverio](https://www.youtube.com/watch?v=MO8hZlgK5zc)
@@ -58,12 +58,12 @@ The following is available on all runtimes.
     - `clearTimeout`
     - `setInterval`
     - `clearInterval`
-    
+
 ## License
 
-*GNU Affero General Public License* version 3 or later
+*European Union Public License 1.2*
 
-SPDX-License-Identifier: AGPL-3.0-or-later
+SPDX-License-Identifier: EUPL-1.2
 
 [license-image]: https://img.shields.io/github/license/eric-bednarz-dev/ECMAScript-modules
-[license-url]:   https://www.gnu.org/licenses/agpl-3.0
+[license-url]:   https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
