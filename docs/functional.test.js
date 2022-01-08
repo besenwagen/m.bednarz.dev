@@ -34,6 +34,7 @@ export default result(test)
       pipe(add_five, times_three)(2),
       21,
     ])
+
   test(compose)
     ('reduce from right to left', [
       compose(add_five, times_three)(2),
