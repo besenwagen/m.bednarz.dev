@@ -8,9 +8,9 @@ import {
   HttpError,
   send,
   Status,
-} from "https://deno.land/x/oak@v6.0.2/mod.ts";
-import { parse } from "https://deno.land/std@0.65.0/flags/mod.ts";
-import { blue, green, red } from "https://deno.land/std@0.65.0/fmt/colors.ts";
+} from "https://deno.land/x/oak@v10.1.0/mod.ts";
+import { parse } from "https://deno.land/std@0.120.0/flags/mod.ts";
+import { blue, green, red } from "https://deno.land/std@0.120.0/fmt/colors.ts";
 
 /* global Deno */
 
