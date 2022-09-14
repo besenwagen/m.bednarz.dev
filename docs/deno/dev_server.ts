@@ -31,8 +31,8 @@ Options:
 -h: host name (localhost)
 
 Certificates are read from
-- [certificates path]/[host name].crt
-- [certificates path]/[host name].key
+- [certificates path]/cert.pem
+- [certificates path]/key.pem
 
 Set -c during installation:
 
@@ -60,7 +60,7 @@ if (!parsedArguments.c) {
 
 const configurable = {
   certificates: parsedArguments.c,
-  hostname: parsedArguments.h || "localhost",
+  hostname: parsedArguments.h || "0.0.0.0",
   port: parsedArguments.p || 3443,
 };
 
@@ -92,8 +92,8 @@ const configure = ({
   hostname,
   port,
   secure: true,
-  certFile: `${certificates}/${hostname}-cert.pem`,
-  keyFile: `${certificates}/${hostname}-key.pem`,
+  certFile: `${certificates}/cert.pem`,
+  keyFile: `${certificates}/key.pem`,
 });
 
 const configuration = configure(configurable);
