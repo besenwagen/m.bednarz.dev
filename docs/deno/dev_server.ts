@@ -11,7 +11,7 @@
  *   --root ~/.local installs into ~/.local/bin
  * Set -f to overwrite a previous installation.
  *
- * Create certificates with mkcert:
+ * Create a certificate with mkcert:
  *
  *   cd /path/to/certificate
  *   mkcert --cert-file cert.pem --key-file key.pem [DNS names]
