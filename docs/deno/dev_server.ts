@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: EUPL-1.2
  */
 import {
-  Application,
-  Context,
-  HttpError,
-  send,
-  Status,
+	Application,
+	Context,
+	HttpError,
+	send,
+	Status,
 } from "https://deno.land/x/oak@v10.1.0/mod.ts";
-import { parse } from "https://deno.land/std@0.120.0/flags/mod.ts";
+import { parse } from "https://deno.land/std@0.156.0/flags/mod.ts";
 import { blue, green, red } from "https://deno.land/std@0.120.0/fmt/colors.ts";
 
 /* global Deno */
@@ -49,51 +49,66 @@ Use --help for more information.
 `;
 
 if (parsedArguments.help === true) {
-  console.info(cliHelp);
-  exit(0);
+	console.info(cliHelp);
+	exit(0);
 }
 
 if (!parsedArguments.c) {
-  console.error(cliError);
-  exit(1);
+	console.error(cliError);
+	exit(1);
 }
 
 const configurable = {
-  certificates: parsedArguments.c,
-  hostname: parsedArguments.h || "0.0.0.0",
-  port: parsedArguments.p || 3443,
+	certificates: parsedArguments.c,
+	hostname: parsedArguments.h || "0.0.0.0",
+	port: parsedArguments.p || 3443,
 };
 
-const documentRoot = parsedArguments.d || "public";
+const directories = ['docs', 'html', 'public', 'web', 'www'];
+
+async function get_document_root() {
+	for (const directory of directories) {
+		try {
+			await Deno.stat(directory);
+			return directory;
+		} catch {
+			continue;
+		}
+	}
+
+	return '.';
+}
+
+const document_root = await get_document_root();
 
 //#endregion
 
 //#region Configuration
 
 interface Configurable {
-  hostname: string;
-  port: number;
-  certificates: string;
+	hostname: string;
+	port: number;
+	certificates: string;
 }
 
 interface Configuration {
-  hostname: string;
-  port: number;
-  secure: true;
-  certFile: string;
-  keyFile: string;
+	hostname: string;
+	port: number;
+	secure: true;
+	certFile: string;
+	keyFile: string;
 }
 
 const configure = ({
-  certificates,
-  hostname,
-  port,
+	certificates,
+	hostname,
+	port,
 }: Configurable): Configuration => ({
-  hostname,
-  port,
-  secure: true,
-  certFile: `${certificates}/cert.pem`,
-  keyFile: `${certificates}/key.pem`,
+	hostname,
+	port,
+	secure: true,
+	certFile: `${certificates}/cert.pem`,
+	keyFile: `${certificates}/key.pem`,
 });
 
 const configuration = configure(configurable);
@@ -101,18 +116,18 @@ const configuration = configure(configurable);
 //#endregion
 
 function log({ request, response }: Context) {
-  const {
-    method,
-    url: {
-      pathname,
-      search,
-    },
-  } = request;
-  const code = String(response.status);
-  const error = /^[45]/.test(code);
-  const status = error ? red(code) : green(code);
+	const {
+		method,
+		url: {
+			pathname,
+			search,
+		},
+	} = request;
+	const code = String(response.status);
+	const error = /^[45]/.test(code);
+	const status = error ? red(code) : green(code);
 
-  console.info(status, method, blue(pathname + search));
+	console.info(status, method, blue(pathname + search));
 }
 
 const app = new Application();
@@ -157,74 +172,74 @@ const html = (message: string, lang = "en"): string => (`
     </main>
   </body>
 </html>
-`.trimLeft());
+`.trimStart());
 
 app.use(async (context, next) => {
-  try {
-    await next();
-  } catch (error) {
-    if (error instanceof HttpError) {
-      const reason = error.expose ? error.message : Status[error.status];
-      assign(context.response, {
-        status: error.status,
-        body: html(`${error.status} - ${reason}`),
-      });
-      log(context);
-    } else if (error instanceof Error) {
-      assign(context.response, {
-        status: 500,
-        body: html("500 - Internal Server Error"),
-      });
-      log(context);
-      console.error(red(error.message));
-      console.error(error.stack);
-    }
-  }
+	try {
+		await next();
+	} catch (error) {
+		if (error instanceof HttpError) {
+			const reason = error.expose ? error.message : Status[error.status];
+			assign(context.response, {
+				status: error.status,
+				body: html(`${error.status} - ${reason}`),
+			});
+			log(context);
+		} else if (error instanceof Error) {
+			assign(context.response, {
+				status: 500,
+				body: html("500 - Internal Server Error"),
+			});
+			log(context);
+			console.error(red(error.message));
+			console.error(error.stack);
+		}
+	}
 });
 
 //#endregion
 
 app.use(async (context, next) => {
-  await next();
-  log(context);
+	await next();
+	log(context);
 });
 
 //#region Static Files & SPA Middleware
 
 const index = "index.html";
-const root = `${Deno.cwd()}/${documentRoot}`;
+const root = `${Deno.cwd()}/${document_root}`;
 
-const isSpaPathComponent = (pathComponent: string): boolean =>
-  !/\.[a-z\d]+$/i.test(pathComponent);
+const is_spa_path_component = (path_component: string): boolean =>
+	!/\.[a-z\d]+$/i.test(path_component);
 
 app.use(async (context) => {
-  const { pathname } = context.request.url;
+	const { pathname } = context.request.url;
 
-  try {
-    await send(context, pathname, {
-      root,
-      index,
-    });
-  } catch (error) {
-    if (isSpaPathComponent(pathname)) {
-      await send(context, `/${index}`, {
-        root,
-        index,
-      });
-    } else {
-      throw error;
-    }
-  }
+	try {
+		await send(context, pathname, {
+			root,
+			index,
+		});
+	} catch (error) {
+		if (is_spa_path_component(pathname)) {
+			await send(context, `/${index}`, {
+				root,
+				index,
+			});
+		} else {
+			throw error;
+		}
+	}
 });
 
 //#endregion
 
 app.addEventListener("listen", ({
-  hostname,
-  port,
+	hostname,
+	port,
 }) => {
-  const origin = `https://${hostname}:${port}`;
-  console.info(`Listening on ${blue(origin)}`);
+	const origin = `https://${hostname}:${port}`;
+	console.info(`Listening on ${blue(origin)}`);
 });
 
 app.listen(configuration);
