@@ -1,7 +1,22 @@
 /**
- * Copyright 2020 Eric Bednarz <https://m.bednarz.dev>
+ * Copyright 2020, 2022 Eric Bednarz <https://m.bednarz.dev>
  * SPDX-License-Identifier: EUPL-1.2
+ *
+ * Installation:
+ *
+ *   deno install --allow-read --allow-net path/to/this/module.ts -c /path/to/certificate
+ *
+ * Set --name for an executable name different from the file name.
+ * Set --root for a path other than ~/.deno. Example:
+ *   --root ~/.local installs into ~/.local/bin
+ * Set -f to overwrite a previous installation.
+ *
+ * Create certificates with mkcert:
+ *
+ *   cd /path/to/certificate
+ *   mkcert --cert-file cert.pem --key-file key.pem [DNS names]
  */
+
 import {
 	Application,
 	Context,
@@ -21,26 +36,21 @@ const { assign } = Object;
 
 const parsedArguments = parse(args);
 
+const directories = ['docs', 'html', 'public', 'web', 'www'];
+
 const cliHelp = `
 Simple HTTPS development server.
 
 Options:
--c: certificates path
+-c: certificate path
 -p: port (3443)
--d: document root (public)
+-d: document root (${directories.join('|')})
 -h: host name (localhost)
 
-Certificates are read from
-- [certificates path]/cert.pem
-- [certificates path]/key.pem
-
-Set -c during installation:
-
-$ deno install --allow-read --allow-net path/to/this/module.ts -c /path/to/certificates
-
-For more installation options, run
-
-$ deno install --help
+The certificate is read from
+- [certificate path]/cert.pem
+- [certificate path]/key.pem
+and should be set during installation.
 `;
 
 const cliError = `
@@ -63,8 +73,6 @@ const configurable = {
 	hostname: parsedArguments.h || "0.0.0.0",
 	port: parsedArguments.p || 3443,
 };
-
-const directories = ['docs', 'html', 'public', 'web', 'www'];
 
 async function get_document_root() {
 	for (const directory of directories) {
