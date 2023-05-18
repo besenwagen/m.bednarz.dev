@@ -1,225 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="">
-  <title>The 'test' module</title>
-  <link href="/bling/documentation.css" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta
+		name="viewport"
+		content="width=device-width,initial-scale=1"
+	>
+	<meta
+		name="description"
+		content=""
+	>
+	<title>The 'test' module</title>
+	<link
+		href="/bling/documentation.css"
+		rel="stylesheet"
+	>
 </head>
 <body>
-  <main id="main">
-    <h1 class="reverse">The <em>test</em> module</h1>
+	<main id="main">
+		<h1 class="reverse">The <em>test</em> module</h1>
 
-    <p>
-      Make <em>unit testing</em> great again with idiomatic
-      <em>ECMAScript modules</em>
-      and a lean
-      <a href="#api">API</a>.
-      No installation or transpilation required.
-      Use it entirely
-      <a href="#browser">client-side</a>
-      with a modern web browser like
-      <em>Firefox</em>,
-      <em>Chrome</em>,
-      <em>Safari</em> or
-      <em>Edge</em>,
-      or server-side with
-      <a href="#deno">Deno</a>
-      or
-      <a href="#nodejs">Node.js</a>.
-    </p>
+		<p>
+			Idiomatic <em>unit testing</em> for
+			<em>ECMAScript modules</em>,
+			no installation or transpilation required.
+			Use it entirely
+			<a href="#browser">client-side</a>
+			with a modern web browser like
+			<em>Firefox</em>,
+			<em>Chrome</em>,
+			<em>Safari</em> or
+			<em>Edge</em>,
+			or server-side with
+			<a href="#deno">Deno</a>
+			or
+			<a href="#nodejs">Node.js</a>.
+		</p>
 
-    <h2>Anatomy of a <em>test suite</em> module</h2>
+		<h2>Anatomy of a <em>test suite</em> module</h2>
 
-    <p id="api">
-      A <em>test suite</em> module imports the
-      <em>unit test</em> API from the <em>test</em> module:
-    </p>
+		<p id="api">
+			A <em>test suite</em> is a module that imports the
+			<em>unit test</em> boilerplate API from the <em>test</em> module:
+		</p>
 
-    <pre data-demo><code>import { suite, result } from 'https://m.bednarz.dev/test.js';</code></pre>
+		<pre data-demo><code>import { suite, result } from 'https://m.bednarz.dev/test.js';</code></pre>
 
-    <p>
-      Now you already know the <em>entire</em> test API surface.
-    </p>
-    <p>
-      The <code>suite</code> function is a <em>factory</em> that returns a
-      <a href="#test-function">test function</a>
-      for the scope of the current <em>test suite</em> module.
-      Its argument is the
-      <a href="https://github.com/tc39/proposal-import-meta"><code>import.meta</code></a>
-      object, a
-      <a href="https://tc39.es/process-document/">TC39</a>
-      <em>stage 4</em> feature that is already implemented
-      in all supported environments.
-    </p>
+		<p>
+			The <code>suite</code> function is a <em>higher-order function</em> that returns a
+			<a href="#test-function">test function</a>
+			for the scope of the current <em>test suite</em> module.
+			Its argument is the ECMAScript 2020
+			<a href="https://github.com/tc39/proposal-import-meta"><code>import.meta</code></a>
+			object.
+		</p>
 
-    <pre data-demo><code>const test = suite(import.meta);</code></pre>
+		<pre data-demo><code>const test = suite(import.meta);</code></pre>
 
-    <p>
-      The identifier for the the <em>test function</em> will
-      likely be the most used one in the <em>test suite</em>
-      and you can choose it yourself.
-      If brevity is your thing, you can name it
-      <code>t</code>, for example.
-    </p>
+		<p>
+			The identifier for the the <em>test function</em> will
+			likely be the most used one in the <em>test suite</em>
+			and is user defined.
+			If brevity is your thing, you can name it
+			<code>t</code>, for example.
+		</p>
 
-    <p>
-      Now call the <code>result</code> function with the
-      <em>test function</em> as argument and
-      <code>export</code>
-      the returned <code>Promise</code>
-      as <code>default</code>.
-    </p>
+		<p>
+			Now call the <code>result</code> function with the
+			<em>test function</em> as argument and
+			<code>export</code>
+			the returned <code>Promise</code>
+			as <code>default</code>.
+		</p>
 
-    <pre data-demo><code>export default result(test);</code></pre>
+		<pre data-demo><code>export default result(test);</code></pre>
 
-    <p>
-      That was all the <em>test API</em> boilerplate code
-      required to create a <em>test suite</em>.
-      A useful <em>test suite</em> would have imported
-      something from a <em>module under test</em> as well.
-    </p>
-    <p>
-      Time to run the first test:
-    </p>
+		<p>
+			That was all the <em>test API</em> boilerplate code
+			required to create a <em>test suite</em>.
+			A useful <em>test suite</em> would have imported
+			something from a <em>module under test</em> as well.
+		</p>
+		<p>
+			Time to run the first test:
+		</p>
 
-    <pre data-demo><code>test('The truth is out there', true);</code></pre>
+		<pre data-demo><code>test('The truth is out there', true);</code></pre>
 
-    <p>
-      After the exported <em>test suite result</em> resolves,
-      a <em>test suite summary</em> is printed to the console or STDOUT.
-    </p>
+		<p>
+			After the exported <em>test suite result</em> resolves,
+			a <em>test suite summary</em> is printed to the
+			<em>browser console</em>
+			or <code>STDOUT</code> as a side effect.
+		</p>
 
-    <p>
-      This page concatenates the text content of the above
-      code examples and dynamically imports the resulting
-      test module source text as an object URL.
-      If you read this in a browser,
-      you should see the following in the console:
-    </p>
+		<p>
+			This page concatenates the text content of the above
+			code examples and dynamically imports the resulting
+			test module source text as an <em>object URL</em>.
+			If you read this in a browser,
+			you should see the following in the console:
+		</p>
 
-    <pre><code>- [Blob reference] (1 passed)</code></pre>
+		<pre><code>- [Blob reference] (1 passed)</code></pre>
 
-    <script type="module">
-      import { evil_import } from '/browser/evil-import.js';
+		<script type="module">
+			import { evil_import } from '/browser/evil-import.js';
 
-      const { from } = Array;
-      const lines = document.querySelectorAll('pre[data-demo]');
+			const { from } = Array;
+			const lines = document.querySelectorAll('pre[data-demo]');
 
-      const source = from(lines)
-        .map(node => node.textContent)
-        .join('\n');
+			const source = from(lines)
+				.map(node => node.textContent)
+				.join('\n');
 
-      evil_import(source);
-    </script>
+			evil_import(source);
+		</script>
 
-    <p>
-      Note that the above <em>test suite summary</em>
-      is just a
-      <em>side effect</em>.
-      To do something with the
-      resolved result object, you need to pass it to a
-      <a href="#environment">reporter</a>.
-    </p>
+		<p>
+			Note that the above <em>test suite summary</em>
+			is just a
+			<em>side effect</em>.
+			To do something with the
+			resolved result object, you need to pass it to a
+			<a href="#environment">reporter</a>.
+		</p>
 
-    <h2 id="test-function">The <em>test function</em></h2>
+		<h2 id="test-function">The <em>test function</em></h2>
 
-    <p>
-      The <em>test function</em> has two parameters, the
-      <a href="#test-description">test description</a>
-      and the
-      <a href="#test-case">test case</a>,
-      and
-      <a href="#chain-gang">returns itself</a>.
-    </p>
+		<p>
+			The <em>test function</em> has two parameters, the
+			<a href="#test-description">test description</a>
+			and the
+			<a href="#test-case">test case</a>,
+			and
+			<a href="#chain-gang">returns itself</a>.
+		</p>
 
-    <ol>
-      <li id="test-description">
-        The <em>test description</em> is a <em>string</em>
-        that enables human consumers to identifiy the <em>test case</em>
-        in conjunction with the <em>test suite</em> module URL.
-        It <em>should</em> be unique in the context of its
-        <em>test suite</em> for cognitive benefits,
-        but technically it does not have to be.
-      </li>
-      <li id="test-case">
-        The <em>test case</em> is a
-        <a href="#sync-assertion">synchronous assertion</a>,
-        an
-        <a href="#async-assertion">asynchronous assertion</a>
-        or a
-        <a href="#callable-assertion">callable assertion</a>.
-      </li>
-    </ol>
+		<ol>
+			<li id="test-description">
+				The <em>test description</em> is a <em>string</em>
+				that enables human consumers to identifiy the <em>test case</em>
+				in conjunction with the <em>test suite</em> module URL.
+				It <em>should</em> be unique in the context of its
+				<em>test suite</em> for cognitive benefits,
+				but technically it does not have to be.
+			</li>
+			<li id="test-case">
+				The <em>test case</em> is a
+				<a href="#sync-assertion">synchronous assertion</a>,
+				an
+				<a href="#async-assertion">asynchronous assertion</a>
+				or a
+				<a href="#callable-assertion">callable assertion</a>.
+			</li>
+		</ol>
 
-    <h3>Test case definitions</h3>
+		<h3>Test case definitions</h3>
 
-    <dl>
-      <dt id="callable-assertion">callable assertion</dt>
-      <dd>
-        A
-        <code>function</code>
-        that returns a
-        <a href="#sync-assertion">synchronous assertion</a>
-        or an
-        <a href="#async-assertion">asynchronous assertion</a>.
-      </dd>
-      <dt id="async-assertion">asynchronous assertion</dt>
-      <dd>
-        A
-        <code>Promise</code>
-        that resolves a
-        <a href="#sync-assertion">synchronous assertion</a>.
-      </dd>
-      <dt id="aync-assertion">synchronous assertion</dt>
-      <dd>
-        A
-        <a href="#boolean-expression">boolean expression</a>
-        or
-        <a href="#ordered-pair">ordered pair</a>.
-      </dd>
-      <dt id="boolean-expression">boolean expression</dt>
-      <dd>
-        An <em>expression</em> that
-        <em>must</em>
-        evaluate to a
-        <em>boolean</em>.
-        The test case passes if it is
-        <code>true</code>.
-      </dd>
-      <dt id="ordered-pair">ordered pair</dt>
-      <dd>
-        An <em>array</em> with two
-        <a href="#test-primitive">test primitives</a>
-        representing the
-        <em>actual</em>
-        and the
-        <em>expected</em>
-        outcome, in that order. The
-        test passes if they are
-        <em>strictly equal</em>.
-      </dd>
-      <dt id="test-primitive">test primitive</dt>
-      <dd>
-        A
-        <em>string literal</em>,
-        <em>number literal</em>,
-        <em>boolean</em> <code>true</code> or <code>false</code>,
-        <code>null</code> or
-        <code>undefined</code>.
-      </dd>
-    </dl>
+		<dl>
+			<dt id="callable-assertion">callable assertion</dt>
+			<dd>
+				A
+				<code>function</code>
+				that returns a
+				<a href="#sync-assertion">synchronous assertion</a>
+				or an
+				<a href="#async-assertion">asynchronous assertion</a>.
+			</dd>
+			<dt id="async-assertion">asynchronous assertion</dt>
+			<dd>
+				A
+				<code>Promise</code>
+				that resolves a
+				<a href="#sync-assertion">synchronous assertion</a>.
+			</dd>
+			<dt id="async-assertion">synchronous assertion</dt>
+			<dd>
+				A
+				<a href="#boolean-expression">boolean expression</a>
+				or
+				<a href="#ordered-pair">ordered pair</a>.
+			</dd>
+			<dt id="boolean-expression">boolean expression</dt>
+			<dd>
+				An <em>expression</em> that
+				<em>must</em>
+				evaluate to a
+				<em>boolean</em>.
+				The test case passes if it is
+				<code>true</code>.
+			</dd>
+			<dt id="ordered-pair">ordered pair</dt>
+			<dd>
+				An <em>array</em> with two
+				<a href="#test-primitive">test primitives</a>
+				representing the
+				<em>actual</em>
+				and the
+				<em>expected</em>
+				outcome, in that order. The
+				test passes if they are
+				<em>strictly equal</em>.
+			</dd>
+			<dt id="test-primitive">test primitive</dt>
+			<dd>
+				A
+				<em>string literal</em>,
+				<em>number literal</em>,
+				<em>boolean</em> <code>true</code> or <code>false</code>,
+				<code>null</code> or
+				<code>undefined</code>.
+			</dd>
+		</dl>
 
-    <p>
-      Use an <em>ordered pair</em> assertion if you care about the
-      <em>actual</em> and <em>expected</em> values being available
-      in failure feedback and reports.
-    </p>
+		<p>
+			Use an <em>ordered pair</em> assertion if you care about the
+			<em>actual</em> and <em>expected</em> values being available
+			in failure feedback and reports.
+		</p>
 
-    <h3>Examples of <em>test function</em> calls with passing <em>test cases</em></h3>
+		<h3>Examples of <em>test function</em> calls with passing <em>test cases</em></h3>
 
-    <pre><code>test('The truth is out there', true);
+		<pre><code>test('The truth is out there', true);
 test('The truth is out there', [42, 42]);
 test('The truth is out there', Promise.resolve(true));
 test('The truth is out there', Promise.resolve([42, 42]));
@@ -228,31 +231,31 @@ test('The truth is out there', () => [42, 42]);
 test('The truth is out there', () => Promise.resolve(true));
 test('The truth is out there', () => Promise.resolve([42, 42]));</code></pre>
 
-    <p>
-      This is all you <em>need</em> to know about the
-      <em>test function</em>.
-      Read on for <em>syntactic sugar</em> or skip ahead for
-      <a href="#environment">runtime environment</a> info.
-    </p>
+		<p>
+			This is all you <em>need</em> to know about the
+			<em>test function</em>.
+			Read on for <em>syntactic sugar</em> or skip ahead for
+			<a href="#environment">runtime environment</a> info.
+		</p>
 
-    <h3 id="chain-gang">Chained tests</h3>
+		<h3 id="chain-gang">Chained tests</h3>
 
-    <p>
-      There is <em>nothing</em> wrong with using
-      one statement per test as shown in the previous section.
-      It is <em>explicit</em> and <em>readable</em>. If a
-      <em>callable assertion</em>
-      has multiple statements, there is just one level
-      of indentation and it is easy to see where the test
-      starts and ends.
-    </p>
+		<p>
+			There is <em>nothing</em> wrong with using
+			one statement per test as shown in the previous section.
+			It is <em>explicit</em> and <em>readable</em>. If a
+			<em>callable assertion</em>
+			has multiple statements, there is just one level
+			of indentation and it is easy to see where the test
+			starts and ends.
+		</p>
 
-    <p>
-      Since the <em>test function</em> returns itself, however,
-      the previous tests <em>could</em> be rewritten as:
-    </p>
+		<p>
+			Since the <em>test function</em> returns itself, however,
+			the previous tests <em>could</em> be rewritten as:
+		</p>
 
-    <pre><code>test
+		<pre><code>test
   ('The truth is out there', true)
   ('The truth is out there', [42, 42])
   ('The truth is out there', Promise.resolve(true))
@@ -263,53 +266,53 @@ test('The truth is out there', () => Promise.resolve([42, 42]));</code></pre>
   ('The truth is out there', () => Promise.resolve([42, 42]))
   ;</code></pre>
 
-    <p>
-      This is a matter of personal preference.
-      As a rule of thumb, one test per statement
-      is better for complex test cases that have
-      multiple lines and nested functions, while
-      chained tests work best with oneliners.
-      The important thing here is:
-      <em>your</em> code,
-      <em>your</em> tests,
-      <em>your</em> choice.
-    </p>
+		<p>
+			This is a matter of personal preference.
+			As a rule of thumb, one test per statement
+			is better for complex test cases that have
+			multiple lines and nested functions, while
+			chained tests work best with oneliners.
+			The important thing here is:
+			<em>your</em> code,
+			<em>your</em> tests,
+			<em>your</em> choice.
+		</p>
 
-    <p>
-      Note: if your <em>coding style</em> requires a semicolon
-      after a statement, putting it on a line of its own makes for cleaner
-      <em>version control</em> diffing when you add or remove tests.
-    </p>
+		<p>
+			Note: if your <em>coding style</em> requires a semicolon
+			after a statement, putting it on a line of its own makes for cleaner
+			<em>version control</em> diffing when you add or remove tests.
+		</p>
 
-    <h3 id="scoped">Scoped tests</h3>
+		<h3 id="scoped">Scoped tests</h3>
 
-    <p>
-      One advantage of <em>pyramid of doom</em> test suite
-      APIs in the style of <em>Mocha</em> or <em>Jasmine</em>
-      is that there is little redundancy in test descriptions
-      because those are nested or concatenated together down
-      the call stack, at the expense of creating
-      monolithic hairballs of code.
-    </p>
+		<p>
+			One advantage of <em>pyramid of doom</em> test suite
+			APIs in the style of <em>Mocha</em> or <em>Jasmine</em>
+			is that there is little redundancy in test descriptions
+			because those are nested or concatenated together down
+			the call stack, at the expense of creating
+			monolithic hairballs of code.
+		</p>
 
-    <p>
-      <em>ECMAScript modules</em> often export
-      multiple functions, and functions are the primary
-      subject of unit testing, so it makes sense to
-      group multiple tests for a particular function together.
-    </p>
+		<p>
+			<em>ECMAScript modules</em> often export
+			multiple functions, and functions are the primary
+			subject of unit testing, so it makes sense to
+			group multiple tests for a particular function together.
+		</p>
 
-    <p>
-      Calling the <em>test function</em> with another
-      <code>function</code> object as argument returns a function
-      with the same signature as the original <em>test function</em>.
-      The only difference is that the <em>test description</em>
-      is automatically prefixed based on the
-      <code>function</code> argument&#8217;s
-      <code>name</code> property:
-    </p>
+		<p>
+			Calling the <em>test function</em> with another
+			<code>function</code> object as argument returns a function
+			with the same signature as the original <em>test function</em>.
+			The only difference is that the <em>test description</em>
+			is automatically prefixed based on the
+			<code>function</code> argument&#8217;s
+			<code>name</code> property:
+		</p>
 
-    <pre><code>import { suite, result } from 'https://m.bednarz.dev/test.js';
+		<pre><code>import { suite, result } from 'https://m.bednarz.dev/test.js';
 import { foo, bar } from './fubar.js';
 
 const test = suite(import.meta);
@@ -317,180 +320,193 @@ const test = suite(import.meta);
 export default result(test);
 
 test(foo)
-  ('description one', true)
-  ('description two', [42, 42])
+  ('is true', foo())
+  ('is numeric', [Number(foo()), 1])
   ;
 
 test(bar)
-  ('description one', true)
-  ('description two', [42, 42])
+  ('is true', bar())
+  ('is numeric', [Number(bar()), 1])
   ;</code></pre>
 
-    <p>
-      The resulting test case descriptions are:
-    </p>
+		<p>
+			The resulting test case descriptions are:
+		</p>
 
-    <ul>
-      <li><i>foo(): description one</i></li>
-      <li><i>foo(): description two</i></li>
-      <li><i>bar(): description one</i></li>
-      <li><i>bar(): description two</i></li>
-    </ul>
+		<ul>
+			<li><i>foo(): is true</i></li>
+			<li><i>foo(): is numeric</i></li>
+			<li><i>bar(): is true</i></li>
+			<li><i>bar(): is numeric</i></li>
+		</ul>
 
-    <p>
-      If you don&#8217;t chain scoped tests, repeated calls
-      create a new <em>scoped test function</em> every time:
-    </p>
+		<p>
+			If you don&#8217;t chain scoped tests, repeated calls
+			create a new <em>scoped test function</em> every time:
+		</p>
 
-    <pre><code>test(foo)
-  ('description one', true);
+		<pre><code>test(foo)
+  ('is true', foo());
 test(foo)
-  ('description two', [42, 42]);</code></pre>
+  ('is numeric', [Number(foo()), 1]);</code></pre>
 
-    <p>
-      In that case, it is better to assign it once and call it by reference.
-      If you care about pollution of the module scope,
-      simply use a block statement:
-    </p>
+		<p>
+			In that case, it is better to assign it once and call it by reference.
+		</p>
 
-    <pre><code>{
-  const test_foo = test(foo);
-  test_foo('description one', true);
-  test_foo('description two', [42, 42]);
+		<pre><code>const test_foo = test(foo);
+test_foo('is true', foo());
+test_foo('is numeric', [Number(foo()), 1]);</code></pre>
+
+		<p>
+			If many functions are imported from the module under test,
+			each can be contained in block statement scope, and the
+			identifier can even be reused:
+		</p>
+
+		<pre><code>{
+   const t = test(foo);
+   t('is true', foo());
+} {
+   const t = test(bar);
+   t('is true', bar());
 }</code></pre>
 
-    <h2>What about &#8230;</h2>
+		<h2>What about &#8230;</h2>
 
-    <h3><em>Spies</em>?</h3>
+		<h3><em>Spies</em>?</h3>
 
-    <p>
-      The idiomatic ECMAScript >= 2015 answer is
-      using a <code>Proxy</code>&#8217;s
-      <a
-         href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler/apply"><code>apply</code></a>
-      handler.
-    </p>
+		<p>
+			The idiomatic ECMAScript >= 2015 answer is
+			using a <code>Proxy</code>&#8217;s
+			<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler/apply"><code>apply</code></a>
+			handler.
+		</p>
 
-    <h3><em>Setup</em> and <em>teardown</em>?</h3>
+		<h3><em>Setup</em> and <em>teardown</em>?</h3>
 
-    <p>
-      <em>Shared</em> initialization and cleanup functions have the same
-      problems as global and/or magic test API identifiers.
-      They contaminate the environment and can cause side effects
-      that are difficult to reason about.
-      Besides, they are completely at odds with the purpose of
-      <em>unit testing</em> in the first place.
-    </p>
+		<p>
+			<em>Shared</em> initialization and cleanup functions have the same
+			problems as global and/or magic test API identifiers.
+			They contaminate the environment and can cause side effects
+			that are difficult to reason about.
+			Besides, they are completely at odds with the purpose of
+			<em>unit testing</em> in the first place.
+		</p>
 
-    <h2 id="environment">Environments</h2>
+		<h2 id="environment">Environments</h2>
 
-    <p>
-      Note: the <em>test-io</em> module at
-      <code>https://m.bednarz.dev/test-io.js</code>
-      provides environment agnostic utilities for
-      <em>test runners</em> and <em>reporters</em>.
-      It is consumed by the
-      <a href="#browser">web browser</a>
-      and
-      <a href="#deno">Deno</a>
-      utilities below.
-    </p>
+		<p>
+			Note: the <em>test-io</em> module at
+			<code>https://m.bednarz.dev/test-io.js</code>
+			provides environment agnostic utilities for
+			<em>test runners</em> and <em>reporters</em>.
+			It is consumed by the
+			<a href="#browser">web browser</a>
+			and
+			<a href="#deno">Deno</a>
+			utilities below.
+		</p>
 
-    <h3 id="browser">Web browser</h3>
+		<h3 id="browser">Web browser</h3>
 
-    <p>
-      You can import a <em>test suite</em> module in an
-      HTML page and inspect its summary in the console.
-      Or you could <em>dynamically</em> import it
-      <em>from</em> the console:
-    </p>
+		<p>
+			You can import a <em>test suite</em> module in an
+			HTML page and inspect its summary in the console.
+			Or you could <em>dynamically</em> import it
+			<em>from</em> the console:
+		</p>
 
-    <pre><code>import('https://m.bednarz.dev/test.test.js');</code></pre>
+		<pre><code>import('https://m.bednarz.dev/test.test.js');</code></pre>
 
-    <p>
-      With a bit more effort, you can inspect not only
-      the summary but also the result:
-    </p>
+		<p>
+			With a bit more effort, you can inspect not only
+			the summary but also the result:
+		</p>
 
-    <pre><code>import('https://m.bednarz.dev/test.test.js')
+		<pre><code>import('https://m.bednarz.dev/test.test.js')
   .then(module => module.default)
   .then(result => console.info(result));</code></pre>
 
-    <p>
-      You can try that for yourself right now by
-      copy and pasting both examples into the console.
-    </p>
+		<p>
+			You can try that for yourself right now by
+			copy and pasting both examples into the console.
+		</p>
 
-    <p>
-      The
-      <a href="/test/component/report.js">report</a>
-      and
-      <a href="/test/component/suite.js">suite</a>
-      <em>web components</em>
-      are an example of integrating <em>on demand</em>
-      reports in a web page using a declarative HTML API.
-      See the
-      <a href="/test/">unit test reporter</a>
-      of this repository for usage.
-    </p>
+		<p>
+			The
+			<a href="/test/component/report.js">report</a>
+			and
+			<a href="/test/component/suite.js">suite</a>
+			<em>web components</em>
+			are an example of integrating <em>on demand</em>
+			reports in a web page using a declarative HTML API.
+			See the
+			<a href="/test/">unit test reporter</a>
+			of this repository for usage.
+		</p>
 
-    <h3 id="deno">Deno</h3>
+		<h3 id="deno">Deno</h3>
 
-    <p>
-      <a href="https://deno.land/">Deno</a>
-      is a runtime for native TypeScript that can also be used
-      for plain ECMAScript.
-      It is easy to run a single test suite manually from the CLI:
-    </p>
+		<p>
+			<a href="https://deno.land/">Deno</a>
+			is a runtime for native TypeScript that can also be used
+			for plain ECMAScript.
+			It is easy to run a single test suite manually from the CLI:
+		</p>
 
-    <pre><code>deno --allow-net my-unit.test.js</code></pre>
+		<pre><code>deno --allow-net my-unit.test.js</code></pre>
 
-    <p>
-      An installable automated <em>test runner</em>
-      that creates a <em>YAML</em> report
-      is available at:
-      <br>
-      <a href="/deno/test_runner.ts">
-        <code>https://m.bednarz.dev/deno/test_runner.ts</code></a>
-      <br>
-      See the file header for instructions.
-    </p>
+		<p>
+			An installable automated <em>test runner</em>
+			that creates a <em>YAML</em> report
+			is available at:
+			<br>
+			<a href="/deno/test_runner.ts">
+				<code>https://m.bednarz.dev/deno/test_runner.ts</code></a>
+			<br>
+			See the file header for instructions.
+		</p>
 
-    <h3 id="nodejs">Node.js</h3>
+		<h3 id="nodejs">Node.js</h3>
 
-    <p>
-      Caveats:
-    </p>
+		<p>
+			Caveats:
+		</p>
 
-    <ul>
-      <li>
-        <em>ECMAScript modules</em> are only available without the
-        <em>experimental</em> flag in <em>Node.js</em>
-        version 13 and higher.
-      </li>
-      <li>
-        Only relative and <code>file:</code> URLs are supported for imports;
-        since both the <em>test</em> and <em>test-io</em> modules
-        have no dependencies, it is easy to save them from
-        the network and use them locally.
-      </li>
-      <li>
-        <em>ECMAScript modules</em> must have a <code>.mjs</code>
-        extension, or the <code>package.json</code> that governs the
-        current working directory must have a
-        <code>"type": "module"</code> field.
-      </li>
-      <li>
-        Using the <code>.mjs</code> extension is broken in <em>VS Code</em>
-        because it is
-        <a href="https://github.com/microsoft/TypeScript/issues/27957">not supported in
-          <em>TypeScript</em></a>
-        in the first place.
-      </li>
-    </ul>
-  </main>
-  <footer class="reverse">
-    © 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
-  </footer>
+		<ul>
+			<li>
+				Only relative and <code>file:</code> URLs are supported for imports;
+				since both the <em>test</em> and <em>test-io</em> modules
+				have no dependencies, saving them from the network for local usage
+				requires no additional steps, but the problem remains for
+				network dependencies of modules under test.
+				<ul>
+					<li>
+						Network based modules using <code>https</code>
+						can be imported since version 16 using the
+						<code>--experimental-network-imports</code>
+						flag.
+					</li>
+				</ul>
+			</li>
+			<li>
+				<em>ECMAScript modules</em> must have a <code>.mjs</code>
+				extension, or the <code>package.json</code> that governs the
+				current working directory must have a
+				<code>"type": "module"</code> field.
+			</li>
+			<!--<li>
+				Using the <code>.mjs</code> extension is broken in <em>VS Code</em>
+				because it is
+				<a href="https://github.com/microsoft/TypeScript/issues/27957">not supported in
+					<em>TypeScript</em></a>
+				in the first place.
+			</li>-->
+		</ul>
+	</main>
+	<footer class="reverse">
+		© 2020 <a href="https://eric.bednarz.dev/">eric.bednarz.dev</a>
+	</footer>
 </body>
 </html>
