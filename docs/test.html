@@ -455,7 +455,7 @@ test_foo('is numeric', [Number(foo()), 1]);</code></pre>
 			It is easy to run a single test suite manually from the CLI:
 		</p>
 
-		<pre><code>deno --allow-net my-unit.test.js</code></pre>
+		<pre><code>deno run --allow-read --allow-net my-unit.test.js</code></pre>
 
 		<p>
 			An installable automated <em>test runner</em>
@@ -486,7 +486,7 @@ test_foo('is numeric', [Number(foo()), 1]);</code></pre>
 						Network based modules using <code>https</code>
 						can be imported since version 16 using the
 						<code>--experimental-network-imports</code>
-						flag.
+						flag (this is unchanged up to version 20).
 					</li>
 				</ul>
 			</li>
